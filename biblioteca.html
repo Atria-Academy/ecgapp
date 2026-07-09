@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PALS Rhythm Quest · Biblioteca de ritmos</title>
+<meta name="theme-color" content="#070b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23070b10'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%233af0ac' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<main class="app">
+  <div class="section-head mt-0">
+    <div>
+      <span class="microlabel">enciclopédia clínica de referência</span>
+      <h2 class="section-title" style="font-size:24px;margin-top:4px">Biblioteca de ritmos</h2>
+    </div>
+  </div>
+  <p class="small muted mb-14">Os 8 ritmos do jogo, com critérios, dicas de reconhecimento e armadilhas. Toque em um ritmo para abrir a ficha completa.</p>
+
+  <input id="lib-busca" placeholder="Buscar ritmo (ex.: TSV, bradicardia...)" autocomplete="off" style="margin-bottom:12px">
+  <div class="filters mb-14" id="lib-filters">
+    <button class="filter-btn active" data-f="todos">Todos</button>
+    <button class="filter-btn" data-f="basico">Básico</button>
+    <button class="filter-btn" data-f="intermediario">Intermediário</button>
+    <button class="filter-btn" data-f="avancado">Avançado</button>
+  </div>
+
+  <div class="librarygrid" id="libgrid"></div>
+
+  <footer class="disclaimer">
+    <b>Aviso clínico</b><br>
+    Tiras geradas proceduralmente para o protótipo. Na produção, cada exemplo é substituído por ECG validado por
+    cardiologista pediátrico ou instrutor PALS. AESP não aparece aqui: é diagnóstico clínico, feito no Plantão PALS.
+  </footer>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/ecg.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script>
+(function () {
+  var ui = PRQ.ui, st = PRQ.state;
+  ui.renderShell();
+  var filtro = 'todos', busca = '';
+  var liveDetalhe = null;
+
+  ui.garantirPerfil(function () {
+    render();
+    // deep-link: biblioteca.html#tsv abre a ficha direto
+    var hash = location.hash.replace('#', '');
+    if (hash && PRQ.RHYTHMS[hash]) setTimeout(function () { abrirFicha(hash); }, 350);
+  });
+
+  document.getElementById('lib-filters').addEventListener('click', function (e) {
+    var b = e.target.closest('.filter-btn');
+    if (!b) return;
+    document.querySelectorAll('#lib-filters .filter-btn').forEach(function (o) { o.classList.remove('active'); });
+    b.classList.add('active');
+    filtro = b.dataset.f;
+    render();
+  });
+  document.getElementById('lib-busca').addEventListener('input', function (e) {
+    busca = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  function fcExemplo(r) {
+    var mapa = { sinusal: 104, bradicardia: 48, taqsinusal: 178, tsv: 236, tv: 184, fv: 0, assistolia: 0, bavt: 42 };
+    return mapa[r.id] || 100;
+  }
+
+  function render() {
+    var ids = Object.keys(PRQ.RHYTHMS).filter(function (id) {
+      var r = PRQ.RHYTHMS[id];
+      if (filtro !== 'todos' && r.categoria !== filtro) return false;
+      if (busca && (r.nome + ' ' + r.nomeEn).toLowerCase().indexOf(busca) < 0) return false;
+      return true;
+    });
+
+    document.getElementById('libgrid').innerHTML = ids.length
+      ? ids.map(function (id) {
+          var r = PRQ.RHYTHMS[id];
+          return '<div class="rhythmcard" data-id="' + id + '" role="button" tabindex="0">' +
+            '<div class="scope"><canvas id="mini-' + id + '"></canvas></div>' +
+            '<div class="rhythmcard-body">' +
+              '<div class="row">' +
+                '<div class="grow"><h3>' + ui.esc(r.nome) + '</h3><div class="en">' + ui.esc(r.nomeEn) + '</div></div>' +
+                ui.diffDots(r.dificuldade) +
+              '</div>' +
+              '<div class="chiprow">' +
+                '<span class="chip">FC: ' + ui.esc(r.fc) + '</span>' +
+                '<span class="chip ' + (r.qrsLargo ? 'bad' : 'ok') + '">QRS ' + (r.qrsLargo ? 'largo' : 'estreito') + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('')
+      : '<p class="small muted" style="text-align:center;padding:26px 0">Nenhum ritmo com esse filtro.</p>';
+
+    ids.forEach(function (id) {
+      var r = PRQ.RHYTHMS[id];
+      var c = document.getElementById('mini-' + id);
+      if (c) requestAnimationFrame(function () { PRQ.ecg.renderStatic(c, id, fcExemplo(r), 77 + id.length * 31); });
+    });
+
+    document.querySelectorAll('.rhythmcard').forEach(function (card) {
+      card.addEventListener('click', function () { abrirFicha(card.dataset.id); });
+      card.addEventListener('keydown', function (e) { if (e.key === 'Enter') abrirFicha(card.dataset.id); });
+    });
+  }
+
+  function abrirFicha(id) {
+    var r = PRQ.RHYTHMS[id];
+    if (!r) return;
+    if (liveDetalhe) { liveDetalhe.stop(); liveDetalhe = null; }
+    var m = ui.modal(
+      '<div class="row" style="align-items:flex-start">' +
+        '<div class="grow"><h3 class="display" style="font-size:21px">' + ui.esc(r.nome) + '</h3>' +
+        '<span class="mono muted" style="font-size:11px">' + ui.esc(r.nomeEn) + '</span></div>' +
+        ui.diffDots(r.dificuldade) +
+      '</div>' +
+      '<div class="scope mt-14" style="height:110px">' +
+        '<span class="scope-label">DII · 25 mm/s</span>' +
+        '<canvas id="ficha-ecg"></canvas>' +
+      '</div>' +
+      '<div class="kvgrid">' +
+        '<div class="kv"><span class="microlabel">FC</span><b>' + ui.esc(r.fc) + '</b></div>' +
+        '<div class="kv"><span class="microlabel">QRS</span><b>' + ui.esc(r.qrs) + '</b></div>' +
+        '<div class="kv"><span class="microlabel">Ritmo</span><b>' + ui.esc(r.ritmo) + '</b></div>' +
+        '<div class="kv"><span class="microlabel">Onda P</span><b>' + ui.esc(r.ondaP) + '</b></div>' +
+        '<div class="kv" style="grid-column:1/-1"><span class="microlabel">Relação P:QRS</span><b>' + ui.esc(r.pqrs) + '</b></div>' +
+      '</div>' +
+      '<div class="teachblock"><span class="microlabel txt-ok">Achados-chave</span><ul>' +
+        r.achados.map(function (a) { return '<li>' + ui.esc(a) + '</li>'; }).join('') +
+      '</ul></div>' +
+      '<div class="teachblock warn"><span class="microlabel txt-gold">Dicas de reconhecimento</span><ul>' +
+        r.dicas.map(function (d) { return '<li>' + ui.esc(d) + '</li>'; }).join('') +
+      '</ul></div>' +
+      '<div class="teachblock trap"><span class="microlabel txt-bad">Armadilhas comuns</span><ul>' +
+        r.armadilhas.map(function (a) { return '<li>' + ui.esc(a) + '</li>'; }).join('') +
+      '</ul></div>' +
+      '<a class="btn btn-primary btn-block" href="partida.html?modo=treino&ritmo=' + id + '">Treinar este ritmo</a>' +
+      '<button class="btn btn-ghost btn-block mt-8" data-close>Fechar</button>'
+    );
+    requestAnimationFrame(function () {
+      var c = m.el.querySelector('#ficha-ecg');
+      if (c) liveDetalhe = PRQ.ecg.renderLive(c, id, fcExemplo(r), 913, { sweepSeg: 3.4 });
+    });
+  }
+})();
+</script>
+</body>
+</html>

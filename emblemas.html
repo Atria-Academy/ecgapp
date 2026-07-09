@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PALS Rhythm Quest · Emblemas</title>
+<meta name="theme-color" content="#070b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23070b10'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%233af0ac' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<main class="app">
+  <div class="section-head mt-0">
+    <div>
+      <span class="microlabel">conquistas ancoradas em objetivo clínico</span>
+      <h2 class="section-title" style="font-size:24px;margin-top:4px">Emblemas</h2>
+    </div>
+    <span class="chip ok" id="bd-count"></span>
+  </div>
+
+  <div class="filters mb-14" id="bd-filters">
+    <button class="filter-btn active" data-f="todos">Todos</button>
+    <button class="filter-btn" data-f="conquistados">Conquistados</button>
+    <button class="filter-btn" data-f="progresso">Em progresso</button>
+  </div>
+
+  <div class="badgegrid" id="badgegrid"></div>
+
+  <footer class="disclaimer">
+    <b>Como funciona</b><br>
+    Cada emblema tem critério objetivo e uma descrição educacional. Toque em um emblema para ver o critério completo e seu progresso.
+  </footer>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/ecg.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script>
+(function () {
+  var ui = PRQ.ui, st = PRQ.state;
+  ui.renderShell();
+  var filtro = 'todos';
+  var novos = [];
+
+  ui.garantirPerfil(function () {
+    novos = st.consumirBadgesNovos();
+    render();
+  });
+
+  document.getElementById('bd-filters').addEventListener('click', function (e) {
+    var b = e.target.closest('.filter-btn');
+    if (!b) return;
+    document.querySelectorAll('#bd-filters .filter-btn').forEach(function (o) { o.classList.remove('active'); });
+    b.classList.add('active');
+    filtro = b.dataset.f;
+    render();
+  });
+
+  function render() {
+    var S = st.get();
+    document.getElementById('bd-count').textContent = S.badges.length + ' de ' + PRQ.BADGES.length;
+
+    var lista = PRQ.BADGES.filter(function (b) {
+      var tem = S.badges.indexOf(b.id) >= 0;
+      if (filtro === 'conquistados') return tem;
+      if (filtro === 'progresso') return !tem && st.progressoBadge(b) > 0;
+      return true;
+    });
+
+    document.getElementById('badgegrid').innerHTML = lista.length
+      ? lista.map(function (b) {
+          var tem = S.badges.indexOf(b.id) >= 0;
+          var prog = Math.min(b.meta, st.progressoBadge(b));
+          var pct = (prog / b.meta) * 100;
+          var fresh = novos.indexOf(b.id) >= 0;
+          return '<button class="badgetile ' + (tem ? 'unlocked' : 'locked') + (fresh ? ' fresh' : '') + '" data-id="' + b.id + '">' +
+            '<div class="badge-emoji">' + b.emoji + '</div>' +
+            '<h4>' + ui.esc(b.nome) + '</h4>' +
+            '<span class="microlabel">' + (tem ? 'desbloqueado' : b.meta > 1 ? prog + ' / ' + b.meta : 'bloqueado') + '</span>' +
+            (!tem && b.meta > 1 ? '<div class="meter gold"><i style="width:' + pct.toFixed(0) + '%"></i></div>' : '') +
+          '</button>';
+        }).join('')
+      : '<p class="small muted" style="grid-column:1/-1;text-align:center;padding:26px 0">Nada aqui ainda. Jogue uma rodada para começar a coleção.</p>';
+
+    document.querySelectorAll('.badgetile').forEach(function (t) {
+      t.addEventListener('click', function () { abrirDetalhe(t.dataset.id); });
+    });
+  }
+
+  function abrirDetalhe(id) {
+    var S = st.get();
+    var b = PRQ.BADGES.filter(function (x) { return x.id === id; })[0];
+    if (!b) return;
+    var tem = S.badges.indexOf(b.id) >= 0;
+    var prog = Math.min(b.meta, st.progressoBadge(b));
+    var pct = (prog / b.meta) * 100;
+    ui.modal(
+      '<div class="center">' +
+        '<div class="badge-emoji" style="width:74px;height:74px;font-size:38px;margin:0 auto 12px;' +
+          (tem ? 'background:linear-gradient(150deg,rgba(255,198,74,.25),rgba(255,198,74,.06));border:1px solid rgba(255,198,74,.5)' : 'filter:grayscale(1);opacity:.5;border:1px solid var(--line)') + '">' + b.emoji + '</div>' +
+        '<h3 class="display" style="font-size:20px">' + ui.esc(b.nome) + '</h3>' +
+        '<span class="microlabel" style="' + (tem ? 'color:var(--gold)' : '') + '">' + (tem ? 'desbloqueado' : 'em progresso') + '</span>' +
+      '</div>' +
+      '<div class="kv mt-14"><span class="microlabel">critério</span><b>' + ui.esc(b.criterio) + '</b></div>' +
+      '<p class="small" style="color:var(--ink-2);margin-top:12px;line-height:1.55">' + ui.esc(b.descricao) + '</p>' +
+      (!tem && b.meta > 1
+        ? '<div class="mt-14"><div class="meter gold"><i style="width:' + pct.toFixed(0) + '%"></i></div>' +
+          '<p class="small muted center mt-8 mono">' + prog + ' / ' + b.meta + '</p></div>'
+        : '') +
+      '<button class="btn btn-ghost btn-block mt-14" data-close>Fechar</button>'
+    );
+  }
+})();
+</script>
+</body>
+</html>

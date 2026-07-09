@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PALS Rhythm Quest · Meu desempenho</title>
+<meta name="theme-color" content="#070b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23070b10'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%233af0ac' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<main class="app">
+  <div class="section-head mt-0">
+    <div>
+      <span class="microlabel">relatório individual</span>
+      <h2 class="section-title" style="font-size:24px;margin-top:4px">Meu desempenho</h2>
+    </div>
+  </div>
+
+  <section class="card levelcard" id="dash-perfil"></section>
+
+  <div class="dash-cols mt-14">
+    <div>
+      <section class="card center" id="dash-acc"></section>
+      <div class="stat-tiles mt-14" id="dash-tiles"></div>
+      <section class="card mt-14" id="dash-mastery"></section>
+    </div>
+    <div>
+      <section class="card mt-14" id="dash-fracos" style="margin-top:14px"></section>
+      <section class="card mt-14" id="dash-erros"></section>
+      <section class="card mt-14" id="dash-config"></section>
+    </div>
+  </div>
+
+  <footer class="disclaimer">
+    <b>Aviso clínico</b><br>
+    Relatório sobre tiras sintéticas de demonstração. Não substitui avaliação formal de competência em PALS.
+  </footer>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/ecg.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script>
+(function () {
+  var ui = PRQ.ui, st = PRQ.state;
+  ui.renderShell();
+  ui.garantirPerfil(render);
+
+  function render() {
+    var S = st.get();
+
+    document.getElementById('dash-perfil').innerHTML =
+      '<div class="levelcard-top">' +
+        '<div class="avatar lg">' + S.avatar + '</div>' +
+        '<div class="levelcard-id">' +
+          '<div class="name">' + ui.esc(S.nome) + '</div>' +
+          '<div class="title">' + ui.esc(PRQ.titleFor(S.nivel)) + '</div>' +
+          '<div class="chiprow mt-8">' +
+            '<span class="chip gold">◉ ' + ui.fmt(S.moedas) + '</span>' +
+            '<span class="chip">' + S.streak.dias + ' dias seguidos</span>' +
+            '<span class="chip ok">' + S.badges.length + '/' + PRQ.BADGES.length + ' emblemas</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="levelbubble"><b>' + S.nivel + '</b><span>nível</span></div>' +
+      '</div>' + ui.xpbarHtml();
+
+    var acc = st.acuraciaGlobal();
+    document.getElementById('dash-acc').innerHTML =
+      '<span class="microlabel" style="display:block;margin-bottom:4px">acurácia global</span>' +
+      '<div class="ring-wrap" style="width:132px;height:132px;margin:10px auto">' +
+        ui.ringSvg(acc, 132, 10) +
+        '<div class="ring-center"><b style="font-size:28px">' + (S.tirasRespondidas ? acc.toFixed(0) + '%' : '--') + '</b>' +
+        '<span>' + ui.fmt(S.tirasRespondidas) + ' tiras</span></div>' +
+      '</div>' +
+      '<p class="small muted">' + (acc >= 95 ? 'Nível de instrutor. Mantenha.' : acc >= 80 ? 'Sólido. Busque os 95% do endgame.' : S.tirasRespondidas ? 'Foque nos ritmos fracos abaixo.' : 'Jogue sua primeira rodada para gerar dados.') + '</p>';
+
+    var tempoMedio = 0, nT = 0;
+    Object.keys(S.rhythmStats).forEach(function (id) {
+      var r = S.rhythmStats[id];
+      tempoMedio += r.msSum; nT += r.total;
+    });
+    tempoMedio = nT ? (tempoMedio / nT / 1000) : 0;
+    document.getElementById('dash-tiles').innerHTML =
+      '<div class="stat-tile t-ok"><b>×' + S.counters.melhorCombo + '</b><span>melhor combo</span></div>' +
+      '<div class="stat-tile t-info"><b>' + (nT ? tempoMedio.toFixed(1) + '<small>s</small>' : '--') + '</b><span>tempo médio</span></div>' +
+      '<div class="stat-tile t-gold"><b>' + ui.fmt(S.rodadas) + '</b><span>rodadas</span></div>';
+
+    // domínio por ritmo
+    var rows = Object.keys(PRQ.RHYTHMS).map(function (id) {
+      var r = PRQ.RHYTHMS[id], rs = S.rhythmStats[id];
+      var pct = rs.total ? (rs.hits / rs.total) * 100 : null;
+      var fraco = pct !== null && rs.total >= 3 && pct < 60;
+      return '<div class="masteryrow' + (fraco ? ' weak' : '') + '">' +
+        '<span class="mname">' + ui.esc(r.nome) + '</span>' +
+        '<div class="meter"><i style="width:' + (pct === null ? 0 : pct.toFixed(0)) + '%"></i></div>' +
+        '<span class="mval">' + (pct === null ? '--' : pct.toFixed(0) + '%') + '</span>' +
+      '</div>';
+    }).join('');
+    document.getElementById('dash-mastery').innerHTML =
+      '<span class="microlabel" style="display:block;margin-bottom:6px">domínio por ritmo · % de acerto</span>' + rows;
+
+    // pontos fracos e revisão dirigida
+    var fracos = st.ritmosFracos(3).filter(function (id) {
+      var rs = S.rhythmStats[id];
+      return rs.total >= 2 && rs.mastery < 0.75;
+    });
+    document.getElementById('dash-fracos').innerHTML =
+      '<span class="microlabel" style="display:block;margin-bottom:8px">revisão dirigida</span>' +
+      (fracos.length
+        ? '<p class="small muted mb-8">O algoritmo adaptativo vai perseguir estes ritmos. Você também pode atacar direto:</p>' +
+          fracos.map(function (id) {
+            return '<a class="btn btn-ghost btn-block btn-sm mb-8" href="partida.html?modo=treino&ritmo=' + id + '">Treinar ' + ui.esc(PRQ.RHYTHMS[id].nome) + '</a>';
+          }).join('')
+        : '<p class="small muted">Sem pontos fracos marcantes por enquanto. Jogue mais rodadas para o relatório ganhar precisão.</p>');
+
+    // últimos erros
+    var erros = S.erros.slice(0, 6);
+    document.getElementById('dash-erros').innerHTML =
+      '<span class="microlabel" style="display:block;margin-bottom:6px">últimos erros</span>' +
+      (erros.length
+        ? erros.map(function (e) {
+            var certa = e.ritmo === 'aesp' ? PRQ.AESP.nome : (PRQ.RHYTHMS[e.ritmo] ? PRQ.RHYTHMS[e.ritmo].nome : e.ritmo);
+            var dita = e.resposta === 'aesp' ? PRQ.AESP.nome : (PRQ.RHYTHMS[e.resposta] ? PRQ.RHYTHMS[e.resposta].nome : e.resposta);
+            return '<div class="errorrow">' +
+              '<div class="err-ic">' + ui.icon('x') + '</div>' +
+              '<div class="body"><b>' + ui.esc(certa) + '</b>' +
+              '<span>você marcou: ' + ui.esc(dita) + '</span></div>' +
+              '<a class="btn btn-ghost btn-sm" href="biblioteca.html#' + e.ritmo + '">rever</a>' +
+            '</div>';
+          }).join('')
+        : '<p class="small muted">Nenhum erro registrado ainda. Bom sinal, mas jogue no Arcade para testar sob pressão.</p>');
+
+    // configurações
+    document.getElementById('dash-config').innerHTML =
+      '<span class="microlabel" style="display:block;margin-bottom:8px">conta</span>' +
+      '<button class="btn btn-ghost btn-block btn-sm mb-8" id="btn-editar">Editar nome e avatar</button>' +
+      '<button class="btn btn-ghost btn-block btn-sm" id="btn-reset" style="color:var(--bad);border-color:rgba(255,90,106,.3)">Zerar progresso (demo)</button>';
+
+    document.getElementById('btn-editar').addEventListener('click', function () {
+      st.get().nome = null;
+      ui.garantirPerfil(render);
+    });
+    document.getElementById('btn-reset').addEventListener('click', function () {
+      var m = ui.modal(
+        '<h3 class="display" style="font-size:19px;margin-bottom:8px">Zerar tudo?</h3>' +
+        '<p class="small muted mb-14">XP, moedas, emblemas e histórico serão apagados. Útil para reiniciar a demo no estande.</p>' +
+        '<div class="row"><button class="btn btn-ghost grow" data-close>Cancelar</button>' +
+        '<button class="btn grow" id="conf-reset" style="background:var(--bad);color:#2a0a0e">Zerar</button></div>'
+      );
+      m.el.querySelector('#conf-reset').addEventListener('click', function () {
+        st.reset();
+        location.reload();
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PALS Rhythm Quest · Modos de jogo</title>
+<meta name="theme-color" content="#070b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23070b10'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%233af0ac' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<main class="app">
+  <div class="section-head mt-0">
+    <div>
+      <span class="microlabel">progressão de dificuldade e de stakes</span>
+      <h2 class="section-title" style="font-size:24px;margin-top:4px">Modos de jogo</h2>
+    </div>
+  </div>
+  <p class="small muted mb-14">Você destrava modos ao subir de nível, mas pode voltar a qualquer um para revisar.</p>
+
+  <div class="modegrid" id="modos"></div>
+
+  <footer class="disclaimer">
+    <b>Aviso clínico</b><br>
+    ECGs sintéticos de demonstração. AESP aparece apenas no Plantão PALS, com pulso ausente e atividade elétrica organizada.
+  </footer>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/ecg.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script>
+(function () {
+  var ui = PRQ.ui, S = PRQ.state.get();
+  ui.renderShell();
+  ui.garantirPerfil(render);
+
+  function render() {
+    S = PRQ.state.get();
+    document.getElementById('modos').innerHTML =
+      Object.keys(PRQ.MODES).map(function (k) {
+        var m = PRQ.MODES[k];
+        var bloqueado = S.nivel < m.nivelMin;
+        var inner =
+          '<div class="modecard-head">' +
+            '<div class="modecard-icon">' + ui.icon(bloqueado ? 'lock' : m.icone) + '</div>' +
+            '<div class="modecard-title">' +
+              '<span class="microlabel">Modo ' + m.num + ' · ' + ui.esc(m.tag) + '</span>' +
+              '<h3>' + ui.esc(m.nome) + '</h3>' +
+            '</div>' +
+            (bloqueado ? '<span class="locktag">' + ui.icon('lock') + ' nv ' + m.nivelMin + '</span>' : '') +
+          '</div>' +
+          '<p class="desc">' + ui.esc(m.desc) + '</p>' +
+          '<div class="modecard-foot">' +
+            '<div class="chiprow">' + m.chips.map(function (c) { return '<span class="chip">' + ui.esc(c) + '</span>'; }).join('') + '</div>' +
+            (S.bestScores[m.id] ? '<span class="modecard-best">melhor: ' + ui.fmt(S.bestScores[m.id]) + ' XP</span>' : '') +
+          '</div>';
+        if (bloqueado) {
+          return '<div class="modecard locked" style="--mode-color:' + m.cor + '">' + inner + '</div>';
+        }
+        return '<a class="modecard" style="--mode-color:' + m.cor + '" href="partida.html?modo=' + m.id + '">' + inner + '</a>';
+      }).join('');
+  }
+})();
+</script>
+</body>
+</html>

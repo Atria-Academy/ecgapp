@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PALS Rhythm Quest · Partida</title>
+<meta name="theme-color" content="#070b10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23070b10'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%233af0ac' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<main class="game-shell">
+  <section id="view-setup">
+    <div class="game-top">
+      <a class="game-exit" href="modos.html" aria-label="Voltar"></a>
+      <div class="game-progress"><span class="microlabel">preparar partida</span></div>
+    </div>
+  </section>
+  <section id="view-play" class="hidden"></section>
+  <section id="view-result" class="hidden"></section>
+</main>
+
+<div class="sheet-backdrop" id="sheet-backdrop"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toastwrap" id="toastwrap" style="top:14px"></div>
+<div class="burst-layer" id="burstlayer"></div>
+
+<script src="js/data.js"></script>
+<script src="js/ecg.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+<script>
+(function () {
+  // a partida é imersiva: sem topbar nem navegação inferior
+  var exit = document.querySelector('#view-setup .game-exit');
+  if (exit) exit.innerHTML = PRQ.ui.icon('back');
+  PRQ.ui.garantirPerfil(function () { PRQ.game.init(); });
+})();
+</script>
+</body>
+</html>
