@@ -53,7 +53,7 @@
   ui.garantirPerfil(function () {
     render();
     // deep-link: biblioteca.html#tsv abre a ficha direto
-    var hash = location.hash.replace('#', '');
+    var hash = ((PRQ.route && PRQ.route.hash) || location.hash).replace('#', '');
     if (hash && PRQ.RHYTHMS[hash]) setTimeout(function () { abrirFicha(hash); }, 350);
   });
 

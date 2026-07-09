@@ -258,6 +258,7 @@ PRQ.ecg = (function () {
 
     function frame(ts) {
       if (stopped) return;
+      if (!canvas.isConnected) { stopped = true; return; } // página trocou
       if (t0 === null) t0 = ts;
       const { w, h } = sizeCanvas(canvas);
       const phase = ((ts - t0) / 1000 / speed) % 1;

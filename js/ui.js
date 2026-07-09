@@ -50,11 +50,14 @@ PRQ.ui = (function () {
   ];
 
   function pageName() {
+    if (PRQ.route && PRQ.route.page) return PRQ.route.page; // modo arquivo único
     const p = location.pathname.split('/').pop() || 'index.html';
     return p === '' ? 'index.html' : p;
   }
 
   function renderShell() {
+    // idempotente: remove casca anterior (navegação em arquivo único)
+    document.querySelectorAll('.topbar, .bottomnav, #toastwrap, #burstlayer').forEach(function (el) { el.remove(); });
     const cur = pageName();
     const S = PRQ.state.get();
     const top = document.createElement('header');

@@ -474,7 +474,8 @@ PRQ.game = (function () {
     html += '<button class="btn btn-primary btn-block" id="btn-next">' +
       (idx + 1 >= fila.length ? 'Ver resultado' : 'Próxima tira') + '</button>';
     abrirSheet(html);
-    $('btn-next').addEventListener('click', function () {
+    const bn = $('btn-next');
+    if (bn) bn.addEventListener('click', function () {
       fecharSheet();
       idx++;
       setTimeout(proximaTira, 260);
@@ -491,6 +492,7 @@ PRQ.game = (function () {
     }
     // etapa 2: conduta
     setTimeout(function () {
+      if (!$('pergunta') || !$('answers')) return; // saiu da partida
       $('pergunta').textContent = 'Conduta inicial (PALS)?';
       const box = $('answers');
       const ordem = shuffle(caso.condutas.map((c, i) => ({ c, i })));
@@ -549,7 +551,8 @@ PRQ.game = (function () {
       '<button class="btn btn-primary btn-block" id="btn-next">' +
       (idx + 1 >= fila.length ? 'Ver resultado' : 'Próximo caso') + '</button>';
     abrirSheet(html);
-    $('btn-next').addEventListener('click', function () {
+    const bn = $('btn-next');
+    if (bn) bn.addEventListener('click', function () {
       fecharSheet();
       idx++;
       setTimeout(proximaTira, 260);
@@ -583,14 +586,17 @@ PRQ.game = (function () {
 
   /* ---------- sheet ---------- */
   function abrirSheet(html) {
-    $('sheet').innerHTML = html;
-    $('sheet-backdrop').classList.add('open');
-    $('sheet').classList.add('open');
-    $('sheet').scrollTop = 0;
+    const sh = $('sheet'), bd = $('sheet-backdrop');
+    if (!sh || !bd) return;
+    sh.innerHTML = html;
+    bd.classList.add('open');
+    sh.classList.add('open');
+    sh.scrollTop = 0;
   }
   function fecharSheet() {
-    $('sheet-backdrop').classList.remove('open');
-    $('sheet').classList.remove('open');
+    const sh = $('sheet'), bd = $('sheet-backdrop');
+    if (bd) bd.classList.remove('open');
+    if (sh) sh.classList.remove('open');
   }
 
   /* ============ RESULTADO ============ */
@@ -688,12 +694,26 @@ PRQ.game = (function () {
     }, 120);
 
     $('btn-again').addEventListener('click', function () { renderSetup(); mostrarView('view-setup'); window.scrollTo(0, 0); });
-    $('btn-modos').addEventListener('click', function () { location.href = 'modos.html'; });
+    $('btn-modos').addEventListener('click', function () { irPara('modos.html'); });
+  }
+
+  function irPara(url) {
+    if (PRQ.nav) PRQ.nav(url); else location.href = url;
+  }
+
+  /* encerra timers e animações (navegação em arquivo único) */
+  function teardown() {
+    pararTimer();
+    if (liveHandle) { liveHandle.stop(); liveHandle = null; }
+    limparBots();
+    fecharSheet();
+    travado = true;
   }
 
   /* ============ init ============ */
   function init() {
-    const params = new URLSearchParams(location.search);
+    const search = (PRQ.route && PRQ.route.search) || location.search;
+    const params = new URLSearchParams(search);
     const mid = params.get('modo') || 'treino';
     ritmoFoco = params.get('ritmo') || null;
     modo = PRQ.MODES[mid] || PRQ.MODES.treino;
@@ -701,12 +721,12 @@ PRQ.game = (function () {
     const S = st().get();
     if (S.nivel < modo.nivelMin) {
       PRQ.ui.toast('Modo bloqueado: alcance o nível ' + modo.nivelMin, 'gold');
-      setTimeout(function () { location.href = 'modos.html'; }, 1200);
+      setTimeout(function () { irPara('modos.html'); }, 1200);
       return;
     }
     renderSetup();
     mostrarView('view-setup');
   }
 
-  return { init: init };
+  return { init: init, teardown: teardown };
 })();

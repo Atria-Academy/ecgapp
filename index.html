@@ -79,9 +79,11 @@
   ];
   var hi = 0, handle = null;
   function cicloHero() {
+    var cv = document.getElementById('hero-ecg');
+    if (!cv) { if (handle) handle.stop(); return; } // saiu da página
     var item = heroRitmos[hi % heroRitmos.length];
     if (handle) handle.stop();
-    handle = PRQ.ecg.renderLive(document.getElementById('hero-ecg'), item.r, item.fc, 42 + hi, { sweepSeg: 3.4 });
+    handle = PRQ.ecg.renderLive(cv, item.r, item.fc, 42 + hi, { sweepSeg: 3.4 });
     document.getElementById('hero-fc').textContent = item.fc || '--';
     hi++;
     setTimeout(cicloHero, 6800);

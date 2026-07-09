@@ -18,6 +18,16 @@ python3 -m http.server 8080
 
 Também funciona hospedado em GitHub Pages, Netlify, Vercel etc. (basta apontar para a raiz).
 
+### Demo em arquivo único
+
+`demo/pals-rhythm-quest.html` é o site inteiro empacotado num só HTML (CSS, JS e
+todas as páginas embutidos, com roteador interno). Serve para mandar por WhatsApp
+ou e-mail e abrir direto no celular, sem servidor. Para regenerar após mudanças:
+
+```bash
+node tools/build-single.mjs
+```
+
 ## Páginas
 
 | Página | Conteúdo |
