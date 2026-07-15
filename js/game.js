@@ -20,11 +20,12 @@ PRQ.game = (function () {
   const R = {               // resultado acumulado da rodada
     acertos: 0, total: 0, xp: 0, moedas: 0,
     combo: 0, melhorCombo: 0, tempos: [],
-    porRitmo: {}, bonusFinal: 0, condutasOk: 0, arenaPts: 0
+    porRitmo: {}, bonusFinal: 0, condutasOk: 0, arenaPts: 0, bonusStop: 0
   };
 
   let bots = [];            // arena
   let ritmoFoco = null;
+  let desafioStop = false;  // Desafio STOP da semana
 
   /* ---------- helpers ---------- */
   function $(id) { return document.getElementById(id); }
@@ -73,10 +74,14 @@ PRQ.game = (function () {
       } else {
         cand = pick(pool);
       }
-      // trava anti-fadiga: nunca a mesma tira, máx. 2 do mesmo ritmo seguidas
+      // trava anti-fadiga: nunca a mesma tira duas vezes seguidas;
+      // em sessão focada (um ritmo só), essa é a única trava que vale.
       const prev1 = out[out.length - 1], prev2 = out[out.length - 2];
-      if (prev1 && prev1.base.id === cand.id) continue;
-      if (prev1 && prev2 && prev1.base.ritmo === cand.ritmo && prev2.base.ritmo === cand.ritmo) continue;
+      const varias = pool.length > 1;
+      if (prev1 && varias && prev1.base.id === cand.id) continue;
+      // sem foco: no máx. 2 tiras do mesmo ritmo seguidas (mistura de categorias)
+      if (!ritmoFoco && prev1 && prev2 &&
+          prev1.base.ritmo === cand.ritmo && prev2.base.ritmo === cand.ritmo) continue;
       out.push({ base: cand, seed: cand.seed + out.length * 997 });
     }
     return out;
@@ -120,8 +125,9 @@ PRQ.game = (function () {
     $('view-setup').innerHTML =
       '<div class="game-top">' +
         '<a class="game-exit" href="modos.html" aria-label="Voltar">' + ui().icon('back') + '</a>' +
-        '<div class="game-progress"><span class="microlabel">preparar partida</span></div>' +
+        '<div class="game-progress"><span class="microlabel">' + (desafioStop ? 'desafio da semana' : 'preparar partida') + '</span></div>' +
       '</div>' +
+      (desafioStop ? '<div class="center mb-14"><span class="stop-seal">Desafio STOP da semana</span></div>' : '') +
       '<div class="card" style="--mode-color:' + m.cor + '">' +
         '<div class="modecard-head">' +
           '<div class="modecard-icon" style="background:color-mix(in srgb, ' + m.cor + ' 13%, transparent);color:' + m.cor + '">' + ui().icon(m.icone) + '</div>' +
@@ -179,7 +185,7 @@ PRQ.game = (function () {
   function iniciarRodada(n, dif) {
     Object.assign(R, {
       acertos: 0, total: 0, xp: 0, moedas: 0, combo: 0,
-      melhorCombo: 0, tempos: [], porRitmo: {}, bonusFinal: 0, condutasOk: 0, arenaPts: 0
+      melhorCombo: 0, tempos: [], porRitmo: {}, bonusFinal: 0, condutasOk: 0, arenaPts: 0, bonusStop: 0
     });
     idx = 0;
     fila = montarFila(n, dif);
@@ -617,6 +623,14 @@ PRQ.game = (function () {
       st().get().counters.treinoSessoes++;
       st().save();
     }
+    // Desafio STOP da semana: bônus fixo + contador do emblema (schema seguro)
+    if (desafioStop) {
+      const bonusStop = 120;
+      st().addXp(bonusStop); R.xp += bonusStop; R.bonusStop = bonusStop;
+      const c = st().get().counters;
+      c.stopDesafios = (c.stopDesafios || 0) + 1;
+      st().save();
+    }
     st().get().rodadas++;
     st().save();
     const recorde = R.xp > 0 ? st().setBestScore(modo.id, R.xp) : false;
@@ -661,15 +675,17 @@ PRQ.game = (function () {
         '<div class="ring-wrap">' + ui().ringSvg(0, 158, 11) +
           '<div class="ring-center"><b id="res-acc">0%</b><span>acurácia</span></div>' +
         '</div>' +
+        (desafioStop ? '<div class="center" style="margin-top:10px"><span class="stop-seal">chancelado pela STOP</span></div>' : '') +
       '</div>' +
       '<div class="card card-tight">' +
         '<div class="bonusline"><span>XP da rodada</span><b id="res-xp">0</b></div>' +
         (R.bonusFinal ? '<div class="bonusline"><span>Bônus de acurácia ' + (acc > 95 ? '>95%' : acc > 90 ? '>90%' : '>80%') + '</span><b>+' + R.bonusFinal + ' XP</b></div>' : '') +
-        '<div class="bonusline"><span>Moedas' + (moedasX2 ? ' (×2 pela acurácia)' : '') + '</span><b class="gold">+' + ui().fmt(R.moedas) + ' ◉</b></div>' +
+        (R.bonusStop ? '<div class="bonusline"><span>Bônus do Desafio STOP</span><b class="reward">+' + R.bonusStop + ' XP</b></div>' : '') +
+        '<div class="bonusline"><span>Moedas' + (moedasX2 ? ' (×2 pela acurácia)' : '') + '</span><b class="reward">+' + ui().fmt(R.moedas) + ' ◉</b></div>' +
         '<div class="bonusline"><span>Melhor combo</span><b>×' + R.melhorCombo + '</b></div>' +
         (modo.timerSeg ? '<div class="bonusline"><span>Tempo médio por tira</span><b>' + tempoMedio + 's</b></div>' : '') +
         (modo.id === 'plantao' ? '<div class="bonusline"><span>Condutas PALS corretas</span><b>' + R.condutasOk + '/' + R.total + '</b></div>' : '') +
-        (recorde && R.xp > 0 ? '<div class="bonusline"><span>Recorde pessoal</span><b class="gold">novo!</b></div>' : '') +
+        (recorde && R.xp > 0 ? '<div class="bonusline"><span>Recorde pessoal</span><b class="reward">novo!</b></div>' : '') +
       '</div>' +
       '<div class="card card-tight mt-14"><span class="microlabel" style="display:block;margin-bottom:6px">Desempenho por ritmo</span>' + porRitmoHtml + '</div>' +
       arenaHtml +
@@ -714,13 +730,19 @@ PRQ.game = (function () {
   function init() {
     const search = (PRQ.route && PRQ.route.search) || location.search;
     const params = new URLSearchParams(search);
-    const mid = params.get('modo') || 'treino';
-    ritmoFoco = params.get('ritmo') || null;
+    let mid = params.get('modo') || 'treino';
+    desafioStop = params.get('desafio') === 'stop';
+    if (desafioStop && PRQ.desafioDaSemana) {
+      const d = PRQ.desafioDaSemana();
+      mid = d.modo; ritmoFoco = d.ritmo;
+    } else {
+      ritmoFoco = params.get('ritmo') || null;
+    }
     modo = PRQ.MODES[mid] || PRQ.MODES.treino;
 
     const S = st().get();
     if (S.nivel < modo.nivelMin) {
-      PRQ.ui.toast('Modo bloqueado: alcance o nível ' + modo.nivelMin, 'gold');
+      PRQ.ui.toast('Modo bloqueado: alcance o nível ' + modo.nivelMin, 'reward');
       setTimeout(function () { irPara('modos.html'); }, 1200);
       return;
     }

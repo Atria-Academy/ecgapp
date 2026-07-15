@@ -201,16 +201,16 @@ PRQ.ecg = (function () {
   }
 
   function drawGrid(ctx, w, h) {
-    ctx.fillStyle = '#050a0e';
+    ctx.fillStyle = '#080d13';
     ctx.fillRect(0, 0, w, h);
     const minor = Math.max(7, Math.round(w / 64));
-    ctx.strokeStyle = 'rgba(58, 240, 172, 0.045)';
+    ctx.strokeStyle = 'rgba(70, 214, 162, 0.045)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     for (let x = 0; x <= w; x += minor) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, h); }
     for (let y = 0; y <= h; y += minor) { ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); }
     ctx.stroke();
-    ctx.strokeStyle = 'rgba(58, 240, 172, 0.09)';
+    ctx.strokeStyle = 'rgba(70, 214, 162, 0.09)';
     ctx.beginPath();
     for (let x = 0; x <= w; x += minor * 5) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, h); }
     for (let y = 0; y <= h; y += minor * 5) { ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); }
@@ -225,9 +225,9 @@ PRQ.ecg = (function () {
     const end = upTo == null ? n : Math.min(n, Math.floor(upTo * n));
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
-    ctx.shadowColor = 'rgba(58, 240, 172, 0.55)';
-    ctx.shadowBlur = Math.max(4, h * 0.045);
-    ctx.strokeStyle = '#3af0ac';
+    ctx.shadowColor = 'rgba(70, 214, 162, 0.38)';
+    ctx.shadowBlur = Math.max(3, h * 0.03);
+    ctx.strokeStyle = '#46D6A2';  /* --ecg-signal: menos neon */
     ctx.lineWidth = Math.max(1.5, h * 0.014);
     ctx.beginPath();
     for (let i = 0; i < end; i++) {
@@ -267,7 +267,7 @@ PRQ.ecg = (function () {
       // lacuna escura à frente do cursor + linha de varredura
       const x = phase * w;
       const gap = Math.max(26, w * 0.09);
-      ctx.fillStyle = 'rgba(5, 10, 14, 0.88)';
+      ctx.fillStyle = 'rgba(8, 13, 19, 0.88)';
       if (x + gap <= w) {
         ctx.fillRect(x, 0, gap, h);
       } else {
@@ -275,8 +275,8 @@ PRQ.ecg = (function () {
         ctx.fillRect(0, 0, gap - (w - x), h);
       }
       const grad = ctx.createLinearGradient(x - 3, 0, x, 0);
-      grad.addColorStop(0, 'rgba(58, 240, 172, 0)');
-      grad.addColorStop(1, 'rgba(58, 240, 172, 0.9)');
+      grad.addColorStop(0, 'rgba(70, 214, 162, 0)');
+      grad.addColorStop(1, 'rgba(70, 214, 162, 0.9)');
       ctx.fillStyle = grad;
       ctx.fillRect(x - 3, 0, 3, h);
       raf = requestAnimationFrame(frame);

@@ -30,7 +30,8 @@ PRQ.state = (function () {
         melhorCombo: 0,
         acertosTsv: 0,
         fvRapidas: 0,
-        plantaoCondutas: 0
+        plantaoCondutas: 0,
+        stopDesafios: 0
       },
       badges: [],
       badgesNovos: [],
@@ -57,10 +58,15 @@ PRQ.state = (function () {
       if (!raw) return freshState();
       const s = JSON.parse(raw);
       const base = freshState();
-      // merge defensivo p/ upgrades de schema
-      const merged = Object.assign(base, s);
-      merged.counters = Object.assign(base.counters, s.counters || {});
-      merged.rhythmStats = Object.assign(base.rhythmStats, s.rhythmStats || {});
+      // merge defensivo p/ upgrades de schema (sem clobber das chaves-base)
+      const merged = Object.assign({}, base, s);
+      merged.counters = Object.assign({}, base.counters, s.counters || {});
+      // garante as 8 chaves de ritmo com a forma-padrão + valores salvos
+      const savedStats = s.rhythmStats || {};
+      merged.rhythmStats = {};
+      Object.keys(base.rhythmStats).forEach(function (id) {
+        merged.rhythmStats[id] = Object.assign({}, base.rhythmStats[id], savedStats[id] || {});
+      });
       if (merged.weekly.semana !== weekKey()) {
         merged.weekly = { xp: 0, semana: weekKey() };
       }

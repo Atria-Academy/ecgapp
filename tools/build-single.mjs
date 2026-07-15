@@ -14,8 +14,13 @@ const PAGES = ['index.html', 'modos.html', 'partida.html', 'dashboard.html',
   'ranking.html', 'emblemas.html', 'biblioteca.html'];
 
 const css = read('css/style.css');
-const core = ['js/data.js', 'js/ecg.js', 'js/state.js', 'js/ui.js', 'js/game.js']
+let core = ['js/data.js', 'js/ecg.js', 'js/state.js', 'js/ui.js', 'js/game.js']
   .map(read).join('\n;\n');
+
+// inlinar a logo STOP como data URI (arquivo único, sem dependência externa)
+const logoWebp = readFileSync(join(root, 'assets/stop-logo.webp'));
+const logoUri = 'data:image/webp;base64,' + logoWebp.toString('base64');
+core = core.split('assets/stop-logo.webp').join(logoUri);
 
 const templates = [];
 const inits = [];
@@ -77,7 +82,7 @@ ${router}
 
 const headPart = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#070b10">
+<meta name="theme-color" content="#0A0E14">
 <title>PALS Rhythm Quest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

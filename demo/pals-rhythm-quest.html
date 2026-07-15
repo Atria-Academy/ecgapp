@@ -3,42 +3,84 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#070b10">
+<meta name="theme-color" content="#0A0E14">
 <title>PALS Rhythm Quest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   PALS Rhythm Quest · folha de estilo principal
-   Estética: monitor de UTI, escuro, sóbrio, clínico.
+   PALS Rhythm Quest · co-branding STOP
+   "Uma experiência educacional da STOP"
+   Estética: monitor de UTI preservada, paleta STOP dessaturada.
+   Sem amarelo, dourado ou laranja saturado. Verde do ECG separado
+   semanticamente do verde de acerto.
    ============================================================ */
 
 /* ---------- tokens ---------- */
 :root {
-  --bg: #070b10;
-  --bg-2: #0a1017;
-  --surface: #0e151d;
-  --surface-2: #121b25;
-  --surface-3: #172230;
-  --line: #1d2a38;
-  --line-soft: #16202b;
+  /* ---- Paleta-marca STOP (dessaturada, fechada) ---- */
+  --stop-teal: #4BBEC1;         --stop-teal-soft: #7FCFD1;
+  --stop-purple: #9E82D6;       --stop-purple-soft: #B7A3E2;
+  --stop-coral: #E4788A;        --stop-coral-soft: #EFA3AF;
+  --stop-green: #55C58F;        --stop-green-soft: #86D7B0;
+  --stop-lavender: #C3B2E6;     --stop-lavender-soft: #D6CBEF;
+  --stop-petrol: #5E9EC9;       --stop-petrol-soft: #8FBBDA;
+  --stop-silver: #C6CFDA;       --stop-warm-white: #F3EEF7;
 
-  --ink: #e9eff5;
-  --ink-2: #a2b3c3;
-  --ink-3: #64778a;
+  /* ---- Fundos e superfícies (tema escuro STOP) ---- */
+  --bg: #0A0E14;
+  --bg-2: #0D131B;
+  --surface: #111823;
+  --surface-2: #16202C;
+  --surface-3: #1D2A38;
+  --line: #26364A;
+  --line-soft: #1a2634;
 
-  --signal: #3af0ac;      /* traçado do ECG */
-  --ok: #2ad4a5;          /* acerto / primária */
-  --ok-ink: #06251c;
-  --info: #4f8cff;        /* casos / info */
-  --gold: #ffc64a;        /* moedas / combo */
-  --bad: #ff5a6a;         /* erro / crítico */
+  --ink: #E8EDF3;
+  --ink-2: #9BA9B9;
+  --ink-3: #61707F;
 
-  --ok-dim: rgba(42, 212, 165, 0.12);
-  --info-dim: rgba(79, 140, 255, 0.12);
-  --gold-dim: rgba(255, 198, 74, 0.12);
-  --bad-dim: rgba(255, 90, 106, 0.12);
+  /* ---- Tokens semânticos (um significado por cor) ---- */
+  --success: var(--stop-green);          /* acerto / conclusão */
+  --success-soft: var(--stop-green-soft);
+  --success-dim: rgba(85, 197, 143, 0.14);
+  --danger: var(--stop-coral);           /* erro / crítico / PCR */
+  --danger-soft: var(--stop-coral-soft);
+  --danger-dim: rgba(228, 120, 138, 0.14);
+  --information: var(--stop-petrol);     /* casos / contexto / clínico */
+  --information-soft: var(--stop-petrol-soft);
+  --information-dim: rgba(94, 158, 201, 0.14);
+  --progress: var(--stop-green);         /* barra de XP / mastery */
+  --institutional: var(--stop-teal);     /* selo / chancela STOP */
+  --institutional-dim: rgba(75, 190, 193, 0.14);
+  --nivel: var(--stop-purple);           /* níveis / progressão / especial */
+  --nivel-soft: var(--stop-purple-soft);
+  --nivel-dim: rgba(158, 130, 214, 0.14);
+  --reward: var(--stop-lavender);        /* moedas / XP / pódio / bônus */
+  --reward-soft: var(--stop-lavender-soft);
+  --reward-dim: rgba(195, 178, 230, 0.14);
+  --reward-ink: var(--stop-warm-white);
+  --streak: var(--stop-purple-soft);     /* sequência de dias (sem laranja) */
+  --streak-dim: rgba(183, 163, 226, 0.14);
+  --locked: #6B7C8E;                     /* bloqueado / indisponível */
+  --locked-dim: rgba(107, 124, 142, 0.14);
+
+  /* ---- Verde do ECG: variável própria, menos neon ---- */
+  --ecg-signal: #46D6A2;
+  --ecg-glow: rgba(70, 214, 162, 0.42);
+  --ecg-grid: rgba(70, 214, 162, 0.05);
+  --ecg-grid-strong: rgba(70, 214, 162, 0.09);
+
+  /* ---- Aliases de compatibilidade (não quebram componentes) ---- */
+  --ok: var(--success);
+  --ok-ink: #05231a;
+  --ok-dim: var(--success-dim);
+  --info: var(--information);
+  --info-dim: var(--information-dim);
+  --bad: var(--danger);
+  --bad-dim: var(--danger-dim);
+  --signal: var(--progress);             /* verde de UI/progresso, não o traçado */
 
   --font-display: "Bricolage Grotesque", "Avenir Next", "Trebuchet MS", sans-serif;
   --font-body: "Instrument Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -50,7 +92,7 @@
 
   --pad-page: 18px;
   --nav-h: 66px;
-  --topbar-h: 56px;
+  --topbar-h: 60px;
 }
 
 /* ---------- reset ---------- */
@@ -79,7 +121,7 @@ input, select {
   width: 100%;
 }
 input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
-::selection { background: rgba(58, 240, 172, 0.25); }
+::selection { background: rgba(70, 214, 162, 0.25); }
 
 /* ---------- tipografia utilitária ---------- */
 .display { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.01em; }
@@ -129,17 +171,48 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .brand-pulse {
   width: 30px; height: 30px; border-radius: 9px; flex: none;
-  background: linear-gradient(145deg, #103326, #0b1f19);
-  border: 1px solid rgba(58, 240, 172, 0.35);
+  background: linear-gradient(145deg, #123a2c, #0c211b);
+  border: 1px solid rgba(70, 214, 162, 0.35);
   display: grid; place-items: center;
-  color: var(--signal);
+  color: var(--ecg-signal);
 }
+.brand-lock { display: flex; flex-direction: column; min-width: 0; line-height: 1.05; }
 .brand-name {
   font-family: var(--font-display);
   font-size: 15.5px; font-weight: 700; letter-spacing: 0.01em;
   white-space: nowrap;
 }
-.brand-name small { color: var(--ok); }
+.brand-name small { color: var(--success); }
+/* logo STOP compacta ao lado da marca (só desktop; base fica antes da media query) */
+.brand-desktop-logo {
+  display: none; height: 26px; width: auto; margin-left: 12px;
+  padding-left: 12px; border-left: 1px solid var(--line);
+  opacity: 0.92; flex: none;
+}
+/* selo institucional discreto: "por STOP" (nunca a logo completa no header) */
+.brand-by {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-mono); font-size: 8.5px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--institutional);
+  white-space: nowrap;
+}
+.brand-by::before {
+  content: ""; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--institutional); flex: none;
+}
+/* selo textual STOP para telas de concentração (perguntas): nunca a logo */
+.stop-seal {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--institutional);
+}
+.stop-seal::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--institutional); flex: none;
+  box-shadow: 0 0 7px rgba(75, 190, 193, 0.6);
+}
 .topbar-stats { display: flex; align-items: center; gap: 8px; }
 .stat-pill {
   display: inline-flex; align-items: center; gap: 5px;
@@ -151,8 +224,8 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   white-space: nowrap;
 }
 .stat-pill .ic { width: 14px; height: 14px; }
-.stat-pill.coins { color: var(--gold); border-color: rgba(255, 198, 74, 0.3); }
-.stat-pill.streak { color: #ff9e6b; border-color: rgba(255, 158, 107, 0.3); }
+.stat-pill.coins { color: var(--reward); border-color: rgba(195, 178, 230, 0.3); }
+.stat-pill.streak { color: var(--streak); border-color: rgba(183, 163, 226, 0.3); }
 
 /* navegação inferior */
 .bottomnav {
@@ -213,12 +286,12 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .scope-label {
   position: absolute; top: 8px; left: 10px; z-index: 2;
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: rgba(58, 240, 172, 0.55);
+  text-transform: uppercase; color: rgba(70, 214, 162, 0.55);
 }
 .scope-hr {
   position: absolute; top: 8px; right: 10px; z-index: 2;
   font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  color: rgba(58, 240, 172, 0.8);
+  color: rgba(70, 214, 162, 0.8);
   display: flex; align-items: center; gap: 5px;
 }
 .scope-hr .beat-heart { color: var(--signal); animation: heartbeat 1s infinite; display: inline-block; }
@@ -264,10 +337,13 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   background: var(--surface-2);
   white-space: nowrap;
 }
-.chip.ok { color: var(--ok); border-color: rgba(42,212,165,0.35); background: var(--ok-dim); }
-.chip.info { color: #8ab2ff; border-color: rgba(79,140,255,0.35); background: var(--info-dim); }
-.chip.gold { color: var(--gold); border-color: rgba(255,198,74,0.35); background: var(--gold-dim); }
-.chip.bad { color: var(--bad); border-color: rgba(255,90,106,0.35); background: var(--bad-dim); }
+.chip.ok { color: var(--success); border-color: rgba(85,197,143,0.4); background: var(--success-dim); }
+.chip.info { color: var(--information-soft); border-color: rgba(94,158,201,0.4); background: var(--info-dim); }
+.chip.reward { color: var(--reward); border-color: rgba(195,178,230,0.45); background: var(--reward-dim); }
+.chip.bad { color: var(--danger); border-color: rgba(228,120,138,0.4); background: var(--bad-dim); }
+.chip.institutional { color: var(--institutional); border-color: rgba(75,190,193,0.45); background: var(--institutional-dim); }
+.chip.nivel { color: var(--nivel-soft); border-color: rgba(158,130,214,0.45); background: var(--nivel-dim); }
+.chip.locked { color: var(--locked); border-color: rgba(107,124,142,0.4); background: var(--locked-dim); }
 
 .chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -297,8 +373,8 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 }
 .xpbar-fill {
   height: 100%; border-radius: 999px;
-  background: linear-gradient(90deg, #1fae87, var(--signal));
-  box-shadow: 0 0 12px rgba(58, 240, 172, 0.4);
+  background: linear-gradient(90deg, #3E9E77, var(--progress));
+  box-shadow: 0 0 10px rgba(85, 197, 143, 0.32);
   transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   min-width: 6px;
 }
@@ -307,10 +383,11 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .meter { height: 8px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
 .meter > i {
   display: block; height: 100%; border-radius: 999px;
-  background: var(--ok);
+  background: var(--progress);
   transition: width 0.6s ease;
 }
-.meter.gold > i { background: var(--gold); }
+.meter.reward > i { background: var(--reward); }
+.meter.nivel > i { background: var(--nivel); }
 .meter.info > i { background: var(--info); }
 .meter.bad > i { background: var(--bad); }
 
@@ -320,17 +397,28 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   border-radius: var(--r-lg);
   border: 1px solid var(--line-soft);
   background:
-    radial-gradient(120% 140% at 85% -20%, rgba(42, 212, 165, 0.14), transparent 55%),
+    radial-gradient(120% 140% at 85% -20%, rgba(85, 197, 143, 0.14), transparent 55%),
     var(--surface);
   padding: 20px 18px 18px;
   overflow: hidden;
 }
-.hero .microlabel { color: rgba(58, 240, 172, 0.6); display: flex; align-items: center; gap: 7px; }
+.hero .microlabel { color: rgba(70, 214, 162, 0.6); display: flex; align-items: center; gap: 7px; }
 .hero .live-dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: var(--signal);
-  box-shadow: 0 0 10px var(--signal);
+  background: var(--ecg-signal);
+  box-shadow: 0 0 10px var(--ecg-signal);
   animation: blink 2.2s infinite;
+}
+/* assinatura de co-branding no hero */
+.hero-signature {
+  display: inline-flex; align-items: center; gap: 7px;
+  margin-top: 14px;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--institutional);
+}
+.hero-signature::before {
+  content: ""; width: 16px; height: 1px; background: rgba(75, 190, 193, 0.5); flex: none;
 }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 .hero h1 {
@@ -365,7 +453,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .levelbubble {
   flex: none; text-align: center;
   font-family: var(--font-mono);
-  border: 1px solid rgba(42, 212, 165, 0.4);
+  border: 1px solid rgba(85, 197, 143, 0.4);
   background: var(--ok-dim);
   border-radius: 12px; padding: 6px 12px;
 }
@@ -387,10 +475,10 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 }
 .stat-tile b small { font-size: 12px; color: var(--ink-3); font-weight: 500; }
 .stat-tile span { font-size: 11px; color: var(--ink-3); letter-spacing: 0.03em; }
-.stat-tile.t-ok b { color: var(--signal); }
-.stat-tile.t-gold b { color: var(--gold); }
-.stat-tile.t-fire b { color: #ff9e6b; }
-.stat-tile.t-info b { color: #8ab2ff; }
+.stat-tile.t-ok b { color: var(--success); }
+.stat-tile.t-reward b { color: var(--reward); }
+.stat-tile.t-fire b { color: var(--streak); }
+.stat-tile.t-info b { color: var(--information-soft); }
 
 /* ---------- cards de modo ---------- */
 .modegrid { display: grid; gap: 12px; }
@@ -488,10 +576,10 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .hud-box .microlabel { font-size: 9px; display: block; }
 .hud-box b { font-family: var(--font-mono); font-size: 17px; font-weight: 600; }
 .hud-box.h-xp b { color: var(--signal); }
-.hud-box.h-coin b { color: var(--gold); }
+.hud-box.h-coin b { color: var(--reward); }
 .hud-box.h-combo b { color: var(--ink); }
-.hud-box.h-combo.hot { border-color: rgba(255, 198, 74, 0.5); background: var(--gold-dim); }
-.hud-box.h-combo.hot b { color: var(--gold); }
+.hud-box.h-combo.hot { border-color: rgba(195, 178, 230, 0.5); background: var(--reward-dim); }
+.hud-box.h-combo.hot b { color: var(--reward); }
 .hud-box.h-combo.hot.shake { animation: comboshake 0.35s ease; }
 @keyframes comboshake {
   0%, 100% { transform: translateX(0); }
@@ -503,9 +591,9 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .timer-ring { position: relative; width: 54px; height: 54px; flex: none; }
 .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .timer-ring .track { stroke: var(--surface-3); }
-.timer-ring .arc { stroke: var(--ok); transition: stroke 0.3s; }
-.timer-ring.warn .arc { stroke: var(--gold); }
-.timer-ring.danger .arc { stroke: var(--bad); }
+.timer-ring .arc { stroke: var(--success); transition: stroke 0.3s; }
+.timer-ring.warn .arc { stroke: var(--information); }
+.timer-ring.danger .arc { stroke: var(--danger); }
 .timer-ring b {
   position: absolute; inset: 0;
   display: grid; place-items: center;
@@ -544,8 +632,8 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 }
 .answer-btn.faded { opacity: 0.35; }
 @keyframes pulse-ok {
-  0% { box-shadow: 0 0 0 0 rgba(42, 212, 165, 0.5); }
-  100% { box-shadow: 0 0 0 16px rgba(42, 212, 165, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(85, 197, 143, 0.5); }
+  100% { box-shadow: 0 0 0 16px rgba(85, 197, 143, 0); }
 }
 @keyframes wrongshake {
   0%, 100% { transform: translateX(0); }
@@ -562,7 +650,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   padding: 14px;
   margin-bottom: 12px;
 }
-.casecard .microlabel { color: #8ab2ff; margin-bottom: 6px; display: block; }
+.casecard .microlabel { color: var(--information-soft); margin-bottom: 6px; display: block; }
 .casecard p { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
 .casecard p b { color: var(--ink); }
 .case-vitals { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
@@ -597,8 +685,8 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   padding: 13px 14px; border-radius: var(--r-md);
   margin-bottom: 14px;
 }
-.verdict.ok { background: var(--ok-dim); border: 1px solid rgba(42, 212, 165, 0.35); }
-.verdict.bad { background: var(--bad-dim); border: 1px solid rgba(255, 90, 106, 0.3); }
+.verdict.ok { background: var(--ok-dim); border: 1px solid rgba(85, 197, 143, 0.35); }
+.verdict.bad { background: var(--bad-dim); border: 1px solid rgba(228, 120, 138, 0.35); }
 .verdict-icon {
   width: 40px; height: 40px; flex: none; border-radius: 50%;
   display: grid; place-items: center;
@@ -619,8 +707,8 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .gain b { font-family: var(--font-mono); font-size: 16.5px; display: block; }
 .gain span { font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
 .gain.g-xp b { color: var(--signal); }
-.gain.g-coin b { color: var(--gold); }
-.gain.g-speed b { color: #8ab2ff; }
+.gain.g-coin b { color: var(--reward); }
+.gain.g-speed b { color: var(--information-soft); }
 .gain.g-neg b { color: var(--bad); }
 
 .teachblock { margin-bottom: 13px; }
@@ -635,17 +723,17 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   width: 6px; height: 6px; border-radius: 2px;
   background: var(--ok);
 }
-.teachblock.warn li::before { background: var(--gold); border-radius: 50%; }
+.teachblock.warn li::before { background: var(--information); border-radius: 50%; }
 .teachblock.trap li::before { background: var(--bad); border-radius: 50%; }
 .tipbox {
-  background: var(--gold-dim);
-  border: 1px solid rgba(255, 198, 74, 0.25);
+  background: var(--information-dim);
+  border: 1px solid rgba(94, 158, 201, 0.28);
   border-radius: var(--r-md);
   padding: 12px 14px;
-  font-size: 13.5px; color: #ffd98a; line-height: 1.5;
+  font-size: 13.5px; color: #c4dbec; line-height: 1.5;
   margin-bottom: 14px;
 }
-.tipbox b { color: var(--gold); }
+.tipbox b { color: var(--information-soft); }
 .compare {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;
 }
@@ -653,8 +741,8 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   border-radius: var(--r-md); padding: 10px 12px;
   font-size: 13px; line-height: 1.3;
 }
-.compare .yours { background: var(--bad-dim); border: 1px solid rgba(255, 90, 106, 0.3); }
-.compare .right { background: var(--ok-dim); border: 1px solid rgba(42, 212, 165, 0.3); }
+.compare .yours { background: var(--bad-dim); border: 1px solid rgba(228, 120, 138, 0.35); }
+.compare .right { background: var(--ok-dim); border: 1px solid rgba(85, 197, 143, 0.3); }
 .compare .microlabel { font-size: 9px; display: block; margin-bottom: 3px; }
 .compare .yours .microlabel { color: var(--bad); }
 .compare .right .microlabel { color: var(--ok); }
@@ -682,7 +770,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 }
 .bonusline:last-child { border-bottom: 0; }
 .bonusline b { font-family: var(--font-mono); color: var(--signal); }
-.bonusline b.gold { color: var(--gold); }
+.bonusline b.reward { color: var(--reward); }
 
 /* ---------- ranking ---------- */
 .podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 10px; align-items: end; margin-bottom: 16px; }
@@ -695,8 +783,8 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   position: relative;
 }
 .podium-card.first {
-  border-color: rgba(255, 198, 74, 0.4);
-  background: linear-gradient(180deg, rgba(255, 198, 74, 0.1), transparent 65%), var(--surface);
+  border-color: rgba(195, 178, 230, 0.4);
+  background: linear-gradient(180deg, rgba(195, 178, 230, 0.1), transparent 65%), var(--surface);
   padding-top: 20px; padding-bottom: 16px;
 }
 .podium-medal {
@@ -707,13 +795,13 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   border: 1px solid var(--line);
   background: var(--surface-3); color: var(--ink-2);
 }
-.podium-card.first .podium-medal { background: var(--gold); color: #3a2800; border-color: var(--gold); }
-.podium-card.second .podium-medal { background: #c8d4e0; color: #232c36; border-color: #c8d4e0; }
-.podium-card.third .podium-medal { background: #d29a6b; color: #3a2410; border-color: #d29a6b; }
+.podium-card.first .podium-medal { background: var(--reward); color: #2c2340; border-color: var(--reward); }
+.podium-card.second .podium-medal { background: var(--stop-silver); color: #232c36; border-color: var(--stop-silver); }
+.podium-card.third .podium-medal { background: var(--stop-coral-soft); color: #3a1f24; border-color: var(--stop-coral-soft); }
 .podium-card .avatar { margin: 2px auto 7px; width: 44px; height: 44px; font-size: 22px; border-radius: 14px; }
 .podium-card.first .avatar { width: 54px; height: 54px; font-size: 27px; }
 .podium-name { font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.podium-pts { font-family: var(--font-mono); font-size: 12px; color: var(--gold); margin-top: 2px; }
+.podium-pts { font-family: var(--font-mono); font-size: 12px; color: var(--reward); margin-top: 2px; }
 
 .ranklist { display: flex; flex-direction: column; }
 .rankrow {
@@ -730,7 +818,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .rankpts { font-family: var(--font-mono); font-size: 13.5px; font-weight: 600; color: var(--ink-2); }
 .rankrow.me {
   background: var(--ok-dim);
-  border: 1px solid rgba(42, 212, 165, 0.35);
+  border: 1px solid rgba(85, 197, 143, 0.35);
   border-radius: var(--r-md);
   margin: 4px 0;
 }
@@ -762,19 +850,35 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   border: 1px solid var(--line);
 }
 .badgetile.unlocked .badge-emoji {
-  background: linear-gradient(150deg, rgba(255, 198, 74, 0.2), rgba(255, 198, 74, 0.05));
-  border-color: rgba(255, 198, 74, 0.45);
-  box-shadow: 0 0 18px rgba(255, 198, 74, 0.12);
+  background: linear-gradient(150deg, rgba(195, 178, 230, 0.2), rgba(195, 178, 230, 0.05));
+  border-color: rgba(195, 178, 230, 0.45);
+  box-shadow: 0 0 18px rgba(195, 178, 230, 0.12);
 }
 .badgetile.locked .badge-emoji { filter: grayscale(1); opacity: 0.4; }
 .badgetile h4 { font-family: var(--font-display); font-size: 14px; font-weight: 700; line-height: 1.2; }
 .badgetile .microlabel { font-size: 9px; margin-top: 5px; display: block; }
-.badgetile.unlocked .microlabel { color: var(--gold); }
+.badgetile.unlocked .microlabel { color: var(--reward); }
 .badgetile .meter { margin-top: 9px; }
 .badgetile.fresh .badge-emoji { animation: badgeflip 0.9s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes badgeflip {
   0% { transform: rotateY(180deg) scale(0.6); opacity: 0; }
   100% { transform: rotateY(0) scale(1); opacity: 1; }
+}
+/* emblema chancelado pela STOP: moldura roxo + turquesa, sem dourado */
+.badgetile.special { border-color: rgba(75, 190, 193, 0.4); }
+.badgetile.special.unlocked .badge-emoji {
+  background: linear-gradient(150deg, rgba(158, 130, 214, 0.22), rgba(75, 190, 193, 0.14));
+  border-color: rgba(75, 190, 193, 0.5);
+  box-shadow: 0 0 18px rgba(75, 190, 193, 0.14);
+}
+.badge-stoptag {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 6px;
+  font-family: var(--font-mono); font-size: 8.5px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--institutional);
+  border: 1px solid rgba(75, 190, 193, 0.4);
+  border-radius: 999px; padding: 2px 7px;
 }
 
 /* ---------- biblioteca ---------- */
@@ -804,7 +908,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 /* dificuldade */
 .diff { display: inline-flex; gap: 3px; align-items: center; }
 .diff i { width: 6px; height: 6px; border-radius: 2px; background: var(--surface-3); }
-.diff i.on { background: var(--gold); }
+.diff i.on { background: var(--reward); }
 
 /* ---------- dashboard ---------- */
 .masteryrow { display: flex; align-items: center; gap: 12px; padding: 9px 0; }
@@ -870,8 +974,9 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   animation: toastin 0.35s cubic-bezier(0.34, 1.3, 0.64, 1);
 }
-.toast.gold { border-color: rgba(255, 198, 74, 0.4); color: var(--gold); }
-.toast.ok { border-color: rgba(42, 212, 165, 0.4); color: var(--ok); }
+.toast.reward { border-color: rgba(195, 178, 230, 0.45); color: var(--reward); }
+.toast.ok { border-color: rgba(85, 197, 143, 0.4); color: var(--success); }
+.toast.institutional { border-color: rgba(75, 190, 193, 0.45); color: var(--institutional); }
 @keyframes toastin {
   from { opacity: 0; transform: translateY(-12px) scale(0.92); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -884,11 +989,11 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .coin-p {
   position: absolute;
   font-family: var(--font-mono); font-size: 15px; font-weight: 700;
-  color: var(--gold);
-  text-shadow: 0 0 10px rgba(255, 198, 74, 0.5);
+  color: var(--reward);
+  text-shadow: 0 0 10px rgba(195, 178, 230, 0.5);
   animation: coinfly 0.95s cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
 }
-.coin-p.xp { color: var(--signal); text-shadow: 0 0 10px rgba(58, 240, 172, 0.5); }
+.coin-p.xp { color: var(--stop-silver); text-shadow: 0 0 10px rgba(198, 207, 218, 0.5); }
 @keyframes coinfly {
   0% { opacity: 0; transform: translate(0, 0) scale(0.6); }
   15% { opacity: 1; transform: translate(var(--dx0, 0), -14px) scale(1.15); }
@@ -898,18 +1003,20 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 /* ---------- aviso clínico ---------- */
 .disclaimer {
   margin-top: 26px;
-  border: 1px dashed rgba(255, 198, 74, 0.3);
+  border: 1px solid rgba(228, 120, 138, 0.3);
+  border-left: 3px solid var(--stop-coral-soft);
   border-radius: var(--r-md);
   padding: 13px 15px;
   font-size: 12px; color: var(--ink-3); line-height: 1.55;
 }
-.disclaimer b { color: var(--gold); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+.disclaimer b { color: var(--stop-coral-soft); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* ---------- util ---------- */
 .mt-0 { margin-top: 0; } .mt-8 { margin-top: 8px; } .mt-14 { margin-top: 14px; } .mt-20 { margin-top: 20px; }
 .mb-8 { margin-bottom: 8px; } .mb-14 { margin-bottom: 14px; }
 .muted { color: var(--ink-3); } .small { font-size: 13px; }
-.txt-ok { color: var(--ok); } .txt-gold { color: var(--gold); } .txt-bad { color: var(--bad); } .txt-info { color: #8ab2ff; }
+.txt-ok { color: var(--success); } .txt-reward { color: var(--reward); } .txt-bad { color: var(--danger); } .txt-info { color: var(--information-soft); }
+.txt-institutional { color: var(--institutional); } .txt-nivel { color: var(--nivel-soft); }
 .row { display: flex; align-items: center; gap: 10px; }
 .grow { flex: 1; min-width: 0; }
 .center { text-align: center; }
@@ -917,6 +1024,98 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 
 /* contagem animada */
 .countup { font-variant-numeric: tabular-nums; }
+
+/* ---------- splash institucional (só no primeiro acesso) ---------- */
+.splash {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 20px; padding: 32px;
+  background:
+    radial-gradient(120% 90% at 50% 30%, rgba(75, 190, 193, 0.08), transparent 60%),
+    var(--bg);
+  text-align: center;
+  transition: opacity 0.5s ease;
+}
+.splash.out { opacity: 0; pointer-events: none; }
+.splash-apresenta {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-3);
+  opacity: 0; animation: splashUp 0.55s ease 0.15s forwards;
+}
+.splash-logo {
+  width: min(240px, 62vw); height: auto;
+  opacity: 0; animation: splashUp 0.6s ease 0.35s forwards;
+}
+.splash-game {
+  opacity: 0; animation: splashUp 0.6s ease 0.85s forwards;
+}
+.splash-game h1 {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(24px, 7vw, 32px); letter-spacing: -0.015em; color: var(--ink);
+}
+.splash-game .brand-by { justify-content: center; margin-top: 6px; font-size: 10px; }
+.splash-line {
+  font-size: 13px; color: var(--ink-2); max-width: 34ch;
+  opacity: 0; animation: splashUp 0.6s ease 1.1s forwards;
+}
+.splash-skip {
+  position: absolute; top: calc(16px + env(safe-area-inset-top, 0)); right: 18px;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  color: var(--ink-3);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 7px 14px; min-height: 40px;
+}
+.splash-skip:hover { color: var(--ink); border-color: var(--ink-3); }
+@keyframes splashUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Desafio STOP da semana ---------- */
+.challenge {
+  position: relative;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(75, 190, 193, 0.28);
+  background:
+    radial-gradient(130% 120% at 100% 0%, rgba(75, 190, 193, 0.12), transparent 55%),
+    var(--surface);
+  padding: 18px;
+  overflow: hidden;
+}
+.challenge-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.challenge-mark {
+  width: 40px; height: 40px; flex: none; border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--institutional-dim);
+  border: 1px solid rgba(75, 190, 193, 0.4);
+  color: var(--institutional);
+}
+.challenge-head .grow .microlabel { color: var(--institutional); }
+.challenge-head h3 { font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+.challenge-strip { height: 74px; margin: 12px 0; }
+.challenge-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.challenge-cta { display: flex; align-items: center; gap: 10px; }
+.challenge-cta .btn { flex: 1; }
+.challenge-reward {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--reward);
+  white-space: nowrap;
+}
+
+/* ---------- rodapé institucional ---------- */
+.instfooter {
+  margin-top: 30px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 22px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.instfooter-brand { display: flex; align-items: center; gap: 13px; }
+.instfooter-logo { width: 72px; height: auto; flex: none; }
+.instfooter-org .microlabel { color: var(--institutional); display: block; margin-bottom: 2px; }
+.instfooter-org b {
+  font-family: var(--font-display); font-size: 14.5px; font-weight: 700;
+  color: var(--ink); line-height: 1.25; display: block;
+}
+.instfooter-org span { font-size: 12px; color: var(--ink-3); }
 
 /* ---------- responsivo: tablet / desktop ---------- */
 @media (min-width: 760px) {
@@ -940,6 +1139,16 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   .dash-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
   .dash-cols .card + .card { margin-top: 0; }
   .sheet { max-width: 620px; border-radius: 22px; bottom: 24px; border-bottom: 1px solid var(--line); }
+  /* no desktop o selo STOP ganha espaço ao lado da marca */
+  .brand-by { font-size: 9.5px; }
+  .brand-desktop-logo { display: block; }
+}
+
+/* small screens: proteger moedas e sequência de overflow no header */
+@media (max-width: 400px) {
+  .brand-by { display: none; }
+  .brand-name { font-size: 15px; }
+  .stat-pill { font-size: 12px; padding: 5px 9px; }
 }
 
 /* links de navegação no topo (desktop) */
@@ -949,7 +1158,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   padding: 7px 13px; border-radius: 999px;
 }
 .topnav-links a:hover { background: var(--surface-2); color: var(--ink); }
-.topnav-links a.active { color: var(--signal); background: var(--ok-dim); }
+.topnav-links a.active { color: var(--success); background: var(--ok-dim); }
 
 /* redução de movimento */
 @media (prefers-reduced-motion: reduce) {
@@ -976,7 +1185,11 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
       <a class="btn btn-primary" href="partida.html?modo=treino">Treinar agora</a>
       <a class="btn btn-ghost" href="modos.html">Ver modos</a>
     </div>
+    <span class="hero-signature">Uma experiência educacional da STOP</span>
   </section>
+
+  <div class="section-head"><h2 class="section-title">Desafio STOP da semana</h2></div>
+  <section class="challenge" id="home-challenge"></section>
 
   <div class="section-head"><h2 class="section-title">Seu plantão</h2></div>
   <section class="card levelcard" id="home-level"></section>
@@ -990,7 +1203,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   <div class="modegrid" id="home-modes"></div>
 
   <div class="section-head">
-    <h2 class="section-title">Ranking da semana</h2>
+    <h2 class="section-title">Liga STOP</h2>
     <a href="ranking.html">ver completo</a>
   </div>
   <section class="card card-tight"><div class="ranklist" id="home-rank"></div></section>
@@ -1001,13 +1214,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   </div>
   <section class="card card-tight" id="home-badges"></section>
 
-  <footer class="disclaimer">
-    <b>Aviso clínico</b><br>
-    Os ECGs deste protótipo são sintéticos e servem apenas para demonstração educacional.
-    A versão de produção exige validação por cardiologista pediátrico ou instrutor PALS.
-    AESP nunca é identificável pela tira isolada: aparece somente no modo Plantão PALS,
-    quando há informação de pulso ausente com atividade elétrica organizada.
-  </footer>
+  <div id="home-footer"></div>
 
 </main>
 </template>
@@ -1080,10 +1287,10 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 <main class="app">
   <div class="section-head mt-0">
     <div>
-      <span class="microlabel">liga da turma · XP da semana</span>
-      <h2 class="section-title" style="font-size:24px;margin-top:4px">Ranking semanal</h2>
+      <span class="microlabel">liga da turma · chancelada pela STOP</span>
+      <h2 class="section-title" style="font-size:24px;margin-top:4px">Liga STOP</h2>
     </div>
-    <span class="chip gold" id="rk-fim"></span>
+    <span class="chip institutional" id="rk-fim"></span>
   </div>
   <p class="small muted mb-14">Todos disputam com as mesmas tiras. A pontuação é o XP acumulado na semana; zera toda segunda-feira.</p>
 
@@ -1606,7 +1813,7 @@ PRQ.MODES = {
     nome: 'Treino Guiado',
     desc: 'Sem cronômetro. Feedback completo em cada tira: achados destacados, explicação e dica de reconhecimento. O terreno seguro para errar e aprender.',
     chips: ['sem tempo', 'feedback total', 'XP reduzido'],
-    cor: '#2ad4a5', icone: 'book',
+    cor: '#55C58F', icone: 'book',
     nivelMin: 1, tiras: 8, timerSeg: 0, xpFator: 0.5, moedasFator: 1
   },
   arcade: {
@@ -1614,7 +1821,7 @@ PRQ.MODES = {
     nome: 'Arcade ECG',
     desc: 'Rodadas rápidas contra o relógio. Combo cresce a cada acerto, moedas chovem, XP multiplica. O foco é reconhecer em menos de 3s sem pensar demais.',
     chips: ['tempo', 'combo', 'moedas x2'],
-    cor: '#ffc64a', icone: 'bolt',
+    cor: '#C3B2E6', icone: 'bolt',
     nivelMin: 1, tiras: 12, timerSeg: 12, xpFator: 1, moedasFator: 2
   },
   plantao: {
@@ -1622,7 +1829,7 @@ PRQ.MODES = {
     nome: 'Plantão PALS',
     desc: 'Casos clínicos curtos: idade, FC, sinais de perfusão e contexto, mais o ECG. Identifique o ritmo e escolha a conduta inicial PALS. Único modo onde AESP aparece.',
     chips: ['caso clínico', 'conduta', 'AESP aqui'],
-    cor: '#4f8cff', icone: 'stetho',
+    cor: '#5E9EC9', icone: 'stetho',
     nivelMin: 3, tiras: 5, timerSeg: 0, xpFator: 1.4, moedasFator: 1
   },
   adaptativo: {
@@ -1630,7 +1837,7 @@ PRQ.MODES = {
     nome: 'Desafio Adaptativo',
     desc: 'O algoritmo ajusta a dificuldade em tempo real com base na sua acurácia, tempo médio e ritmos com maior taxa de erro. Nunca fácil demais, nunca frustrante.',
     chips: ['adaptativo', 'revisão espaçada'],
-    cor: '#b78bff', icone: 'target',
+    cor: '#9E82D6', icone: 'target',
     nivelMin: 5, tiras: 10, timerSeg: 15, xpFator: 1.2, moedasFator: 1
   },
   arena: {
@@ -1638,7 +1845,7 @@ PRQ.MODES = {
     nome: 'Arena em Tempo Real',
     desc: 'Competição ao vivo: todos recebem as mesmas tiras simultaneamente. A pontuação combina acurácia, velocidade e sequência. Nesta demo, você enfrenta 3 residentes simulados.',
     chips: ['mesmas tiras p/ todos', 'pontuação combinada'],
-    cor: '#ff5a6a', icone: 'trophy',
+    cor: '#E4788A', icone: 'trophy',
     nivelMin: 8, tiras: 8, timerSeg: 10, xpFator: 1, moedasFator: 1
   }
 };
@@ -1692,6 +1899,12 @@ PRQ.BADGES = [
     criterio: 'Nível 21+ com 95% de acurácia global',
     descricao: 'Domínio de nível de quem ensina: reconhecimento rápido, preciso e reproduzível.',
     meta: 1, contador: 'instrutor'
+  },
+  {
+    id: 'selo_stop', emoji: '💠', nome: 'Selo STOP',
+    criterio: 'Concluir 1 Desafio STOP da Semana',
+    descricao: 'Emblema chancelado pela Sociedade Tocantinense de Pediatria. Reconhece quem encara o desafio semanal da comunidade.',
+    meta: 1, contador: 'stopDesafios', special: true
   }
 ];
 
@@ -1737,6 +1950,32 @@ PRQ.ARENA_BOTS = [
 ];
 
 PRQ.AVATARS = ['🩺', '🚑', '🧠', '🫀', '🔬', '🦉', '🐆', '🦈', '🐬', '🦊', '🐙', '🦅'];
+
+/* ---------- identidade institucional STOP ---------- */
+PRQ.STOP = {
+  logo: 'data:image/webp;base64,UklGRlYwAABXRUJQVlA4IEowAACQuACdASpSAjABPikSiEMhoSER6E0YGAKEpu/Eu+AzIMyK4f6d+TPjbTK6J/eP1q/qf/W/y/zmVl+Wfdb+sf9P/J/gNf6+deN/nf+M/tn+Q/2H+E////X+8f9n/uH9g/Z35E/of/de4B/F/5H/eP7T/kv+L/kP///7vAp/bP+d6gv5p/WP+J/fP3z+Xn/L/7b/Q+5H+wf67/o/2v/VfID/M/7R/xva//2/sFf5D/m+wT/Nf8D/y/Zn/3H/l/zv7//RT+0f/k/0/7//Qd/Nv7N/0/2y//fyAf+r1AP+R/9Pcs/gH78e7P01/r39Q/aHwM/sv92/a/+4eRD6R+3fkx/Yeb7Ey+H/X38P/ev3b/wX7gfNX9v/KX8gPZ/5F/4nqBfif8n/u39q/bP++/vJ9GnaDuVNJ/3H/B9QL1o+i/6D+5/vB/ofRq/vfR/7H+wB/NP61/vf7h7Cf2X/vf47yIvq/+M/Zj4AP4v/XP+L/m/3S/zH0o/yP+4/yv+U/Zb2rfkn98/63+T/Kn7A/41/PP93/eP9B/9v9l/////9v3rt/a/2Fv1O/5n58kTeNA44Y1ebveTT7UEjJEjQOOGNXfszcQOZijHC/eTynQO6mmaY9m/2UjlN6ogt029oanY59bEuyNU+GRBjHLBtphQT2+m4Zigush0DhRf8FBKRhJiuytvy1RFtzCK5LSBxsQqj07p/+8oDaC246UbaNNghbDtDHynWIENXR8/+cKYsQZTMZ6XVtYuZVsArItaXuDCaKBtA4TJpYtAOooZWONwdl+tgNEZdlWOyut5mPVzzDx55itTJDuQndU1N/qMYWmmbMpFuIokeiNC2ZbEVvaVoGn2oJkrn/uDGvhccyJnQQbKr4FpdnQdH7p343FqeK69IjZmz+j6wwIQivg5poCG1xYskhngj0C23QPkgHs6ocYd2fKwlCZ2hyjy4dWDkmJkxXNLFoBBT3FfTrn1gnb1pd1w3IZMZYk0ymZcj33aoUq0aARCu9zu0hTAZQ7k+0FsVrKKdxuAWcNAD5MX7asbOX+IbQa8hJzYQE/SVLu76M4RjcO589f8PLUdY1IqmrIUMkPIopgQV9kJv97X34LNGefF0c0nX8eZIuODggo8Ro5P0NpGS9GwbH18LV26qOt5t+N2XK29tdAIMnX/PNAtIOHtut5qtdpO9OwWFlN4j4HzOo5xohSMk3yLHdQBDRvzsmEAH8EhSsM3avZ4QGv386vLGN3f43keoo662Wzy4bef31HYpELan4WreadUCVuP2qe4O+XYnQtIRH593swZIPjcJ26o6AZYTakkAcRE+l43areTitNXc2pwtEZwDq4HaHJ/Nch5cJwdhsCHfxt9Rd/9f66A9zYAQOPMlMcHGMOvWKKkYrfaw2FirbCvaKXbUSw/5NAS/u2uUIefM1HPwPrm3v9rO1So6MHpAKoZ23pneSde0yk3yaTuYN/w+7maAuIk3WDx8xSyIvZShvSaXAVxK5ZVJWssF6eKwwdVc+gRFyx+B4ubpT9s3MBgb/G5f/JK7wxmOc7SWfxO5qusF8aH8dCebV3rlJRO0dkf/MSM9t3oe4tR6A5nWPMuKgrPy3Xz/AFcA7xxlz2slDMcjcyYgtOUkSNA44hc+K9ACHsD82Ga4eMU56hidVQHsdp35Wn9LwMpuM6pWELMHS2XX+oCGw5YXigbT162LnpIz8wV4B8vmZpRhIr8b0J5tXm73k65Edu6LG73jar3IwjivN3/2MEjJEjQOOGNXm73k0+0vTxJO83Wno0ohlTV5u95NPtQSMkSNA44YPFG/ybqYUphTQrCk7BkJiW6xF1nAOrVbbV0SYOnTzc4GCXrzd7yafagkZIkaBxwxmXJ12o4pAXEIH1sYY2znNweS5ua+2hkLP/Jp9qCRkiRoHHDGrzd7xxmtGocs6JMaJoFzhi+HRGvdyvj7nckSNA44Y1ebveTT7UEjJEjQOOGNXm73jIAA/v/q/QAAAAJHTYFCweZRx7G00nE0QSO8vWQMXOydnWgKujaUJC6n95FPhOZWP0+Ndp9EGZEZ1vGRBS54i9RQ5liq8q4R37GRu5gKQTdOnwOqJauomD9FyyAimzQF46RWI/2PwJVncSnYQjSlMDm5PkAe4cwjoID7G51Q7bbd1TAa946vwJ3Fz4WfIk+keoMPgxJOBIX2UF3z4SB8KwuoYrZfoT5dMqW9gW2RB1EA1zJ6jIpF4u9LS0udMsXKqywTCfed9YDutas7oClkLXKxZgz7b0WKqfpI7JD+yS230SPQf4cL7gINJr6CxB6jBPjUXwyecymIAbc1dhuUbhBxvEvUXnKa3mM/r+/XRO0NpiAUANUJayaj3135fvvuo4piFzRp4OR2F/o5gERrTkKAf4J68zZ2TLJZOQ5PqFhPRP7rdvy3KHC0ljx2gKDsewD7TGdsahXdxHS8onsI0adQ7HXe5kUAAC5mI+6KVntvrt4d+2uSRb10sz8suH/NEwOHmbWASBbYpv58bbcvQaXDbdL9jyDv2hAil5g73+m7TDnyyFMBHJHvgdaxL0GoyK+1cOqA70rjSv8oOeXcindhBvME8yeybwj03+Z+vEyCbAkGdJ3YcNZeN40IyWHoOA3sPUaTN7JAeKzymgLjxgYd7Vl+rX/mtdd5l8nXvm6X1E7fU28ZDzbSAbJqM7Ycl3oi0530KEhtp6IrCLnmE6MH3Huymsm0fHz/BjsjX/9K3K30FlFR4ZMjFzLnZV07RLRLQ0HU1NtPXHp8RmShp9y2zvnAwalTCvqHV1bM13L+VszJ7w4a6Cv0fAYRtv2EYEeaqlHfpFfMwc08WloWkLp1BkdEg3igEZsWj8XQoYyg1dECP5KIPiQTVPq6wfBdPnND1NqsOBbBuKafUBpM1EbIq9bav3MjVW2g2IU41iXbZWs0tltHCR/poaFaHjRwcXP3/D2PLHnz6DxGDDbG5qbLPMOiAtyA+WvdVCGtZjRVuZ2EjJmtRp1AVyQxePKkCqECa78w8uyiuo8LJ+whgOeFYXWdM52BseJTq19fqD0V+XGmL4kF4bt+11m9YHvWRNPFmD6s1BakmvCzrRJa9VgQ7Ef0Y/nvDHbqwsPTp8awIGFDTNH+O3iWUlQSIoBjfJSofQCf0LQl+e8+A1NplqTS2nyaXsAwxR7Ll+IfDI1nLsJRRvmCSSaeP9m+pX69oa/Xqbk7DmHSD4A+NjdOTSE6uHE18K7D/pl5nDhhDkPqB6f0a7FnM/+adlJQBVj3p4oPAqnNgTu4zQSt9QggkBAAAAZ3egAHbAFUrRl6BK8HEWjIAsiDJjiKxIcL/QZnp0i6RvPHOlK19z+qz0pSL2fSfPEyVKMYn3nA7238GQTu4lxfkEyAc8c2gHcwlbWTCqPMbU9NMNG2qrI9BlCtbyvOE2UuR1715UPpzzOOIWYk2ObTHD0b2wYrSAfIAY3zxBLuuHdC7ZJUFTifqiwK09HrQ8HREKQOaDD81xOp+lJoH+sN4oemehe2Lgexe2NUg0RkapWrQwJO9eK64l0Nj8++WAG4+Kozz7hioUhMC20CGmzqXOxYCCk/ObtZU14x1L7V2siPgbeaPFpPzWAiEJ5/5HE92sR/kYyftmdtHBEnJ/H33PGZHHx9z69O8jP3NU+cwugQpAG1WCKhdkBRkrC3HghYp74lROr5LJPhLjWpKL9t/CQa+06zhn001JmP7R8k3eK+741vq6PAO8cD2EG16HaDwvZdNb/IwDZBHiiRsGYz4BRrBmr7t/kXEIbiGpX2aGGGIx/i9SIwqisS3Qh2fZYTs+kwSmkggQ3UxiV79WMbKS9wlJOqryoL+17XBDd/kDUkpUyQhdT8KKStk9PE5gAyINDA8foyCuaGGSXcNzs2vQtjaIAAD9EGQw71MxbDS4mFk/yGX7R+PD1cJP/t4VQQUr6Hlfcc6XCOud6q5c2Ik2b5xrIUfhr8j5gXxEjzAJexIiKckCwoaOf4/QZ71iQuu0zkG155WVpHFef0s3Scm1evpmPAiPvTXxRZ5jgC+toBgyfjsNnAijD80SEf4WGrCRFFnVNU4Q9m75SH4+j5VqkoAQr+R1kYo+xzm9LFWVRdwgsK1WG/WW8MDUCZJ+5aiACAnDo6QSmU9l1WIPEaILzFuuf81GVJDQaeDVI4frvc8xhgt1FqEvu46hml1s8RgRpbayLCjFl1NyX3b1TFlLBm7ZWrzMhvt2oE3ZPExoQM2yz2wQVYLkYNitP8sgrp8BD+7dlNs8LD653o9+Cgwk4LRYwdTk0txAiCC22LVvubb/GRrbBD4IB0tsmqRzaQz60muQty1O31ThUY5vVDmX/pGK5wZoBhOeacaEzv/+JaDcWKs+UAn0J8mPygE+hPkzvoMULj796+vGrz7LBnGH/9Dxysogp8Z3MTmJ12XWQ3/oeehVy4OU5hw5EtViLzBKtiZhcTJ9jxvRlVR1P83onyx/W+01v6r5Vs+AkuQxVSBd169UHQdDCibSQWy31Gs5EawKB1pzQgnB2FwpbwHoMvB7jUoLy8FkK6B7BrzFNNKbqT/gn3TiE0G/n9/qtVuUHb8JMYN34k53/9y95D6Cyx/4RQPVRWzkBBn14bgpQX8z6Z46BAypv4ai6PRegy4xDH9PE43F03L+7OzGGpn0el6NHRqYW0ag69kvJ6M4d6aPjwtPHyDUUBcMtZkrtR2Wv1Xly2tiEcNmXBLIR3MNVNQnb2y72s+46YER6PwBW/OVytOYqI3jxxmFD3PpRzSfF0K/J1YFedFodiE1wAAclDKQH0/l3SjlGNpm1NmKG0sRi94qg/AS7zZTfRowJeUuwM54Iq6Z2ieGW1af6461yyfZB2s+ZQVcrfNzbVrG/9gkJm//a7WhdttBzIQzx6diIPymTOyaxRXztiTFewB0nrzxUytOGNL26KW0vRJN2EImAEiYXkuzn4PwMo86hTy+iTjFuJubnee6y3onRiPaxb4UC5vUL28WbzGdj2O/ZJdBKAPeemu4uphcY3incWLzweushfewoTFCm6Nq0PVN0jIyCFzmP3SRzwQcPWHKvpEDm3PgIrwaweChste3XDSauIlG/kJSV1dg6vn1WAYxETSCzXQ/Azvnt/KbdC+xxUNhoJ/qiOf1jnxLzi769TjrtwrhW9VvQuEBey2T50lq/LjfKS00zmJ2s1nGrn/FrcjWeHYRg7VHG5felfLyeRHSIkiLx+vJKjyKhojx2VEwIJylXa4p1wk8YpuCmvglwipELWiWLNruNn/sa1+m0el6OdE2+Q5rXhXnIp3vA/kJ3hrPWze2TCMUUb7yXwLpHx7tE/XB1UGjAnDjrzE2N9RgNnXQj6/lXNn9OyLB+LBA2az9d0We2mkuqAar1qNDkzIGEV5QMHLAJ1tD5/42ELhM6NgeYJLjmzLjVxL+RkLOe0dRu9uDREDyhCcznzPob9BTJ9oOW/K69J00J6edKrCUNU3hz9gMYnUC/xRTgkwc+uoe5wLOyloqaVkKj5X71hYVGn3pyImEDE7HkYksCorClcFvdqNFVsX030uJvKp6JzpmxJFZHzHt1bItoJpBGoEL4/giZLrP4Ujt6jCQkQhpPhkJDnJyy449E5BdVGxrWL/Y4P4my4eG3IUUedtXe2aTbkzsYnokL0wjnYz3W0jHa9UKFpnlt3HjGFf6bkoX2SjkkYWkasGWcLao688NreDIKSLxcT6Wpg7Kr4utoVWxLr27a99Bj82VmhKH5L/Mt2obytfltBb340928zgHTWNmIpamypcBf8VJ7ryaKbUz6MyDBRVmDg4J7t1HKNwPlaDEB1f8aoPUkD5+80rkD1NKMtSH/n/t3cZ2kt6X+jFHVGimn0L9GQhKhPstZxAq0UNZ9rNKe8zXSYDc+J3E839uaq/0OuHofkjxfRCKKerInuRlNNixlsR8GVMJwMtHaFFD3WUBgnUKGEaK01brOsK4e6PPrRi3M+m+TtoE1SLbvZQMk28Oqiotx/lUZXOWW8uNU38JXYBaOi2FOl9arbbNbcWc/VPaFAK6GbP6i2xujr2E/twfCSl8Q60pZRvnyesH9M35+qs0rEHyn8PjB1tod5HbP9uLzkhdH9wQNGngYl6vfjintlYGIFI0dDPzBkXFzV7UCjOE7GGEBZfoDGkeRGyh6xgi9Wf/Qfs11y+lcwXJkRJI0cjz3kjeWMZpDT8koyGWNF1IXNf7x22Bu8h0BUDbrVe2Z8kJ3TYsS/WeB7W8pabjf/346pJ+ZbTFvRnTOOl6hYXIoY1VcBn6iX3cd49gKLPw2MxyhKSbGnRCP4pKT10uscH3BKGt1bmxCK8C3LRi98QTU7hHXfZwhwB5cmrFLmCq3j02L4MiIxmQDCCyk8cnQCLwOWaeAFmhe+83ZmRRKtY62wCu/UZRwNzA6amvDUwgAzFLHaDXHNlTMSxglJUyGjtiAk04sDmGOhwqUKhvO0gK0Xo0QlQodTjTwALRJ0HKTNbw02U8rsGpgYXpR8CBgRPX+tJp0wotFiPD69UFrVUIZp7UWocIBo083WPwjuHGIrjEVKy6SSXnD7Wfk/UmZlLqV67GEgunpULKfpTHpasB3P8QUnw7/HrGl5O9MbUp/kF09odCtvfQaHJ0fNahP0zKxLB/c43/mXdyi8bWKVL/PXmqui246H/EqdevptiQwLZAnm2sA8siokBVM8VPZMzmK5kaDTp+zsqDcPKGxkVhynUSXrQX3e9r6DZpqp46rkxeZidbAEnHeyNfuJ/J/H5Gg2EvXMUmltY5kVwTyIbOxRRqdBxQof/tv0Xt/rr8bW+Q6efXUfrwDRSPW/LqmBgL2vOOWPBfBH0V8tP1CIsONjQ+m4j/0xDqLtQGjsu8RdhtCCshD1wr9hhqbMGP8LnxM7bTzXeBWi9GiAU6Y7kSCzRKHqoQVpO/it+IC8sfYtPhVNZkm4v1cIdq+5D0vC9KYagM0LjeDorpb6R/l+uQgL3Cu/iL8wLcui6Uaj7RYMDJ7U6P3qSoM50h3VFriKnVMcMezuCq49xF/6blG/s2hZi5WiShWivB9nxL1fHWKZLHru4ARFfSQSyjdrZrOQf7t15z5O/CPhUXXhttcNEjE3sjCFMzOY5+5Yy5YY+fwkG4MiEsdyGzsqDdn51N6Y/T76eoohMzULM33P0OAbwY7P/aFUOXVTHjChY2UEM+sFXhi1OIS0QgjPVyZNr476u1r4WXCY1TT86jPATiS5RdwFHWAqf8kKraM/C7SJF1LVuLWFZ95NkOZPdNcwhX7rqtICu3+kY/uXqp02cWH//rWVEu+M3EHv+QrOtYX4qvAB/uyTKw0wW8tfFj0FcCALovPLo8XaGau/MZIVrmv0t2kF0JDCDyOo1pCaJQnrALevOb6VmDiO9PzPluDhvMh3D3LZEOLxmF8LuZPECoV7fE1pepHOYc9Hzs4O6BfE69IfziDLL4CBuO72p52a9NA+IRw/nPuimpDr3+bEsvO8brvcD/NRrYyXquDn9JWqvxldrurZQUpLub2K+6mdFL2kP1RY/wL0RTTJb/tB94ItElmT3QN5SjpEFqSXkbDixJQChWk4L7K6lsoT2pOHhI3ExN0oUJYwCzcdLsg6BQShZFgj+Ah46HfUYkypNSPpi0dxzCW7ZAFhjnUE52v8TeJRSqOomJa5bcjDSD+1/hLtdmWJtAvMaKLgrsyi76g/IoTuqdzJAPFh0bk6l7mXIVkf3ou3+ZfM84JwLqCRvH0/h6hn4RQLQPsofbe50Ws3nx6KYibMDm4MVqzoZsnPosHzjfVYcDC9GcOC88PJbw83kUA4QsYBYmO1/HMfrG/DFu2H7KFgZJXOJ8S+g/ghatMHswzxD52PrTaELUlqe3dp+wHqY6CkRwSMSSGZmytQnUpcsKz0p5+FJRpLj4Bi2kWlCSj4tNScz0gMIB9i+D8NIq5/6d3JasT/gMvJ1IZob9OO27AuASml2GuHzFRFjO2D4g7zRvrcFHzUdossfffj0gZlfSA1pP/3DI8Sol7XTv/gDCOpEhEtcqovIHHMhIm3b+A7NnKiBoU0vke143sXjvOwGdY0wl2Fz5Qy3MvhXqAPBBgyXKFK0C6V/KHDZRFmqtXhw/bKKDDVw3BwDhV67zYo71c6+HYN8dg6D1J69U10/GoNBy1cjf2SIRw/tZoZ7f2gJyFEnK4sjwwplA7cIwLWY5P3+aGL4LgZsSfAUFQjxTuvirsL69uIoRObLgCc96qio6gfm6PFMMw898Uv2B6ys9JSyixqaZPIV/c+7vDn39mt4iD6tZA8R+o7XWezGysOI04oxxqXx2B7vFky0tRhON+PJugaShl0tLTsHLZvOHMytZ+7sxd5MGEY461agW5TnlHjA89ZCaVKd/HrAclZ4CaFoIN0AHVNjgwYsOoHMKmIYJ1lLk6CZ6blZaKwpkDtsqlKkCBIjtC9tuLl9JtpQ0S7ob6k+ZNXu4Gn6s3L2SaGhiNkwU+s1sIGPVLrgRF/L1/6Gqxi6PRHWLQfzhRJsQ+pIwRWrTiK0HfKJ28sDkzLf6b+e8l6iggXwR8ZzFze0TjqKwH6IhM/czIfGM1bV3puJmBbAPCQAFzGrjIfyr+3KCxq5KUwwVe7gIa/V3hGXhjiHZer7LCswgJUIRD9cy8Ltff8JIhMWMD7eVriBoaL0I3NGsTOFI/uRzSkOTtuhazkALqO5+bbnJtN/pMd8iwjuNx8ijs9JiNJ5eVBrinwZsKRq0PzYVuPDaVBJFe++f5TfI9Y0vGTgkw9X4EP3X+Oi6OKWe8voMvyyaQ5UPk+SE356SVL5MTnQ1/jNvzL6o4gDTG8Bz95VlgDK+L3vWb7g/dovF1dPLM2C4kdf/2hMhP0EAwISoaKMKvaPSodrGuWfQIqU/nSz47i94aqZOX1io7cW+ypJNif9w/nU5BMheCkCtrnH5t8Nr3CtuQDhnlXCWDsJxt0x+HEmuEACjNLp2WfbiKuSZi3xctkn8Oh7R2iQmZQbjO1sil1zfRJ5yH3aYoQkdordOFleWq/Lt9GO+eSP7dY3SdmAjN9qgCzO3ASEhWl0dMLn1aY1aF9rXSMcHBWCLlvg8SEbIrBQIt3AmX4EBPpupA14bNk1jnsLykMi1QgQ7WQdrDRPdNIjX4nz/rC24CP9V0rFzlkJqav7zWrdvn8708JqoA4TJTmJ2k2M+Ghrpgsp0XrhDqiV/1yMF16gXrotebBGDCfxVSWmvYxDXPPk9v29UTCbIO8fxkUp0bcd6FXzeGoXs36BG9PyDxyN/bk4VB6TADDCIBR8uV4d/GffHn64N0qXyLdCdgGU6WMOoGOrmbOsDmdS1bUp9Wmr100mtH5N+sKlfOwf3nsXjIu0o7x+5WQtxSrSfYM8HsrAxLgmhc3ymP9W8O/dSubmrPd98iXOIkkRh9+1To0XVUj56klZqVCXsM4lYAJn/KoQyVOEJgmkVnH8seTlvqoky3yCSWS6cjktWWRrnFuTcUcifQDGStHQi3tMpp43x9wJRJaY5Y0H0O4unaQmjfMMDI+n1Zi3F52sw7xagCKFg6pKHiLaOlcjTr17oXsVQ0cmWR4izrFHMX90PJ5E2lN1KfD13DgUv1Qd77dJcgI0MvK/2utintgOIBHG1PpDohF6XEZUanLWkxfkDc8fz4qIfTVmfvKCfRoCKEfQh4XzQqC5YCHaWphGGY7i0KT4w734MHyqrKVt33GcPXjnDazY27y5sh4wjC0DNWhQ6RkuIzqPaDvORhwMaQFS9G/Tgo8+bnmeXu+zU2lR55nRaV60lAhYyBnaZHUEzmB6Je68WPsIfU/RNYVNFsqF/FW9zQ/3LLVEdcPQIob9tX51s4TKvYFlnyBuxgkcO1CkqLppoZ/OxN7rEGy0K4KMU1PTFDjPE971CCIEBIvwu0R7j6wLWci2fnDpNvzuoy/p85tvy3PFOtiVeyfHpsolJD0vOexEYdsuYJ5VWP+/cgVMUFZRJuU8KPH0uvP/m9S3gOqm1C6SFgT3oEMc+F/89hytZfoiFxnvsAOIa96xXAoFj/7yq101QR/ze5XAPyYKKRnkbVFUGWmq+TeSoj4JCsA6RO7OjmKar16c/pQAGIDzcqWhZLMTXS6XUxugZonRAYUVIHI8/VAyIM54x4HClyuHRDdckcBjUIa71hWPDf2ATc/3k4G+l5pPvctpyf8JF/igdBRe/yGaW80qjJxxerxbnFaEC9CaB/ZHj1hn9Yz6CWMPXds0LGX3nvDrG4pDnYJd+mjUjfdDM8ZaBQ1RBCNEjItetUhtf+5GWWqspAmSbIB0ebO9yJ9nGYH5q1CzqZ4LLAzROiCzItArX2jPcfqwthYhf/QAHeI0WftwUcQ4nxzBZg0lTIE490aggEQWavlzKyd4AcL8PQlYvMrwrGNfl+qA08+q36OMxI8JDVqD8UwV1iH5UJ3F+6TrQo7GpoD2cJS1rLm42SqoV8qPmuVbE5g53rHBwmLRK2rlz/o+lnu2OEqMpKi4X/43guTXsQU99jb4S7+3IS5aQ6YtqYQqlOWV2oTCbpmFXrYAyiVrj05jdMj5rrzZhvr4PTKYSFoWhJz+JfjikmyKnW+MSw8rlP8ZFsjkPwnpMeMumMcAkAHlHWl4p2FNvma1eN89/BBYjzfYrqe1w4zrsT6bu1uc32yHaEj2FIoTIPLYWxzVmuf6ukarEUxFokhNJ+PyytOa7bdDcAE/tNIyZYWkHRqSUNYsaPd1swf7YMpJtiuZ6ktfIwQbPRxOBa4mO5PRLeptSqMFLKZfgbURFQOIMwYz1exO27uxXUK4zyh+OCr9URS0jS+Ban4xsmAYOI5zZmXILlfTGEIn774aZcpn7oWQArRZq5GWw8gPDwy42J/XwUsIXlXJhtVqKhkjRud0M8IRocp6ieFRmSZ5FdSeXWdyX2D3Fp3+Ph7/SHYR8chSjz6YLNx/LaEYiwRJny6MS7tsuiD4ytA2aTnrdEdPfHUTcIVbw0CVvEgXUMCpFnFkBxrwhvgflCUjNeluKdr3CI5JFDkt9uaedVhgYVQKA631YWtteQiS0FfLKa9XeqTeWkz+OXZ+GBOxoBVJ5lqhEzCiW0nHXQzCSK/NgD6Bh+MZtQ4M3VACIqBZ1+QYiGk2dAQBuJWc88uN90w+mTLycXFHhn6cGl8fgfx4VyT4cC2u25ArygT4+//0Uha6d4co83XM0mpP90ahpekwMltmv2CZ+l0z0wJ+ZdMk62sLaMx8Bf6jbgIB4/SeOZOkiVwZM/pKlNkKk+c7DnEgTyGvvIJFuKcdse9xmGHM5V+qbMEne8IL7pjQdaEQRsOrDE56yRi0VE/DnW02wMSHIuoz/xj48Ns7eKZJQNssgwZwKuMebwLl/VcjgyQ6fYkcx/E9qmhDWvszSnZmS0p1Kb/Bcpby6F/tQI/sKf8P5KPy5SOnbCfHFnCg9BmkmuW1J0rooPxDEXVGzUE0+HhRt4LlAud6bBqW60zFnt2Ns89Lu4L8cffm3rZCZhubJ8/Unm1roKgCY/ZDSkZi/Li5zn1oSRwX1ifQANBIGJiGb1vlzlOAvaYet7tLgYWRhrVUN2JoiLkddSPE9Zj0Fc3AoqWbVZKQZIvgUn4Hu89Sx9Ls/PK14CT6jnU5U0ykBSBJygqkUMMZhiIUIaNxYcMw54sY22QInNe7WbEwXomCMnfUzTgWvv1WzKx80/+/U+ohptQFHJMWz/FB5XYXylg/5OBi9bxXK9MpZrV2o2ow0kiOzYKGUO6Y83EqLIJmF2T6uVnrj9TjA1TFGRNyvYkCqgknB6KWsaQZ6TbZzLosTEy5atev1/acJc30FUySG6/5rKzdirzERCe7VurbUJO+tGulcHgDbCuHPJQJHFQ0yXcbJ5YauYjxBjL5b+tjkGbLryRwUT5qR6lOpP4BCpAZVNFr9Isz7vItFqhpimTCnkL2gjQtaegp6Dg8ta3DNTvwv5X9zDzppl0sK60mLn3Y9c+7kkb0/KaHUNEGyZ4uUnm6uI+c0qoODPOCyRJNSzCmEz4VlC2/9spUU4rHmeO1wRIVYz0cCjnrTINyzM7v+PoshvF26aYclaj444ZjnorHMnmwDRj5WEvu4BuQFdVGZd2SoLEUY3RCXbPy+jXuYB4MdPG1S8iJFbtQz0myRq7SRFfJXFSCViLzAwIx+bWLzwlWs4wl0S4UBlczwBeaS+FXlFdl9+vgxlUFrCbaOPYPiNBT8btrlOFT5LPJtEt602+2yI8cpNoyR6IYxotMUUU6kldXEtsWJS57D9urBiZRha3nxkNFrjIOsrhIzkLPIOmlvIr/wxISMYGEEOA0PrubMgIzNMIsvaynRIfP0GE4n4Fsafbnb5WAu3/E3z/pG+O8moiYQuK1lagCnjEzMaqmyJPl10teFcvNq3YJ0Uf3bVuovLVQelbaXv5UUr9653Y/S0pGxfjvyuTO5UrGjTxv0OSrotmVtCj14FKxeKwstoiE1NjKuulhpV1IXjygG63xhbhlt/72z4UmjYlni99ZGpdMpfXOFJQBzX/4bDIlU0BCKLUb7lKtEfvz2UC04f7uJ4hGbPUs4MFHh60i3+pqvegeryq3F650cytoJIJ8Y/SHPvxeDfSrpKSjtg2pbzIjg72PzNBnxI6UhuAJY3HwJEerF+5swNcJ8tHgdP/+EFixl+D1v34iLCv10O1juaipL7ud6fe7irIywvaenp8w5UmzlYuD1ty4V+DeTPCAzXdN8qy6AcJ9+L8VvV+sM2GkC5pJFMSYalKt/1K5tlhEsf+W8IHIx9AIiZwnKM6PBYzgDOmQzYL+lt7EezWIZNgcoU+4JaWEIGLy9GjCLpF0G69ydzAUsHXcBRJoq8W+6gfEqDqJLJaiZzj3yve0ye9Qge7ofqMGxeazcGcvDxG0bhqvjhTnINJ9DAVCNG3ROpE5go7gJJT1wOe6ou0IRaR0I2mKRWFm2Bxsic/eStJxzq8zohud4JzZvcT2mwgvb9cBDoYcNotNx+qAi7PQa4BwSoBQGkzLssdKmNhLy2lMe3sQvBxkd3agMT14D8l0xcQERHA5t2eiVjpr74WDkmIHCw+Dvwcj+Hltm+6JXfACN7D0FD1QP7tnyuhssCazX9JJyaHcPmkGd8+gljp2u+cm6FHmeuxAACxzZbZHNeeL5+8Va45DFXNANrDKrXnsX3Q+q1/DzN9dRXZkUFZlC3w8BLijRmvMjM78Vp6kNqe4dKNv2HXMqLLlr2FYCGgWfX8/Nw9TSeznoDqssiau1w9m4bfrVMvaKJ0fPE1jO9kSDNLAZl8+cSLqh3sWrr1LfetD+eXs/1hT6trms2pjxuGpTtnCzK89DlEQMDujKtPlzl+TgCFX1h44kDlUtsSsEYcUTSFhnkwf2TdP2sEUPSDY/LAyLcW7MzucWSucidJ4AAh6dkZX27scL1Rt+AX6LAP9d/gmqHB9YEXCFgHVWv0PpOqKbMVI2SoCygH1zfvuDJIBHJPeu3puO7ZADBwUCvimdnxKqKYhN7w/DhXtchjej2rMrNkWTRXvgaBjacCCGWxbmLI5ualN8vEX3w3tg/FfL8Hd1prI9Msb1p0IfGxVDWYESSyHGr4HwmkHraVnW0dGvpiDeI53bPlQojegY8zVrIaE6h2dYOzkPqf8Zr6gi8KrqiBwuHgfPJs2EmvulC1joBD675VADbi4TY9qFKltlSFQzWTGMvC3ueBsgedZRvwxLOBKaTa8cWvZsR5naB4gPYoXr1zrq6uxED60+ksFSQe/nOgwNkvvrEAfPvLYKq96KQygJ9wuoitZs0DMIGF7YUn1ZiiIijFSH6nuWfr2NH+kU1jtnl1zVfJvc4Yl7ZwQatAvdYf/wBg6g7cSq2Q+/0eb4tBJq9WJzILS1uzRDHRQFCoY0SlB3GquRSYHn3PzepE0IdcoRlB8CkCbvoHJwo/RdQ+a59DY53HdQGT1yV5wKs/4XAR5uir3cva5RuacFKqLRltHNZc5TCKRL8Mcrqn5TA87P2/kPB6OOlVUOETNQoykUbQDvU/OSmT7vYmV9G1czaZrfpHUVMCsnat01a8WgM7I3zM89j/BhTRejQ66PdnNcQyhqUJc13M8msqX+Ix6nuIvBhw87PRhAMFQzX7Uu3hcQNkU6B7IkHVxs4dTJ5maY97UdfeW6RFvOSLTQzDAtuANqllTt7Yi++xh3o0UrwOLM/GNnedWA51iaK773XWV+uwyODI8ZVgV6JGm/4V7ok9MxB5Q4US/IF3BMAaLX/uF4Gy2kH78XD6P2lmXdkYw4Wit7soS8Xj2++ucM9oJsouYPFEXx01UZlRwU5cH2hciOzB1fHQ9s5ajZMb9ICobYxkbwQJIpqN8TdJMQqsFpr4D4HogjqbuzKzP82e7D7lmHTy1+fqomKlj/HUZ9pP4BkRtBhS0RFCRi3T0pfxLL9AwIonWbIyDt5TrBOpaWbJGoY8zetQoRe9J7rq4RVpcj0Yd0kGt7oCvX/HLI3MELosC/lBlMTt2y03BXcMfDMfknm5xs0zzR38lFoYyuFNmobeIiflHvnvjTftijhZixvuZLAsc6QJhS/bTZSd1XNrsv4kis5U/GPZXKR2u5JYATq5L3DQzNc5gK0ic0G4gA3WtlnHnxgIIm6iArXAaY+RagqiC76A/w++N+IhDRnIOAPFzlE4hELfI+c4y+s+MAAAAAAAAayywl++PRrSHXhOFYf7GDH4M8AfW7OhDPxZ/lyGX41tbtO8rEjyiX5Y9cgs8IDgmKqb+ZKqAhxG7X7/p79/mjdJipEAAAAAAF1x6SqMVJv8j3Nlk5tv3MM20JrryuVa5wNdi1r8ZiRskcGJVj2gSKlsFqjz+AAeXyeMDNPPyEIAc6ZDxWGqiaVBzQNsQ7OHaInhNGTCrtIVkqLSahkTyzWr0mHz3p1sfrPHjNm/loAAAMPa4SX5gZYxxSTKAjxohdP/sWhlUTHNA6+MyvLJs9ZJ+FFVTg0NhS4iUf6/tiF8NU3tzRg8UrZ/z0ldFAGfBFkfZ3osfEeVfkPgE2zizc3DY2/IWNGI5lNbT4BYsIlyfOPaSEkA9UroUXd6oZ1hDkAxfxfdMAqiHXUHpGxITrIwjJ0Jy0XEQ0QupdpT/vy7J4YnvSWu0pw5LaRtF+vcfAQnDy3Yd7ND0DunJPta3E1ZZte3CuUFUmItCGvW9Fn56+ktv3irYdSVGrRruYEnjahdOy8Qn8p/D7dl2a5Xb0aJwPO6dwoXjGAb2uDoAap5RBYdNLOhj+xtNfUS+Ar7G3J/4PdFnD+m2T2PGCba/uGbtJtnE6p1p0opCvMP4ANnqPqw3Hffv/JK1efIyYpOpxwQsbeY2CyCza9wAH5wRTqHwDpvXVWPL8jaVkkM/cyC0PY+98ug/96Nhe2MtVsBqHht7RLlHzKtopSdTn6UbPabVDCr2xb51M37SlsCr8dg4ubYPCzUz7i+ig6ZWwC6ZLksVpcQ6k0UeQAHGNG4ksIpqMhOtpDRfhEVUe33Qo95ENz6HyULoAO+rfOgm/qxpQflTOx19/j/9YPEE0gqvXQYTHs5QrtQyVgvUqoh/b/kdIB9tRf4jg8UiX9CUC2PADnIB2B8q32Ggz9CKTPpxkHGRVceAAB1t01VeRuyyduoFq1a9uJmV+M0Xf4JV7vUFnODl7+e8nnQckKRHzFYpf8/UKRIbyG+LYywYTZXUvYtxRB5z8nW/vmSUkaCO1V76dz27WafunON3XkUV/rx4FhKT0m59Zk6FQ2wyQYw0PtFdK/5dGmtYy9/O9/Qx6BVZUymASMp9Yk/K22aND16z46+BxxKTk7Ox6asu7ki/WwNMnzoII3y7YJxJhfSxYy/QdAUXksBeBedegzKL1hjwEERgfN8o0OKpSW8/ZO+1e1oB3uZBDgpm+XF3B2KkW4O577aO0RCtk+pIEZC5phm9no2XvnhcyJKw/Q+06bKmaTQ4WrpjrOzVbR6sECDirz4Vl1Lf/AEyn8kdfRFZyKXRLS9ozz27uXta3PeRgN7wYtNV/Fuqzr2NfqGt75OG/gH5WSsSpe8WRF9gr8w8QpLNCMjrNTq9U5BvBrYAAAArC+Lk2IkEr84RABy3aE8BQaWwwTX0YlWHWBX9fnKMCd3F7+fjd7mc7Dum3vW+O7+8iaE66azUDg7KbMmIuyMzRm4aKRzbPIghqNwGdKYbvNK6Xo9fOwlkeI8BvuJSjY+6UndMsQWwrXR3DePCUx8khMYDj0nl2ioQ5bo0un+rAmyR6G+2vRvvewvNzRAI6HVkBWlkSPMGm8/IRA+JrfmRSPSJJN3iL6HiKT5NkYagGd6B/XtPlxUUBZFHlWwG3+qJjMtizzs2OuXqvlytp4R3kBauEMWzfT0sVsiH5fhahYLzB4oKhFVrxKdMYT1NaXHheOMU6W+Q8vFyeUMJIKiEUs36B4F+J4HNzCirBM81M4YEYrtYnxVbJ+ddYl61nk9x+AJJ49a7hyIxVs/8ArOoZsONJoZo+5U1QAAAAAAAAAAAA==',      // recortada e otimizada (o build inline em data URI)
+  logoW: 594, logoH: 304,             // proporção original preservada
+  org: 'Sociedade Tocantinense de Pediatria',
+  assinatura: 'Uma experiência educacional da STOP'
+};
+
+/* Desafio STOP da Semana: rotaciona um ritmo-foco por semana ISO,
+   de forma determinística (mesmo desafio para todos na mesma semana). */
+PRQ.desafioDaSemana = function () {
+  const foco = ['tsv', 'tv', 'fv', 'bavt', 'taqsinusal', 'bradicardia', 'assistolia', 'sinusal'];
+  const d = new Date();
+  const onejan = new Date(d.getFullYear(), 0, 1);
+  const semana = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+  const rit = PRQ.RHYTHMS[foco[semana % foco.length]];
+  return {
+    semana: semana,
+    ritmo: rit.id,
+    nome: rit.nome,
+    modo: 'arcade',
+    recompensa: '+120 XP bônus',
+    resumo: 'Reconheça ' + rit.nome + ' sob pressão de tempo. Selo STOP para quem concluir.'
+  };
+};
 
 ;
 /* ============================================================
@@ -1942,16 +2181,16 @@ PRQ.ecg = (function () {
   }
 
   function drawGrid(ctx, w, h) {
-    ctx.fillStyle = '#050a0e';
+    ctx.fillStyle = '#080d13';
     ctx.fillRect(0, 0, w, h);
     const minor = Math.max(7, Math.round(w / 64));
-    ctx.strokeStyle = 'rgba(58, 240, 172, 0.045)';
+    ctx.strokeStyle = 'rgba(70, 214, 162, 0.045)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     for (let x = 0; x <= w; x += minor) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, h); }
     for (let y = 0; y <= h; y += minor) { ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); }
     ctx.stroke();
-    ctx.strokeStyle = 'rgba(58, 240, 172, 0.09)';
+    ctx.strokeStyle = 'rgba(70, 214, 162, 0.09)';
     ctx.beginPath();
     for (let x = 0; x <= w; x += minor * 5) { ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, h); }
     for (let y = 0; y <= h; y += minor * 5) { ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); }
@@ -1966,9 +2205,9 @@ PRQ.ecg = (function () {
     const end = upTo == null ? n : Math.min(n, Math.floor(upTo * n));
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
-    ctx.shadowColor = 'rgba(58, 240, 172, 0.55)';
-    ctx.shadowBlur = Math.max(4, h * 0.045);
-    ctx.strokeStyle = '#3af0ac';
+    ctx.shadowColor = 'rgba(70, 214, 162, 0.38)';
+    ctx.shadowBlur = Math.max(3, h * 0.03);
+    ctx.strokeStyle = '#46D6A2';  /* --ecg-signal: menos neon */
     ctx.lineWidth = Math.max(1.5, h * 0.014);
     ctx.beginPath();
     for (let i = 0; i < end; i++) {
@@ -2008,7 +2247,7 @@ PRQ.ecg = (function () {
       // lacuna escura à frente do cursor + linha de varredura
       const x = phase * w;
       const gap = Math.max(26, w * 0.09);
-      ctx.fillStyle = 'rgba(5, 10, 14, 0.88)';
+      ctx.fillStyle = 'rgba(8, 13, 19, 0.88)';
       if (x + gap <= w) {
         ctx.fillRect(x, 0, gap, h);
       } else {
@@ -2016,8 +2255,8 @@ PRQ.ecg = (function () {
         ctx.fillRect(0, 0, gap - (w - x), h);
       }
       const grad = ctx.createLinearGradient(x - 3, 0, x, 0);
-      grad.addColorStop(0, 'rgba(58, 240, 172, 0)');
-      grad.addColorStop(1, 'rgba(58, 240, 172, 0.9)');
+      grad.addColorStop(0, 'rgba(70, 214, 162, 0)');
+      grad.addColorStop(1, 'rgba(70, 214, 162, 0.9)');
       ctx.fillStyle = grad;
       ctx.fillRect(x - 3, 0, 3, h);
       raf = requestAnimationFrame(frame);
@@ -2064,7 +2303,8 @@ PRQ.state = (function () {
         melhorCombo: 0,
         acertosTsv: 0,
         fvRapidas: 0,
-        plantaoCondutas: 0
+        plantaoCondutas: 0,
+        stopDesafios: 0
       },
       badges: [],
       badgesNovos: [],
@@ -2091,10 +2331,15 @@ PRQ.state = (function () {
       if (!raw) return freshState();
       const s = JSON.parse(raw);
       const base = freshState();
-      // merge defensivo p/ upgrades de schema
-      const merged = Object.assign(base, s);
-      merged.counters = Object.assign(base.counters, s.counters || {});
-      merged.rhythmStats = Object.assign(base.rhythmStats, s.rhythmStats || {});
+      // merge defensivo p/ upgrades de schema (sem clobber das chaves-base)
+      const merged = Object.assign({}, base, s);
+      merged.counters = Object.assign({}, base.counters, s.counters || {});
+      // garante as 8 chaves de ritmo com a forma-padrão + valores salvos
+      const savedStats = s.rhythmStats || {};
+      merged.rhythmStats = {};
+      Object.keys(base.rhythmStats).forEach(function (id) {
+        merged.rhythmStats[id] = Object.assign({}, base.rhythmStats[id], savedStats[id] || {});
+      });
       if (merged.weekly.semana !== weekKey()) {
         merged.weekly = { xp: 0, semana: weekKey() };
       }
@@ -2354,9 +2599,13 @@ PRQ.ui = (function () {
     top.className = 'topbar';
     top.innerHTML =
       '<div class="topbar-inner">' +
-        '<a class="brand" href="index.html">' +
+        '<a class="brand" href="index.html" aria-label="PALS Rhythm Quest, uma experiência educacional da STOP">' +
           '<span class="brand-pulse">' + icon('pulse') + '</span>' +
-          '<span class="brand-name">Rhythm<small>Quest</small></span>' +
+          '<span class="brand-lock">' +
+            '<span class="brand-name">Rhythm<small>Quest</small></span>' +
+            '<span class="brand-by">por STOP</span>' +
+          '</span>' +
+          (PRQ.STOP ? '<img class="brand-desktop-logo" src="' + PRQ.STOP.logo + '" width="' + PRQ.STOP.logoW + '" height="' + PRQ.STOP.logoH + '" alt="Logo da Sociedade Tocantinense de Pediatria" loading="lazy">' : '') +
         '</a>' +
         '<nav class="topnav-links">' +
           NAV.map(function (n) {
@@ -2542,9 +2791,61 @@ PRQ.ui = (function () {
     if (!novos || !novos.length) return;
     novos.forEach(function (b, i) {
       setTimeout(function () {
-        toast('<span style="font-size:17px">' + b.emoji + '</span> Emblema desbloqueado: <b>' + esc(b.nome) + '</b>', 'gold', 3400);
+        toast('<span style="font-size:17px">' + b.emoji + '</span> Emblema desbloqueado: <b>' + esc(b.nome) + '</b>', b.special ? 'institutional' : 'reward', 3400);
       }, i * 900);
     });
+  }
+
+  /* ---------- rodapé institucional (logo + STOP + aviso) ---------- */
+  function instFooterHtml(disclaimerHtml) {
+    if (!PRQ.STOP) return '';
+    return '<footer class="instfooter">' +
+      '<div class="instfooter-brand">' +
+        '<img class="instfooter-logo" src="' + PRQ.STOP.logo + '" width="' + PRQ.STOP.logoW + '" height="' + PRQ.STOP.logoH + '" alt="Logo STOP, Sociedade Tocantinense de Pediatria" loading="lazy">' +
+        '<div class="instfooter-org">' +
+          '<span class="microlabel">Realização</span>' +
+          '<b>' + esc(PRQ.STOP.org) + '</b>' +
+          '<span>' + esc(PRQ.STOP.assinatura) + '</span>' +
+        '</div>' +
+      '</div>' +
+      (disclaimerHtml || '') +
+    '</footer>';
+  }
+
+  /* ---------- splash institucional (só no primeiro acesso) ---------- */
+  const SPLASH_KEY = 'prq_splash_v1';
+  function splash(cb) {
+    let visto = false;
+    try { visto = localStorage.getItem(SPLASH_KEY) === '1'; } catch (e) {}
+    if (visto || !PRQ.STOP) { cb && cb(); return; }
+    try { localStorage.setItem(SPLASH_KEY, '1'); } catch (e) {}
+
+    const reduz = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const el = document.createElement('div');
+    el.className = 'splash';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', 'Abertura: ' + PRQ.STOP.org + ' apresenta PALS Rhythm Quest');
+    el.innerHTML =
+      '<button class="splash-skip" type="button" aria-label="Pular abertura">pular</button>' +
+      '<span class="splash-apresenta">' + esc(PRQ.STOP.org) + ' apresenta</span>' +
+      '<img class="splash-logo" src="' + PRQ.STOP.logo + '" width="' + PRQ.STOP.logoW + '" height="' + PRQ.STOP.logoH + '" alt="Logo STOP, Sociedade Tocantinense de Pediatria">' +
+      '<div class="splash-game">' +
+        '<h1 class="display">PALS Rhythm Quest</h1>' +
+        '<span class="brand-by">uma experiência educacional da STOP</span>' +
+      '</div>' +
+      '<p class="splash-line">Reconhecimento rápido de arritmias pediátricas em tira de ECG.</p>';
+    document.body.appendChild(el);
+
+    let fechado = false;
+    function fechar() {
+      if (fechado) return;
+      fechado = true;
+      el.classList.add('out');
+      setTimeout(function () { el.remove(); cb && cb(); }, reduz ? 0 : 500);
+    }
+    el.querySelector('.splash-skip').addEventListener('click', fechar);
+    // duração máxima de 2 segundos; sem flashes
+    setTimeout(fechar, reduz ? 700 : 2000);
   }
 
   return {
@@ -2561,7 +2862,9 @@ PRQ.ui = (function () {
     diffDots: diffDots,
     countUp: countUp,
     garantirPerfil: garantirPerfil,
-    celebrarBadges: celebrarBadges
+    celebrarBadges: celebrarBadges,
+    instFooterHtml: instFooterHtml,
+    splash: splash
   };
 })();
 
@@ -2588,11 +2891,12 @@ PRQ.game = (function () {
   const R = {               // resultado acumulado da rodada
     acertos: 0, total: 0, xp: 0, moedas: 0,
     combo: 0, melhorCombo: 0, tempos: [],
-    porRitmo: {}, bonusFinal: 0, condutasOk: 0, arenaPts: 0
+    porRitmo: {}, bonusFinal: 0, condutasOk: 0, arenaPts: 0, bonusStop: 0
   };
 
   let bots = [];            // arena
   let ritmoFoco = null;
+  let desafioStop = false;  // Desafio STOP da semana
 
   /* ---------- helpers ---------- */
   function $(id) { return document.getElementById(id); }
@@ -2641,10 +2945,14 @@ PRQ.game = (function () {
       } else {
         cand = pick(pool);
       }
-      // trava anti-fadiga: nunca a mesma tira, máx. 2 do mesmo ritmo seguidas
+      // trava anti-fadiga: nunca a mesma tira duas vezes seguidas;
+      // em sessão focada (um ritmo só), essa é a única trava que vale.
       const prev1 = out[out.length - 1], prev2 = out[out.length - 2];
-      if (prev1 && prev1.base.id === cand.id) continue;
-      if (prev1 && prev2 && prev1.base.ritmo === cand.ritmo && prev2.base.ritmo === cand.ritmo) continue;
+      const varias = pool.length > 1;
+      if (prev1 && varias && prev1.base.id === cand.id) continue;
+      // sem foco: no máx. 2 tiras do mesmo ritmo seguidas (mistura de categorias)
+      if (!ritmoFoco && prev1 && prev2 &&
+          prev1.base.ritmo === cand.ritmo && prev2.base.ritmo === cand.ritmo) continue;
       out.push({ base: cand, seed: cand.seed + out.length * 997 });
     }
     return out;
@@ -2688,8 +2996,9 @@ PRQ.game = (function () {
     $('view-setup').innerHTML =
       '<div class="game-top">' +
         '<a class="game-exit" href="modos.html" aria-label="Voltar">' + ui().icon('back') + '</a>' +
-        '<div class="game-progress"><span class="microlabel">preparar partida</span></div>' +
+        '<div class="game-progress"><span class="microlabel">' + (desafioStop ? 'desafio da semana' : 'preparar partida') + '</span></div>' +
       '</div>' +
+      (desafioStop ? '<div class="center mb-14"><span class="stop-seal">Desafio STOP da semana</span></div>' : '') +
       '<div class="card" style="--mode-color:' + m.cor + '">' +
         '<div class="modecard-head">' +
           '<div class="modecard-icon" style="background:color-mix(in srgb, ' + m.cor + ' 13%, transparent);color:' + m.cor + '">' + ui().icon(m.icone) + '</div>' +
@@ -2747,7 +3056,7 @@ PRQ.game = (function () {
   function iniciarRodada(n, dif) {
     Object.assign(R, {
       acertos: 0, total: 0, xp: 0, moedas: 0, combo: 0,
-      melhorCombo: 0, tempos: [], porRitmo: {}, bonusFinal: 0, condutasOk: 0, arenaPts: 0
+      melhorCombo: 0, tempos: [], porRitmo: {}, bonusFinal: 0, condutasOk: 0, arenaPts: 0, bonusStop: 0
     });
     idx = 0;
     fila = montarFila(n, dif);
@@ -3185,6 +3494,14 @@ PRQ.game = (function () {
       st().get().counters.treinoSessoes++;
       st().save();
     }
+    // Desafio STOP da semana: bônus fixo + contador do emblema (schema seguro)
+    if (desafioStop) {
+      const bonusStop = 120;
+      st().addXp(bonusStop); R.xp += bonusStop; R.bonusStop = bonusStop;
+      const c = st().get().counters;
+      c.stopDesafios = (c.stopDesafios || 0) + 1;
+      st().save();
+    }
     st().get().rodadas++;
     st().save();
     const recorde = R.xp > 0 ? st().setBestScore(modo.id, R.xp) : false;
@@ -3229,15 +3546,17 @@ PRQ.game = (function () {
         '<div class="ring-wrap">' + ui().ringSvg(0, 158, 11) +
           '<div class="ring-center"><b id="res-acc">0%</b><span>acurácia</span></div>' +
         '</div>' +
+        (desafioStop ? '<div class="center" style="margin-top:10px"><span class="stop-seal">chancelado pela STOP</span></div>' : '') +
       '</div>' +
       '<div class="card card-tight">' +
         '<div class="bonusline"><span>XP da rodada</span><b id="res-xp">0</b></div>' +
         (R.bonusFinal ? '<div class="bonusline"><span>Bônus de acurácia ' + (acc > 95 ? '>95%' : acc > 90 ? '>90%' : '>80%') + '</span><b>+' + R.bonusFinal + ' XP</b></div>' : '') +
-        '<div class="bonusline"><span>Moedas' + (moedasX2 ? ' (×2 pela acurácia)' : '') + '</span><b class="gold">+' + ui().fmt(R.moedas) + ' ◉</b></div>' +
+        (R.bonusStop ? '<div class="bonusline"><span>Bônus do Desafio STOP</span><b class="reward">+' + R.bonusStop + ' XP</b></div>' : '') +
+        '<div class="bonusline"><span>Moedas' + (moedasX2 ? ' (×2 pela acurácia)' : '') + '</span><b class="reward">+' + ui().fmt(R.moedas) + ' ◉</b></div>' +
         '<div class="bonusline"><span>Melhor combo</span><b>×' + R.melhorCombo + '</b></div>' +
         (modo.timerSeg ? '<div class="bonusline"><span>Tempo médio por tira</span><b>' + tempoMedio + 's</b></div>' : '') +
         (modo.id === 'plantao' ? '<div class="bonusline"><span>Condutas PALS corretas</span><b>' + R.condutasOk + '/' + R.total + '</b></div>' : '') +
-        (recorde && R.xp > 0 ? '<div class="bonusline"><span>Recorde pessoal</span><b class="gold">novo!</b></div>' : '') +
+        (recorde && R.xp > 0 ? '<div class="bonusline"><span>Recorde pessoal</span><b class="reward">novo!</b></div>' : '') +
       '</div>' +
       '<div class="card card-tight mt-14"><span class="microlabel" style="display:block;margin-bottom:6px">Desempenho por ritmo</span>' + porRitmoHtml + '</div>' +
       arenaHtml +
@@ -3282,13 +3601,19 @@ PRQ.game = (function () {
   function init() {
     const search = (PRQ.route && PRQ.route.search) || location.search;
     const params = new URLSearchParams(search);
-    const mid = params.get('modo') || 'treino';
-    ritmoFoco = params.get('ritmo') || null;
+    let mid = params.get('modo') || 'treino';
+    desafioStop = params.get('desafio') === 'stop';
+    if (desafioStop && PRQ.desafioDaSemana) {
+      const d = PRQ.desafioDaSemana();
+      mid = d.modo; ritmoFoco = d.ritmo;
+    } else {
+      ritmoFoco = params.get('ritmo') || null;
+    }
     modo = PRQ.MODES[mid] || PRQ.MODES.treino;
 
     const S = st().get();
     if (S.nivel < modo.nivelMin) {
-      PRQ.ui.toast('Modo bloqueado: alcance o nível ' + modo.nivelMin, 'gold');
+      PRQ.ui.toast('Modo bloqueado: alcance o nível ' + modo.nivelMin, 'reward');
       setTimeout(function () { irPara('modos.html'); }, 1200);
       return;
     }
@@ -3309,7 +3634,13 @@ PRQ.game = (function () {
 
 (function () {
   var ui = PRQ.ui, st = PRQ.state;
-  ui.renderShell();
+
+  var DISCLAIMER =
+    '<div class="disclaimer"><b>Aviso clínico</b><br>' +
+    'Os ECGs deste protótipo são sintéticos e servem apenas para demonstração educacional. ' +
+    'A versão de produção exige validação por cardiologista pediátrico ou instrutor PALS. ' +
+    'AESP nunca é identificável pela tira isolada: aparece somente no modo Plantão PALS, ' +
+    'quando há informação de pulso ausente com atividade elétrica organizada.</div>';
 
   // ECG vivo do hero: alterna entre ritmos a cada varredura completa
   var heroRitmos = [
@@ -3327,9 +3658,13 @@ PRQ.game = (function () {
     hi++;
     setTimeout(cicloHero, 6800);
   }
-  cicloHero();
 
-  ui.garantirPerfil(render);
+  // splash institucional só no primeiro acesso; depois monta a casca e a home
+  ui.splash(function () {
+    ui.renderShell();
+    cicloHero();
+    ui.garantirPerfil(render);
+  });
 
   function render() {
     var S = st.get();
@@ -3414,6 +3749,30 @@ PRQ.game = (function () {
           }).join('') +
         '</div>' +
       '</div>';
+
+    // Desafio STOP da semana
+    var d = PRQ.desafioDaSemana();
+    document.getElementById('home-challenge').innerHTML =
+      '<div class="challenge-head">' +
+        '<div class="challenge-mark">' + ui.icon('trophy') + '</div>' +
+        '<div class="grow">' +
+          '<span class="microlabel">semana ' + d.semana + ' · chancelado pela STOP</span>' +
+          '<h3>' + ui.esc(d.nome) + '</h3>' +
+        '</div>' +
+        '<span class="chip institutional">STOP</span>' +
+      '</div>' +
+      '<p class="small muted">' + ui.esc(d.resumo) + '</p>' +
+      '<div class="scope challenge-strip"><canvas id="challenge-ecg"></canvas></div>' +
+      '<div class="challenge-cta">' +
+        '<a class="btn btn-primary" href="partida.html?desafio=stop">Aceitar desafio</a>' +
+        '<span class="challenge-reward">' + ui.esc(d.recompensa) + '</span>' +
+      '</div>';
+    var cc = document.getElementById('challenge-ecg');
+    var fcMap = { sinusal: 104, bradicardia: 48, taqsinusal: 172, tsv: 232, tv: 180, fv: 0, assistolia: 0, bavt: 42 };
+    if (cc) requestAnimationFrame(function () { PRQ.ecg.renderStatic(cc, d.ritmo, fcMap[d.ritmo] || 120, 700 + d.semana); });
+
+    // rodapé institucional (logo + STOP + aviso clínico)
+    document.getElementById('home-footer').innerHTML = ui.instFooterHtml(DISCLAIMER);
   }
 })();
 
@@ -3481,7 +3840,7 @@ PRQ.game = (function () {
           '<div class="name">' + ui.esc(S.nome) + '</div>' +
           '<div class="title">' + ui.esc(PRQ.titleFor(S.nivel)) + '</div>' +
           '<div class="chiprow mt-8">' +
-            '<span class="chip gold">◉ ' + ui.fmt(S.moedas) + '</span>' +
+            '<span class="chip reward">◉ ' + ui.fmt(S.moedas) + '</span>' +
             '<span class="chip">' + S.streak.dias + ' dias seguidos</span>' +
             '<span class="chip ok">' + S.badges.length + '/' + PRQ.BADGES.length + ' emblemas</span>' +
           '</div>' +
@@ -3508,7 +3867,7 @@ PRQ.game = (function () {
     document.getElementById('dash-tiles').innerHTML =
       '<div class="stat-tile t-ok"><b>×' + S.counters.melhorCombo + '</b><span>melhor combo</span></div>' +
       '<div class="stat-tile t-info"><b>' + (nT ? tempoMedio.toFixed(1) + '<small>s</small>' : '--') + '</b><span>tempo médio</span></div>' +
-      '<div class="stat-tile t-gold"><b>' + ui.fmt(S.rodadas) + '</b><span>rodadas</span></div>';
+      '<div class="stat-tile t-reward"><b>' + ui.fmt(S.rodadas) + '</b><span>rodadas</span></div>';
 
     // domínio por ritmo
     var rows = Object.keys(PRQ.RHYTHMS).map(function (id) {
@@ -3559,7 +3918,7 @@ PRQ.game = (function () {
     document.getElementById('dash-config').innerHTML =
       '<span class="microlabel" style="display:block;margin-bottom:8px">conta</span>' +
       '<button class="btn btn-ghost btn-block btn-sm mb-8" id="btn-editar">Editar nome e avatar</button>' +
-      '<button class="btn btn-ghost btn-block btn-sm" id="btn-reset" style="color:var(--bad);border-color:rgba(255,90,106,.3)">Zerar progresso (demo)</button>';
+      '<button class="btn btn-ghost btn-block btn-sm" id="btn-reset" style="color:var(--bad);border-color:rgba(228,120,138,.35)">Zerar progresso (demo)</button>';
 
     document.getElementById('btn-editar').addEventListener('click', function () {
       st.get().nome = null;
@@ -3675,11 +4034,12 @@ PRQ.game = (function () {
           var prog = Math.min(b.meta, st.progressoBadge(b));
           var pct = (prog / b.meta) * 100;
           var fresh = novos.indexOf(b.id) >= 0;
-          return '<button class="badgetile ' + (tem ? 'unlocked' : 'locked') + (fresh ? ' fresh' : '') + '" data-id="' + b.id + '">' +
+          return '<button class="badgetile ' + (tem ? 'unlocked' : 'locked') + (b.special ? ' special' : '') + (fresh ? ' fresh' : '') + '" data-id="' + b.id + '">' +
             '<div class="badge-emoji">' + b.emoji + '</div>' +
             '<h4>' + ui.esc(b.nome) + '</h4>' +
             '<span class="microlabel">' + (tem ? 'desbloqueado' : b.meta > 1 ? prog + ' / ' + b.meta : 'bloqueado') + '</span>' +
-            (!tem && b.meta > 1 ? '<div class="meter gold"><i style="width:' + pct.toFixed(0) + '%"></i></div>' : '') +
+            (b.special ? '<span class="badge-stoptag">selo STOP</span>' : '') +
+            (!tem && b.meta > 1 ? '<div class="meter reward"><i style="width:' + pct.toFixed(0) + '%"></i></div>' : '') +
           '</button>';
         }).join('')
       : '<p class="small muted" style="grid-column:1/-1;text-align:center;padding:26px 0">Nada aqui ainda. Jogue uma rodada para começar a coleção.</p>';
@@ -3696,17 +4056,21 @@ PRQ.game = (function () {
     var tem = S.badges.indexOf(b.id) >= 0;
     var prog = Math.min(b.meta, st.progressoBadge(b));
     var pct = (prog / b.meta) * 100;
+    var moldura = b.special
+      ? 'background:linear-gradient(150deg,rgba(158,130,214,.28),rgba(75,190,193,.16));border:1px solid rgba(75,190,193,.5)'
+      : 'background:linear-gradient(150deg,rgba(195,178,230,.28),rgba(195,178,230,.08));border:1px solid rgba(195,178,230,.5)';
     ui.modal(
       '<div class="center">' +
         '<div class="badge-emoji" style="width:74px;height:74px;font-size:38px;margin:0 auto 12px;' +
-          (tem ? 'background:linear-gradient(150deg,rgba(255,198,74,.25),rgba(255,198,74,.06));border:1px solid rgba(255,198,74,.5)' : 'filter:grayscale(1);opacity:.5;border:1px solid var(--line)') + '">' + b.emoji + '</div>' +
+          (tem ? moldura : 'filter:grayscale(1);opacity:.5;border:1px solid var(--line)') + '">' + b.emoji + '</div>' +
         '<h3 class="display" style="font-size:20px">' + ui.esc(b.nome) + '</h3>' +
-        '<span class="microlabel" style="' + (tem ? 'color:var(--gold)' : '') + '">' + (tem ? 'desbloqueado' : 'em progresso') + '</span>' +
+        '<span class="microlabel" style="' + (tem ? 'color:var(--reward)' : '') + '">' + (tem ? 'desbloqueado' : 'em progresso') + '</span>' +
+        (b.special ? '<div style="margin-top:8px"><span class="badge-stoptag">chancelado pela STOP</span></div>' : '') +
       '</div>' +
       '<div class="kv mt-14"><span class="microlabel">critério</span><b>' + ui.esc(b.criterio) + '</b></div>' +
       '<p class="small" style="color:var(--ink-2);margin-top:12px;line-height:1.55">' + ui.esc(b.descricao) + '</p>' +
       (!tem && b.meta > 1
-        ? '<div class="mt-14"><div class="meter gold"><i style="width:' + pct.toFixed(0) + '%"></i></div>' +
+        ? '<div class="mt-14"><div class="meter reward"><i style="width:' + pct.toFixed(0) + '%"></i></div>' +
           '<p class="small muted center mt-8 mono">' + prog + ' / ' + b.meta + '</p></div>'
         : '') +
       '<button class="btn btn-ghost btn-block mt-14" data-close>Fechar</button>'
@@ -3811,7 +4175,7 @@ PRQ.game = (function () {
       '<div class="teachblock"><span class="microlabel txt-ok">Achados-chave</span><ul>' +
         r.achados.map(function (a) { return '<li>' + ui.esc(a) + '</li>'; }).join('') +
       '</ul></div>' +
-      '<div class="teachblock warn"><span class="microlabel txt-gold">Dicas de reconhecimento</span><ul>' +
+      '<div class="teachblock warn"><span class="microlabel txt-reward">Dicas de reconhecimento</span><ul>' +
         r.dicas.map(function (d) { return '<li>' + ui.esc(d) + '</li>'; }).join('') +
       '</ul></div>' +
       '<div class="teachblock trap"><span class="microlabel txt-bad">Armadilhas comuns</span><ul>' +

@@ -1,8 +1,14 @@
 # PALS Rhythm Quest
 
+Uma experiência educacional da STOP (Sociedade Tocantinense de Pediatria).
+
 Jogo educacional de reconhecimento rápido de arritmias pediátricas em tira de ECG,
 pensado para treino de PALS em congressos e salas de aula. Protótipo funcional (MVP),
-mobile-first, com estética de monitor de UTI.
+mobile-first, com estética de monitor de UTI e co-branding STOP.
+
+O detalhamento da repaginação de marca (paleta dessaturada, tokens semânticos,
+substituições de cor, splash, Liga STOP, Desafio STOP da Semana e emblema institucional)
+está em `CO-BRANDING-STOP.md`. Os assets da logo ficam em `assets/`.
 
 ## Como rodar
 

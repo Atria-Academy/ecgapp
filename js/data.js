@@ -456,7 +456,7 @@ PRQ.MODES = {
     nome: 'Treino Guiado',
     desc: 'Sem cronômetro. Feedback completo em cada tira: achados destacados, explicação e dica de reconhecimento. O terreno seguro para errar e aprender.',
     chips: ['sem tempo', 'feedback total', 'XP reduzido'],
-    cor: '#2ad4a5', icone: 'book',
+    cor: '#55C58F', icone: 'book',
     nivelMin: 1, tiras: 8, timerSeg: 0, xpFator: 0.5, moedasFator: 1
   },
   arcade: {
@@ -464,7 +464,7 @@ PRQ.MODES = {
     nome: 'Arcade ECG',
     desc: 'Rodadas rápidas contra o relógio. Combo cresce a cada acerto, moedas chovem, XP multiplica. O foco é reconhecer em menos de 3s sem pensar demais.',
     chips: ['tempo', 'combo', 'moedas x2'],
-    cor: '#ffc64a', icone: 'bolt',
+    cor: '#C3B2E6', icone: 'bolt',
     nivelMin: 1, tiras: 12, timerSeg: 12, xpFator: 1, moedasFator: 2
   },
   plantao: {
@@ -472,7 +472,7 @@ PRQ.MODES = {
     nome: 'Plantão PALS',
     desc: 'Casos clínicos curtos: idade, FC, sinais de perfusão e contexto, mais o ECG. Identifique o ritmo e escolha a conduta inicial PALS. Único modo onde AESP aparece.',
     chips: ['caso clínico', 'conduta', 'AESP aqui'],
-    cor: '#4f8cff', icone: 'stetho',
+    cor: '#5E9EC9', icone: 'stetho',
     nivelMin: 3, tiras: 5, timerSeg: 0, xpFator: 1.4, moedasFator: 1
   },
   adaptativo: {
@@ -480,7 +480,7 @@ PRQ.MODES = {
     nome: 'Desafio Adaptativo',
     desc: 'O algoritmo ajusta a dificuldade em tempo real com base na sua acurácia, tempo médio e ritmos com maior taxa de erro. Nunca fácil demais, nunca frustrante.',
     chips: ['adaptativo', 'revisão espaçada'],
-    cor: '#b78bff', icone: 'target',
+    cor: '#9E82D6', icone: 'target',
     nivelMin: 5, tiras: 10, timerSeg: 15, xpFator: 1.2, moedasFator: 1
   },
   arena: {
@@ -488,7 +488,7 @@ PRQ.MODES = {
     nome: 'Arena em Tempo Real',
     desc: 'Competição ao vivo: todos recebem as mesmas tiras simultaneamente. A pontuação combina acurácia, velocidade e sequência. Nesta demo, você enfrenta 3 residentes simulados.',
     chips: ['mesmas tiras p/ todos', 'pontuação combinada'],
-    cor: '#ff5a6a', icone: 'trophy',
+    cor: '#E4788A', icone: 'trophy',
     nivelMin: 8, tiras: 8, timerSeg: 10, xpFator: 1, moedasFator: 1
   }
 };
@@ -542,6 +542,12 @@ PRQ.BADGES = [
     criterio: 'Nível 21+ com 95% de acurácia global',
     descricao: 'Domínio de nível de quem ensina: reconhecimento rápido, preciso e reproduzível.',
     meta: 1, contador: 'instrutor'
+  },
+  {
+    id: 'selo_stop', emoji: '💠', nome: 'Selo STOP',
+    criterio: 'Concluir 1 Desafio STOP da Semana',
+    descricao: 'Emblema chancelado pela Sociedade Tocantinense de Pediatria. Reconhece quem encara o desafio semanal da comunidade.',
+    meta: 1, contador: 'stopDesafios', special: true
   }
 ];
 
@@ -587,3 +593,29 @@ PRQ.ARENA_BOTS = [
 ];
 
 PRQ.AVATARS = ['🩺', '🚑', '🧠', '🫀', '🔬', '🦉', '🐆', '🦈', '🐬', '🦊', '🐙', '🦅'];
+
+/* ---------- identidade institucional STOP ---------- */
+PRQ.STOP = {
+  logo: 'assets/stop-logo.webp',      // recortada e otimizada (o build inline em data URI)
+  logoW: 594, logoH: 304,             // proporção original preservada
+  org: 'Sociedade Tocantinense de Pediatria',
+  assinatura: 'Uma experiência educacional da STOP'
+};
+
+/* Desafio STOP da Semana: rotaciona um ritmo-foco por semana ISO,
+   de forma determinística (mesmo desafio para todos na mesma semana). */
+PRQ.desafioDaSemana = function () {
+  const foco = ['tsv', 'tv', 'fv', 'bavt', 'taqsinusal', 'bradicardia', 'assistolia', 'sinusal'];
+  const d = new Date();
+  const onejan = new Date(d.getFullYear(), 0, 1);
+  const semana = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+  const rit = PRQ.RHYTHMS[foco[semana % foco.length]];
+  return {
+    semana: semana,
+    ritmo: rit.id,
+    nome: rit.nome,
+    modo: 'arcade',
+    recompensa: '+120 XP bônus',
+    resumo: 'Reconheça ' + rit.nome + ' sob pressão de tempo. Selo STOP para quem concluir.'
+  };
+};

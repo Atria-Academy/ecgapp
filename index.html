@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PALS Rhythm Quest · Início</title>
-<meta name="theme-color" content="#070b10">
+<meta name="theme-color" content="#0A0E14">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23070b10'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%233af0ac' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230A0E14'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%2346D6A2' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 </head>
 <body>
 
@@ -28,7 +28,11 @@
       <a class="btn btn-primary" href="partida.html?modo=treino">Treinar agora</a>
       <a class="btn btn-ghost" href="modos.html">Ver modos</a>
     </div>
+    <span class="hero-signature">Uma experiência educacional da STOP</span>
   </section>
+
+  <div class="section-head"><h2 class="section-title">Desafio STOP da semana</h2></div>
+  <section class="challenge" id="home-challenge"></section>
 
   <div class="section-head"><h2 class="section-title">Seu plantão</h2></div>
   <section class="card levelcard" id="home-level"></section>
@@ -42,7 +46,7 @@
   <div class="modegrid" id="home-modes"></div>
 
   <div class="section-head">
-    <h2 class="section-title">Ranking da semana</h2>
+    <h2 class="section-title">Liga STOP</h2>
     <a href="ranking.html">ver completo</a>
   </div>
   <section class="card card-tight"><div class="ranklist" id="home-rank"></div></section>
@@ -53,13 +57,7 @@
   </div>
   <section class="card card-tight" id="home-badges"></section>
 
-  <footer class="disclaimer">
-    <b>Aviso clínico</b><br>
-    Os ECGs deste protótipo são sintéticos e servem apenas para demonstração educacional.
-    A versão de produção exige validação por cardiologista pediátrico ou instrutor PALS.
-    AESP nunca é identificável pela tira isolada: aparece somente no modo Plantão PALS,
-    quando há informação de pulso ausente com atividade elétrica organizada.
-  </footer>
+  <div id="home-footer"></div>
 
 </main>
 
@@ -70,7 +68,13 @@
 <script>
 (function () {
   var ui = PRQ.ui, st = PRQ.state;
-  ui.renderShell();
+
+  var DISCLAIMER =
+    '<div class="disclaimer"><b>Aviso clínico</b><br>' +
+    'Os ECGs deste protótipo são sintéticos e servem apenas para demonstração educacional. ' +
+    'A versão de produção exige validação por cardiologista pediátrico ou instrutor PALS. ' +
+    'AESP nunca é identificável pela tira isolada: aparece somente no modo Plantão PALS, ' +
+    'quando há informação de pulso ausente com atividade elétrica organizada.</div>';
 
   // ECG vivo do hero: alterna entre ritmos a cada varredura completa
   var heroRitmos = [
@@ -88,9 +92,13 @@
     hi++;
     setTimeout(cicloHero, 6800);
   }
-  cicloHero();
 
-  ui.garantirPerfil(render);
+  // splash institucional só no primeiro acesso; depois monta a casca e a home
+  ui.splash(function () {
+    ui.renderShell();
+    cicloHero();
+    ui.garantirPerfil(render);
+  });
 
   function render() {
     var S = st.get();
@@ -175,6 +183,30 @@
           }).join('') +
         '</div>' +
       '</div>';
+
+    // Desafio STOP da semana
+    var d = PRQ.desafioDaSemana();
+    document.getElementById('home-challenge').innerHTML =
+      '<div class="challenge-head">' +
+        '<div class="challenge-mark">' + ui.icon('trophy') + '</div>' +
+        '<div class="grow">' +
+          '<span class="microlabel">semana ' + d.semana + ' · chancelado pela STOP</span>' +
+          '<h3>' + ui.esc(d.nome) + '</h3>' +
+        '</div>' +
+        '<span class="chip institutional">STOP</span>' +
+      '</div>' +
+      '<p class="small muted">' + ui.esc(d.resumo) + '</p>' +
+      '<div class="scope challenge-strip"><canvas id="challenge-ecg"></canvas></div>' +
+      '<div class="challenge-cta">' +
+        '<a class="btn btn-primary" href="partida.html?desafio=stop">Aceitar desafio</a>' +
+        '<span class="challenge-reward">' + ui.esc(d.recompensa) + '</span>' +
+      '</div>';
+    var cc = document.getElementById('challenge-ecg');
+    var fcMap = { sinusal: 104, bradicardia: 48, taqsinusal: 172, tsv: 232, tv: 180, fv: 0, assistolia: 0, bavt: 42 };
+    if (cc) requestAnimationFrame(function () { PRQ.ecg.renderStatic(cc, d.ritmo, fcMap[d.ritmo] || 120, 700 + d.semana); });
+
+    // rodapé institucional (logo + STOP + aviso clínico)
+    document.getElementById('home-footer').innerHTML = ui.instFooterHtml(DISCLAIMER);
   }
 })();
 </script>

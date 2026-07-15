@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PALS Rhythm Quest · Meu desempenho</title>
-<meta name="theme-color" content="#070b10">
+<meta name="theme-color" content="#0A0E14">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23070b10'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%233af0ac' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230A0E14'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%2346D6A2' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 </head>
 <body>
 
@@ -62,7 +62,7 @@
           '<div class="name">' + ui.esc(S.nome) + '</div>' +
           '<div class="title">' + ui.esc(PRQ.titleFor(S.nivel)) + '</div>' +
           '<div class="chiprow mt-8">' +
-            '<span class="chip gold">◉ ' + ui.fmt(S.moedas) + '</span>' +
+            '<span class="chip reward">◉ ' + ui.fmt(S.moedas) + '</span>' +
             '<span class="chip">' + S.streak.dias + ' dias seguidos</span>' +
             '<span class="chip ok">' + S.badges.length + '/' + PRQ.BADGES.length + ' emblemas</span>' +
           '</div>' +
@@ -89,7 +89,7 @@
     document.getElementById('dash-tiles').innerHTML =
       '<div class="stat-tile t-ok"><b>×' + S.counters.melhorCombo + '</b><span>melhor combo</span></div>' +
       '<div class="stat-tile t-info"><b>' + (nT ? tempoMedio.toFixed(1) + '<small>s</small>' : '--') + '</b><span>tempo médio</span></div>' +
-      '<div class="stat-tile t-gold"><b>' + ui.fmt(S.rodadas) + '</b><span>rodadas</span></div>';
+      '<div class="stat-tile t-reward"><b>' + ui.fmt(S.rodadas) + '</b><span>rodadas</span></div>';
 
     // domínio por ritmo
     var rows = Object.keys(PRQ.RHYTHMS).map(function (id) {
@@ -140,7 +140,7 @@
     document.getElementById('dash-config').innerHTML =
       '<span class="microlabel" style="display:block;margin-bottom:8px">conta</span>' +
       '<button class="btn btn-ghost btn-block btn-sm mb-8" id="btn-editar">Editar nome e avatar</button>' +
-      '<button class="btn btn-ghost btn-block btn-sm" id="btn-reset" style="color:var(--bad);border-color:rgba(255,90,106,.3)">Zerar progresso (demo)</button>';
+      '<button class="btn btn-ghost btn-block btn-sm" id="btn-reset" style="color:var(--bad);border-color:rgba(228,120,138,.35)">Zerar progresso (demo)</button>';
 
     document.getElementById('btn-editar').addEventListener('click', function () {
       st.get().nome = null;

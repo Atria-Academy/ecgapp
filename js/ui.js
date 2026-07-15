@@ -64,9 +64,13 @@ PRQ.ui = (function () {
     top.className = 'topbar';
     top.innerHTML =
       '<div class="topbar-inner">' +
-        '<a class="brand" href="index.html">' +
+        '<a class="brand" href="index.html" aria-label="PALS Rhythm Quest, uma experiência educacional da STOP">' +
           '<span class="brand-pulse">' + icon('pulse') + '</span>' +
-          '<span class="brand-name">Rhythm<small>Quest</small></span>' +
+          '<span class="brand-lock">' +
+            '<span class="brand-name">Rhythm<small>Quest</small></span>' +
+            '<span class="brand-by">por STOP</span>' +
+          '</span>' +
+          (PRQ.STOP ? '<img class="brand-desktop-logo" src="' + PRQ.STOP.logo + '" width="' + PRQ.STOP.logoW + '" height="' + PRQ.STOP.logoH + '" alt="Logo da Sociedade Tocantinense de Pediatria" loading="lazy">' : '') +
         '</a>' +
         '<nav class="topnav-links">' +
           NAV.map(function (n) {
@@ -252,9 +256,61 @@ PRQ.ui = (function () {
     if (!novos || !novos.length) return;
     novos.forEach(function (b, i) {
       setTimeout(function () {
-        toast('<span style="font-size:17px">' + b.emoji + '</span> Emblema desbloqueado: <b>' + esc(b.nome) + '</b>', 'gold', 3400);
+        toast('<span style="font-size:17px">' + b.emoji + '</span> Emblema desbloqueado: <b>' + esc(b.nome) + '</b>', b.special ? 'institutional' : 'reward', 3400);
       }, i * 900);
     });
+  }
+
+  /* ---------- rodapé institucional (logo + STOP + aviso) ---------- */
+  function instFooterHtml(disclaimerHtml) {
+    if (!PRQ.STOP) return '';
+    return '<footer class="instfooter">' +
+      '<div class="instfooter-brand">' +
+        '<img class="instfooter-logo" src="' + PRQ.STOP.logo + '" width="' + PRQ.STOP.logoW + '" height="' + PRQ.STOP.logoH + '" alt="Logo STOP, Sociedade Tocantinense de Pediatria" loading="lazy">' +
+        '<div class="instfooter-org">' +
+          '<span class="microlabel">Realização</span>' +
+          '<b>' + esc(PRQ.STOP.org) + '</b>' +
+          '<span>' + esc(PRQ.STOP.assinatura) + '</span>' +
+        '</div>' +
+      '</div>' +
+      (disclaimerHtml || '') +
+    '</footer>';
+  }
+
+  /* ---------- splash institucional (só no primeiro acesso) ---------- */
+  const SPLASH_KEY = 'prq_splash_v1';
+  function splash(cb) {
+    let visto = false;
+    try { visto = localStorage.getItem(SPLASH_KEY) === '1'; } catch (e) {}
+    if (visto || !PRQ.STOP) { cb && cb(); return; }
+    try { localStorage.setItem(SPLASH_KEY, '1'); } catch (e) {}
+
+    const reduz = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const el = document.createElement('div');
+    el.className = 'splash';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', 'Abertura: ' + PRQ.STOP.org + ' apresenta PALS Rhythm Quest');
+    el.innerHTML =
+      '<button class="splash-skip" type="button" aria-label="Pular abertura">pular</button>' +
+      '<span class="splash-apresenta">' + esc(PRQ.STOP.org) + ' apresenta</span>' +
+      '<img class="splash-logo" src="' + PRQ.STOP.logo + '" width="' + PRQ.STOP.logoW + '" height="' + PRQ.STOP.logoH + '" alt="Logo STOP, Sociedade Tocantinense de Pediatria">' +
+      '<div class="splash-game">' +
+        '<h1 class="display">PALS Rhythm Quest</h1>' +
+        '<span class="brand-by">uma experiência educacional da STOP</span>' +
+      '</div>' +
+      '<p class="splash-line">Reconhecimento rápido de arritmias pediátricas em tira de ECG.</p>';
+    document.body.appendChild(el);
+
+    let fechado = false;
+    function fechar() {
+      if (fechado) return;
+      fechado = true;
+      el.classList.add('out');
+      setTimeout(function () { el.remove(); cb && cb(); }, reduz ? 0 : 500);
+    }
+    el.querySelector('.splash-skip').addEventListener('click', fechar);
+    // duração máxima de 2 segundos; sem flashes
+    setTimeout(fechar, reduz ? 700 : 2000);
   }
 
   return {
@@ -271,6 +327,8 @@ PRQ.ui = (function () {
     diffDots: diffDots,
     countUp: countUp,
     garantirPerfil: garantirPerfil,
-    celebrarBadges: celebrarBadges
+    celebrarBadges: celebrarBadges,
+    instFooterHtml: instFooterHtml,
+    splash: splash
   };
 })();
