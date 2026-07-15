@@ -4,6 +4,17 @@
    ============================================================ */
 window.PRQ = window.PRQ || {};
 
+/* ---------- service worker (só quando hospedado; nunca em file://) ---------- */
+(function registrarSW() {
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+  // no build de arquivo único não há sw.js separado: registro é ignorado se 404
+  if (document.querySelector('#spa-root')) return;
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () { /* offline/indisponível: segue sem cache */ });
+  });
+})();
+
 PRQ.ui = (function () {
 
   /* ---------- ícones SVG ---------- */
