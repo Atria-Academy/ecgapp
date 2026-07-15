@@ -68,12 +68,34 @@ const router = `
 })();
 `;
 
+// aviso quando o navegador do celular não roda JS / falha silenciosa (evita "tela azul")
+const noscript = `<noscript><div style="max-width:520px;margin:12vh auto;padding:24px;font-family:system-ui,-apple-system,sans-serif;color:#E8EDF3;text-align:center">
+<div style="font-size:40px;margin-bottom:12px">&#129728;</div>
+<h1 style="font-size:20px;margin:0 0 8px">PALS Rhythm Quest</h1>
+<p style="color:#9BA9B9;font-size:14px;line-height:1.6">Este jogo precisa de JavaScript ativado. Abra em um navegador (Chrome ou Safari atualizado). No celular, o ideal &eacute; abrir por um link hospedado, n&atilde;o pelo arquivo salvo.</p>
+</div></noscript>`;
+
+const guard = `<script>
+(function(){
+  function show(msg){var r=document.getElementById('spa-root')||document.body;
+    r.innerHTML='<div style="max-width:520px;margin:12vh auto;padding:24px;font-family:system-ui,-apple-system,sans-serif;color:#E8EDF3;text-align:center">'
+    +'<div style="font-size:40px;margin-bottom:12px">\\u2764\\uFE0F</div>'
+    +'<h1 style="font-size:20px;margin:0 0 10px">PALS Rhythm Quest</h1>'
+    +'<p style="color:#9BA9B9;font-size:14px;line-height:1.6">'+msg+'</p></div>';}
+  window.addEventListener('error',function(e){show('N&atilde;o consegui iniciar neste navegador.<br><br>Tente abrir em Chrome ou Safari atualizado, ou use a vers&atilde;o hospedada (link).<br><br><small style="color:#61707F">'+((e&&e.message)||'')+'</small>');});
+  setTimeout(function(){var r=document.getElementById('spa-root');
+    if(r&&r.children.length===0){show('Este visualizador n&atilde;o executou o jogo a partir do arquivo local.<br><br>No celular, abra por um <b>link hospedado</b> \\u2014 funciona em qualquer navegador.');}},4500);
+})();
+</script>`;
+
 const content = `<title>PALS Rhythm Quest</title>
 <style>
 ${css}
 </style>
 <div id="spa-root"></div>
+${noscript}
 ${templates.join('\n')}
+${guard}
 <script>
 ${core}
 ;
@@ -91,7 +113,9 @@ const headPart = `<meta charset="utf-8">
 ${css}
 </style>`;
 const bodyPart = `<div id="spa-root"></div>
+${noscript}
 ${templates.join('\n')}
+${guard}
 <script>
 ${core}
 ;
