@@ -1202,7 +1202,7 @@ body.mon-page { background: #05080c; }
 /* --- TELA DO MONITOR --- */
 .mon-screen {
   background: #06090e; border: 1px solid #17222e; border-radius: 18px;
-  padding: 14px 16px 16px; overflow: hidden;
+  padding: 14px 16px 16px; overflow: visible; position: relative;
   box-shadow: inset 0 0 0 1px rgba(70,214,162,.04), 0 20px 50px rgba(0,0,0,.4);
 }
 .mon-head {
@@ -1323,8 +1323,7 @@ body.mon-page { background: #05080c; }
 
 /* --- PROJEÇÃO / ESPELHO: só a tela, ocupando toda a viewport --- */
 body.mirror { background: #000; }
-body.mirror .mon-bar, body.mirror .mon-controls,
-body.projecting .mon-bar, body.projecting .mon-controls { display: none; }
+body.mirror .mon-only-control { display: none !important; }
 body.mirror .mon-wrap, body.projecting .mon-wrap { max-width: none; padding: 0; }
 body.mirror .mon-screen { position: fixed; inset: 0; border-radius: 0; border: 0; height: 100vh; height: 100dvh; }
 #mon-screen:fullscreen { border-radius: 0; border: 0; width: 100vw; height: 100vh; padding: 20px 24px; }
@@ -1368,6 +1367,101 @@ body.mirror .mon-vital.small > b { font-size: 30px; }
   .presenter-mini { flex: none; flex-direction: row; align-items: center; }
   .presenter-tag { flex: none; }
   .presenter-ecg { flex: 1; min-height: 54px; }
+}
+
+/* ============================================================
+   MONITOR · controle direto na tela (faixa + tiles + popovers)
+   ============================================================ */
+/* reset dos tiles/labels que viraram botões */
+button.mon-vital, button.mon-rhythm {
+  font: inherit; text-align: left; width: 100%; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+.mon-rhythm.mon-edit { background: none; border: 0; padding: 0; }
+.mon-vital.editable { transition: border-color .12s, transform .08s; }
+.mon-vital.editable:hover { border-color: rgba(70,214,162,.4); }
+.mon-vital.editable:active { transform: translateY(1px); }
+.mon-vital.editable::after {
+  content: '✎'; position: absolute; top: 7px; right: 9px;
+  font-size: 11px; color: var(--ink-3); opacity: .6;
+}
+.mon-rhythm.mon-edit { cursor: pointer; }
+
+/* o atributo hidden deve vencer as regras de display abaixo */
+.mon-pacer-rate[hidden], .mon-pop[hidden], .mon-pop-bg[hidden] { display: none !important; }
+
+/* faixa de controle rápida no topo da tela */
+.mon-strip {
+  display: flex; flex-wrap: wrap; gap: 7px; align-items: center;
+  padding: 10px 0 12px; margin-bottom: 10px; border-bottom: 1px solid #131c26;
+}
+.mon-chip {
+  font-family: inherit; font-weight: 700; font-size: 12.5px;
+  padding: 7px 12px; border-radius: 999px; cursor: pointer;
+  background: #0b111a; border: 1px solid var(--line); color: var(--ink-2);
+  transition: background .12s, border-color .12s, color .12s;
+}
+.mon-chip:hover { border-color: var(--ink-3); color: var(--ink); }
+.mon-chip.accent { background: var(--success); color: #04231a; border-color: transparent; }
+.mon-chip.ghost { color: var(--ink-3); }
+.mon-chip.toggle.on { background: rgba(70,214,162,.14); border-color: rgba(70,214,162,.5); color: var(--success); }
+.mon-pacer-rate { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+.mon-pacer-rate b { font-family: 'IBM Plex Mono', monospace; color: var(--ink); }
+.mon-mini-step {
+  width: 26px; height: 26px; border-radius: 8px; cursor: pointer;
+  background: #0b111a; border: 1px solid var(--line); color: var(--ink);
+  font-size: 16px; line-height: 1; font-weight: 700;
+}
+
+/* tile do desfibrilador (logo abaixo do FR) */
+.mon-defib-tile { display: block; }
+.mon-defib-tile .mon-vlabel { color: #E7C15A; }
+.mon-defib-tile::after { content: '⚡'; color: #E7C15A; opacity: .8; }
+.mon-defib-tile-b { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 16px; color: var(--ink); }
+.mon-defib-tile-b small { font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-3); letter-spacing: 0; }
+
+/* popover de edição */
+.mon-pop-bg { position: fixed; inset: 0; background: rgba(3,6,10,.45); z-index: 60; }
+.mon-pop {
+  position: absolute; z-index: 70; width: 258px;
+  background: #0d141d; border: 1px solid #223042; border-radius: 15px;
+  padding: 14px; box-shadow: 0 22px 60px rgba(0,0,0,.6);
+}
+.mon-pop.as-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; top: auto; width: auto;
+  border-radius: 20px 20px 0 0; padding: 16px 16px calc(18px + env(safe-area-inset-bottom));
+  animation: monSheet .16s ease;
+}
+@keyframes monSheet { from { opacity: 0; } to { opacity: 1; } }
+.mon-pop-head { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+.mon-pop-head small { color: var(--ink-3); font-weight: 600; }
+.mon-pop-sub { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 12px 0 7px; }
+.mon-pop-val { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.mon-pop-val b { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 34px; color: var(--ink); min-width: 70px; text-align: center; }
+.mon-pop-val.small b { font-size: 24px; }
+.mon-pop-step {
+  width: 46px; height: 46px; border-radius: 12px; cursor: pointer; flex: none;
+  background: #0b111a; border: 1px solid var(--line); color: var(--ink);
+  font-size: 24px; font-weight: 700; line-height: 1;
+}
+.mon-pop-step:active { background: #12202b; }
+.mon-pop input[type=range] { width: 100%; height: 28px; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+.mon-pop input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: #1a2634; }
+.mon-pop input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: #1a2634; }
+.mon-pop input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: var(--success); border: 3px solid #06110d; }
+.mon-pop input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--success); border: 3px solid #06110d; }
+.mon-keypad.pop { grid-template-columns: repeat(3, 1fr); gap: 7px; max-height: 46vh; overflow-y: auto; }
+.mon-energy.pop { margin-bottom: 12px; }
+.mon-pop-ok {
+  width: 100%; margin-top: 14px; font-family: inherit; font-weight: 700; font-size: 14px;
+  padding: 11px; border-radius: 12px; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+}
+.mon-pop-ok:hover { border-color: var(--ink-3); }
+
+@media (max-width: 720px) {
+  .mon-strip { gap: 6px; }
+  .mon-chip { font-size: 12px; padding: 7px 11px; }
 }
 
 </style>
@@ -1579,7 +1673,7 @@ body.mirror .mon-vital.small > b { font-size: 30px; }
 <template data-page="monitor.html">
 <main class="mon-wrap">
 
-  <div class="mon-bar" id="mon-bar">
+  <div class="mon-bar mon-only-control" id="mon-bar">
     <a class="mon-back" href="index.html" aria-label="Voltar">‹ Sair</a>
     <span class="mon-title">Monitor de simulação <small>modo apresentador</small></span>
     <div class="mon-bar-actions">
@@ -1588,12 +1682,27 @@ body.mirror .mon-vital.small > b { font-size: 30px; }
     </div>
   </div>
 
-  <!-- TELA DO MONITOR (é o que se projeta) -->
+  <!-- TELA DO MONITOR (é o que se projeta e onde tudo é operado) -->
   <section class="mon-screen" id="mon-screen">
     <div class="mon-head">
-      <div class="mon-patient"><span class="mon-dot"></span>Paciente pediátrico · simulação educacional</div>
-      <div class="mon-rhythm"><span class="mon-mini">ritmo</span><b data-m="ritmo" class="tone-ok">Ritmo sinusal</b></div>
+      <div class="mon-patient"><span class="mon-dot"></span>Paciente pediátrico · simulação</div>
+      <button class="mon-rhythm mon-edit" data-edit="ritmo"><span class="mon-mini">ritmo<span class="mon-only-control"> · tocar p/ mudar</span></span><b data-m="ritmo" class="tone-ok">Ritmo sinusal</b></button>
       <div class="mon-clock"><span class="mon-mini">tempo</span><b data-m="timer">00:00</b></div>
+    </div>
+
+    <!-- faixa de controle rápida (some na projeção espelhada) -->
+    <div class="mon-strip mon-only-control" id="mon-strip">
+      <button class="mon-chip" id="c-run">▶ Iniciar</button>
+      <button class="mon-chip" id="c-reset-time">⟲ Zerar tempo</button>
+      <button class="mon-chip toggle on" id="t-pulso">Pulso</button>
+      <button class="mon-chip toggle" id="t-sync">SYNC</button>
+      <button class="mon-chip toggle" id="t-pacer">PACER</button>
+      <span class="mon-pacer-rate" id="row-pacer" hidden>
+        <button class="mon-mini-step" data-pacer="-5">−</button>
+        <b><span data-out="pacerFc">80</span> ppm</b>
+        <button class="mon-mini-step" data-pacer="5">+</button>
+      </span>
+      <button class="mon-chip ghost" id="c-reset-all">Restaurar</button>
     </div>
 
     <div class="mon-body">
@@ -1604,76 +1713,37 @@ body.mirror .mon-vital.small > b { font-size: 30px; }
       </div>
 
       <div class="mon-vitals">
-        <div class="mon-vital v-hr" data-vital="hr">
+        <button class="mon-vital v-hr editable" data-vital="hr" data-edit="fc">
           <span class="mon-vlabel">FC<small>bpm</small></span><b data-m="hr">110</b>
-        </div>
-        <div class="mon-vital v-pa" data-vital="pa">
+        </button>
+        <button class="mon-vital v-pa editable" data-vital="pa" data-edit="pa">
           <span class="mon-vlabel">PA<small>mmHg</small></span><b data-m="pa">95/60</b>
-        </div>
-        <div class="mon-vital v-spo2" data-vital="spo2">
+        </button>
+        <button class="mon-vital v-spo2 editable" data-vital="spo2" data-edit="spo2">
           <span class="mon-vlabel">SpO₂<small>%</small></span><b data-m="spo2">98</b>
-        </div>
-        <div class="mon-vital v-etco2" data-vital="etco2">
+        </button>
+        <button class="mon-vital v-etco2 editable" data-vital="etco2" data-edit="etco2">
           <span class="mon-vlabel">EtCO₂<small>mmHg</small></span><b data-m="etco2">35</b>
-        </div>
+        </button>
         <div class="mon-vital-row">
-          <div class="mon-vital v-fr small" data-vital="fr"><span class="mon-vlabel">FR<small>rpm</small></span><b data-m="fr">24</b></div>
-          <div class="mon-vital v-temp small"><span class="mon-vlabel">Temp<small>°C</small></span><b data-m="temp">37.0</b></div>
+          <button class="mon-vital v-fr small editable" data-vital="fr" data-edit="fr"><span class="mon-vlabel">FR<small>rpm</small></span><b data-m="fr">24</b></button>
+          <button class="mon-vital v-temp small editable" data-edit="temp"><span class="mon-vlabel">Temp<small>°C</small></span><b data-m="temp">37.0</b></button>
           <div class="mon-vital v-shocks small"><span class="mon-vlabel">Choques</span><b data-m="shocks">0</b></div>
         </div>
+        <!-- Desfibrilador logo abaixo do FR -->
+        <button class="mon-vital mon-defib-tile mon-only-control" data-edit="defib">
+          <span class="mon-vlabel">Desfibrilador</span>
+          <span class="mon-defib-tile-b">⚡ <span data-m="energia-lbl">20</span> J <small>· tocar para carregar/chocar</small></span>
+        </button>
       </div>
     </div>
+
+    <!-- popover de edição (aparece sobre a tela, sem rolar) -->
+    <div class="mon-pop-bg" id="mon-pop-bg" hidden></div>
+    <div class="mon-pop" id="mon-pop" hidden></div>
   </section>
 
-  <!-- PAINEL DE CONTROLE (some na projeção/espelho) -->
-  <section class="mon-controls" id="mon-controls">
-
-    <div class="mon-ctl-row mon-toolbar">
-      <button class="mon-btn primary" id="c-run">Iniciar</button>
-      <button class="mon-btn" id="c-reset-time">Zerar tempo</button>
-      <button class="mon-btn ghost" id="c-reset-all">Restaurar padrão</button>
-    </div>
-
-    <div class="mon-panel">
-      <div class="mon-panel-head">Ritmo cardíaco</div>
-      <div class="mon-keypad" id="c-keypad"></div>
-    </div>
-
-    <div class="mon-cols">
-      <div class="mon-panel">
-        <div class="mon-panel-head">Sinais vitais</div>
-        <div class="mon-slider" data-k="fc"><label>FC <b><span data-out="fc">110</span> bpm</b></label><input type="range" id="s-fc" min="0" max="300" step="1" value="110"></div>
-        <div class="mon-slider" data-k="pas"><label>PA sistólica <b><span data-out="pas">95</span></b></label><input type="range" id="s-pas" min="30" max="180" step="1" value="95"></div>
-        <div class="mon-slider" data-k="pad"><label>PA diastólica <b><span data-out="pad">60</span></b></label><input type="range" id="s-pad" min="15" max="120" step="1" value="60"></div>
-        <div class="mon-slider" data-k="spo2"><label>SpO₂ <b><span data-out="spo2">98</span>%</b></label><input type="range" id="s-spo2" min="40" max="100" step="1" value="98"></div>
-        <div class="mon-slider" data-k="etco2"><label>EtCO₂ <b><span data-out="etco2">35</span> mmHg</b></label><input type="range" id="s-etco2" min="0" max="80" step="1" value="35"></div>
-        <div class="mon-slider" data-k="fr"><label>FR <b><span data-out="fr">24</span> rpm</b></label><input type="range" id="s-fr" min="0" max="70" step="1" value="24"></div>
-        <div class="mon-slider" data-k="temp"><label>Temperatura <b><span data-out="temp">37.0</span> °C</b></label><input type="range" id="s-temp" min="32" max="42" step="0.1" value="37"></div>
-      </div>
-
-      <div class="mon-panel">
-        <div class="mon-panel-head">Intervenções</div>
-        <div class="mon-toggle-row">
-          <button class="mon-toggle on" id="t-pulso" data-on="1">Pulso central<span class="mon-toggle-dot"></span></button>
-          <button class="mon-toggle" id="t-sync" data-on="0">SYNC (cardioversão)<span class="mon-toggle-dot"></span></button>
-          <button class="mon-toggle" id="t-pacer" data-on="0">Marca-passo (PACER)<span class="mon-toggle-dot"></span></button>
-        </div>
-        <div class="mon-slider" data-k="pacerFc" id="row-pacer" hidden><label>Frequência do PACER <b><span data-out="pacerFc">80</span> ppm</b></label><input type="range" id="s-pacer" min="40" max="180" step="5" value="80"></div>
-
-        <div class="mon-defib">
-          <div class="mon-panel-head">Desfibrilação</div>
-          <div class="mon-energy" id="c-energy"></div>
-          <div class="mon-defib-actions">
-            <button class="mon-btn" id="c-charge">Carregar</button>
-            <button class="mon-btn shock" id="c-shock" disabled>⚡ CHOQUE</button>
-          </div>
-          <p class="mon-hint">Pediátrico: desfibrilação 2 J/kg (1º choque) e 4 J/kg (seguintes). Cardioversão sincronizada 0,5–1 J/kg.</p>
-        </div>
-      </div>
-    </div>
-
-    <p class="mon-disclaimer">Ferramenta educacional. Traçados sintéticos para treino de reconhecimento e condução de cenários PALS — não substituem monitor clínico real.</p>
-  </section>
+  <p class="mon-disclaimer mon-only-control">Ferramenta educacional. Toque em um valor para ajustar. Traçados sintéticos — não substituem monitor clínico real.</p>
 
 </main>
 </template>
@@ -4901,14 +4971,20 @@ PRQ.monitor = (function () {
 (function () {
   var M = PRQ.monitor;
   var CH = 'prq-monitor', LS = 'prq-monitor-state';
-  var singleFile = !!(window.PRQ && PRQ.route);      // arquivo único: sem janela-espelho
-  var params = (function () {
+  var singleFile = !!(window.PRQ && PRQ.route);
+  var isMirror = (function () {
     var h = (PRQ.route && PRQ.route.search) || location.search || '';
     return /view=mirror/.test(h) || /[?&]mirror/.test(location.hash);
   })();
-  var isMirror = params;
 
   var ENERGIAS = [2, 4, 10, 20, 50, 70, 100, 150, 200];
+  var screenEl = document.getElementById('mon-screen');
+  var pop = document.getElementById('mon-pop'), popBg = document.getElementById('mon-pop-bg');
+  // ancora o popover no body: garante position:fixed relativo à viewport
+  // (o #mon-screen cria bloco de contenção). Em tela cheia, movemos p/ a tela.
+  function popParent() { return document.fullscreenElement || document.body; }
+  function reparentPop() { var p = popParent(); p.appendChild(popBg); p.appendChild(pop); }
+  document.body.appendChild(popBg); document.body.appendChild(pop);
 
   var state = defaults();
   function defaults() {
@@ -4919,18 +4995,16 @@ PRQ.monitor = (function () {
     return p;
   }
 
-  /* ---------- canal de sincronização (controle → espelho) ---------- */
+  /* --- sincronização controle → espelho --- */
   var bc = null;
   try { bc = ('BroadcastChannel' in window) ? new BroadcastChannel(CH) : null; } catch (e) { bc = null; }
   function broadcast() {
     try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {}
     if (bc) { try { bc.postMessage(state); } catch (e) {} }
   }
-  function loadShared() {
-    try { var s = JSON.parse(localStorage.getItem(LS)); if (s) state = s; } catch (e) {}
-  }
+  function loadShared() { try { var s = JSON.parse(localStorage.getItem(LS)); if (s) state = s; } catch (e) {} }
 
-  /* ---------- motor de ondas ---------- */
+  /* --- motor de ondas --- */
   var engine = M.createEngine({
     ecg: document.getElementById('mon-ecg'),
     pleth: document.getElementById('mon-pleth'),
@@ -4938,160 +5012,218 @@ PRQ.monitor = (function () {
     getState: function () { return state; }
   });
 
-  /* ---------- relógio (mesmo cálculo nos dois modos) ---------- */
-  function elapsed() {
-    return state.running ? state.elapsedMs + (Date.now() - state.startedAt) : state.elapsedMs;
-  }
-  function timerText() {
-    var s = Math.floor(elapsed() / 1000), m = Math.floor(s / 60);
-    s = s % 60;
-    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-  }
-  setInterval(function () {
-    var el = document.querySelector('[data-m="timer"]');
-    if (el) el.textContent = timerText();
-  }, 250);
+  /* --- relógio --- */
+  function elapsed() { return state.running ? state.elapsedMs + (Date.now() - state.startedAt) : state.elapsedMs; }
+  function timerText() { var s = Math.floor(elapsed() / 1000), m = Math.floor(s / 60); s = s % 60; return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s; }
+  setInterval(function () { var el = document.querySelector('[data-m="timer"]'); if (el) el.textContent = timerText(); }, 250);
 
-  function paint() { M.renderNumbers(document, state); }
+  function paint() {
+    M.renderNumbers(document, state);
+    var e = document.querySelector('[data-m="energia-lbl"]'); if (e) e.textContent = state.energia;
+  }
 
   /* ============================================================
-     MODO ESPELHO: só a tela, recebe estado e desenha
+     ESPELHO: só a tela, recebe estado
      ============================================================ */
   if (isMirror) {
     document.body.classList.add('mirror');
-    loadShared();
-    engine.invalidate(); paint();
+    loadShared(); engine.invalidate(); paint();
     function onMsg(s) { if (s) { state = s; engine.invalidate(); paint(); } }
     if (bc) bc.onmessage = function (e) { onMsg(e.data); };
-    window.addEventListener('storage', function (e) {
-      if (e.key === LS && e.newValue) { try { onMsg(JSON.parse(e.newValue)); } catch (err) {} }
-    });
+    window.addEventListener('storage', function (e) { if (e.key === LS && e.newValue) { try { onMsg(JSON.parse(e.newValue)); } catch (err) {} } });
     return;
   }
 
   /* ============================================================
-     MODO CONTROLE
+     CONTROLE
      ============================================================ */
+  function commit() { paint(); syncStrip(); broadcast(); }
 
-  // teclado de ritmos
-  document.getElementById('c-keypad').innerHTML = M.RITMOS.map(function (r) {
-    return '<button class="mon-key tone-' + r.tom + '" data-r="' + r.id + '">' +
-      '<span class="mon-key-sigla">' + r.sigla + '</span>' +
-      '<span class="mon-key-nome">' + r.nome + '</span></button>';
-  }).join('');
-
-  // energias
-  document.getElementById('c-energy').innerHTML = ENERGIAS.map(function (j) {
-    return '<button class="mon-j" data-j="' + j + '">' + j + '<small>J</small></button>';
-  }).join('');
-
-  function syncControls() {
-    var r = M.ritmo(state.ritmo);
-    document.querySelectorAll('.mon-key').forEach(function (b) {
-      b.classList.toggle('active', b.dataset.r === state.ritmo);
-    });
-    setSlider('s-fc', 'fc', state.fc);
-    setSlider('s-pas', 'pas', state.pas);
-    setSlider('s-pad', 'pad', state.pad);
-    setSlider('s-spo2', 'spo2', state.spo2);
-    setSlider('s-etco2', 'etco2', state.etco2);
-    setSlider('s-fr', 'fr', state.fr);
-    setSliderF('s-temp', 'temp', state.temp);
-    setSlider('s-pacer', 'pacerFc', state.pacerFc);
-    toggleBtn('t-pulso', state.pulso);
-    toggleBtn('t-sync', state.sync);
-    toggleBtn('t-pacer', state.pacer);
+  function syncStrip() {
+    var run = document.getElementById('c-run');
+    run.textContent = state.running ? '⏸ Pausar' : '▶ Iniciar';
+    run.classList.toggle('accent', !state.running);
+    tog('t-pulso', state.pulso); tog('t-sync', state.sync); tog('t-pacer', state.pacer);
     document.getElementById('row-pacer').hidden = !state.pacer;
-    document.querySelectorAll('.mon-j').forEach(function (b) {
-      b.classList.toggle('active', +b.dataset.j === state.energia);
-    });
-    document.getElementById('c-run').textContent = state.running ? 'Pausar' : 'Iniciar';
-    document.getElementById('c-run').classList.toggle('primary', !state.running);
-    var shock = document.getElementById('c-shock');
-    shock.disabled = !state.charged;
-    shock.textContent = state.charged ? ('⚡ CHOQUE ' + state.energia + 'J') : '⚡ CHOQUE';
+    var pr = document.querySelector('[data-out="pacerFc"]'); if (pr) pr.textContent = state.pacerFc;
   }
-  function setSlider(id, out, val) { var i = document.getElementById(id); if (i) i.value = val; var o = document.querySelector('[data-out="' + out + '"]'); if (o) o.textContent = val; }
-  function setSliderF(id, out, val) { var i = document.getElementById(id); if (i) i.value = val; var o = document.querySelector('[data-out="' + out + '"]'); if (o) o.textContent = (+val).toFixed(1); }
-  function toggleBtn(id, on) { var b = document.getElementById(id); if (b) { b.classList.toggle('on', on); b.dataset.on = on ? '1' : '0'; } }
+  function tog(id, on) { var b = document.getElementById(id); if (b) b.classList.toggle('on', !!on); }
 
-  function commit() { paint(); syncControls(); broadcast(); }
+  /* ---------- POPOVERS ---------- */
+  var VIT = {
+    fc:   { label: 'FC', unit: 'bpm', min: 0, max: 300, step: 5, get: function () { return state.fc; }, set: function (v) { state.fc = v; engine.invalidate(); } },
+    spo2: { label: 'SpO₂', unit: '%', min: 40, max: 100, step: 1, get: function () { return state.spo2; }, set: function (v) { state.spo2 = v; } },
+    etco2:{ label: 'EtCO₂', unit: 'mmHg', min: 0, max: 80, step: 1, get: function () { return state.etco2; }, set: function (v) { state.etco2 = v; engine.invalidate(); } },
+    fr:   { label: 'FR', unit: 'rpm', min: 0, max: 70, step: 2, get: function () { return state.fr; }, set: function (v) { state.fr = v; engine.invalidate(); } },
+    temp: { label: 'Temperatura', unit: '°C', min: 32, max: 42, step: 0.1, float: true, get: function () { return state.temp; }, set: function (v) { state.temp = v; } }
+  };
 
-  // escolher ritmo → aplica vitais sugeridos (mantém tempo e choques)
-  document.getElementById('c-keypad').addEventListener('click', function (e) {
-    var b = e.target.closest('.mon-key'); if (!b) return;
-    var novo = M.preset(b.dataset.r);
+  function closePop() { pop.hidden = true; popBg.hidden = true; pop.innerHTML = ''; }
+  popBg.addEventListener('click', closePop);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePop(); });
+
+  function placePop(anchor) {
+    var mobile = window.matchMedia('(max-width: 720px)').matches;
+    pop.classList.toggle('as-sheet', mobile);
+    if (mobile) { pop.style.left = ''; pop.style.top = ''; return; }
+    // pop é fixed relativo à viewport: usa coordenadas de viewport da âncora
+    var ar = anchor.getBoundingClientRect();
+    var w = 258, vw = window.innerWidth, vh = window.innerHeight;
+    var left = Math.max(8, Math.min(ar.left, vw - w - 8));
+    var top = Math.min(ar.bottom + 8, vh - 40);
+    pop.style.left = left + 'px'; pop.style.top = top + 'px';
+  }
+  function openPop(html, anchor) {
+    reparentPop();
+    pop.innerHTML = html + '<button class="mon-pop-ok" data-close>Concluir</button>';
+    pop.hidden = false; popBg.hidden = false;
+    placePop(anchor);
+    pop.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', closePop); });
+  }
+
+  // editor numérico genérico
+  function editNum(key, anchor) {
+    var c = VIT[key];
+    var html =
+      '<div class="mon-pop-head">' + c.label + ' <small>' + c.unit + '</small></div>' +
+      '<div class="mon-pop-val">' +
+        '<button class="mon-pop-step" data-d="-1">−</button>' +
+        '<b id="pop-val"></b>' +
+        '<button class="mon-pop-step" data-d="1">+</button>' +
+      '</div>' +
+      '<input type="range" id="pop-range" min="' + c.min + '" max="' + c.max + '" step="' + c.step + '">';
+    openPop(html, anchor);
+    var out = pop.querySelector('#pop-val'), rng = pop.querySelector('#pop-range');
+    function show() { var v = c.get(); out.textContent = c.float ? (+v).toFixed(1) : v; rng.value = v; }
+    function change(v) { v = Math.max(c.min, Math.min(c.max, +v)); if (c.float) v = Math.round(v * 10) / 10; c.set(v); show(); commit(); }
+    show();
+    pop.querySelectorAll('.mon-pop-step').forEach(function (b) {
+      b.addEventListener('click', function () { change(c.get() + (+b.dataset.d) * c.step); });
+    });
+    rng.addEventListener('input', function () { change(rng.value); });
+  }
+
+  // editor de PA (sistólica + diastólica)
+  function editPA(anchor) {
+    var html =
+      '<div class="mon-pop-head">Pressão arterial <small>mmHg</small></div>' +
+      paRow('Sistólica', 'pas', 30, 180) + paRow('Diastólica', 'pad', 15, 120);
+    openPop(html, anchor);
+    ['pas', 'pad'].forEach(function (k) {
+      var out = pop.querySelector('#o-' + k), rng = pop.querySelector('#r-' + k);
+      function show() { out.textContent = state[k]; rng.value = state[k]; }
+      function change(v) { state[k] = Math.max(+rng.min, Math.min(+rng.max, +v)); show(); commit(); }
+      show();
+      pop.querySelectorAll('[data-k="' + k + '"]').forEach(function (b) { b.addEventListener('click', function () { change(state[k] + (+b.dataset.d) * 5); }); });
+      rng.addEventListener('input', function () { change(rng.value); });
+    });
+  }
+  function paRow(label, k, min, max) {
+    return '<div class="mon-pop-sub">' + label + '</div>' +
+      '<div class="mon-pop-val small">' +
+        '<button class="mon-pop-step" data-k="' + k + '" data-d="-1">−</button>' +
+        '<b id="o-' + k + '"></b>' +
+        '<button class="mon-pop-step" data-k="' + k + '" data-d="1">+</button>' +
+      '</div>' +
+      '<input type="range" id="r-' + k + '" min="' + min + '" max="' + max + '" step="1">';
+  }
+
+  // editor de ritmo (teclado)
+  function editRitmo(anchor) {
+    var html = '<div class="mon-pop-head">Ritmo cardíaco</div><div class="mon-keypad pop">' +
+      M.RITMOS.map(function (r) {
+        return '<button class="mon-key tone-' + r.tom + (r.id === state.ritmo ? ' active' : '') + '" data-r="' + r.id + '">' +
+          '<span class="mon-key-sigla">' + r.sigla + '</span><span class="mon-key-nome">' + r.nome + '</span></button>';
+      }).join('') + '</div>';
+    openPop(html, anchor);
+    pop.querySelectorAll('.mon-key').forEach(function (b) {
+      b.addEventListener('click', function () {
+        aplicarRitmo(b.dataset.r); closePop();
+      });
+    });
+  }
+  function aplicarRitmo(id) {
+    var novo = M.preset(id);
     novo.running = true; novo.seed = (state.seed || 7) + 1;
     novo.choques = state.choques; novo.energia = state.energia;
     novo.sync = state.sync; novo.pacer = state.pacer; novo.pacerFc = state.pacerFc;
-    novo.elapsedMs = state.elapsedMs; novo.startedAt = state.startedAt; novo.charged = state.charged;
-    if (!wasRunning()) { novo.startedAt = Date.now(); }
-    state = novo;
-    engine.invalidate(); commit();
-  });
-  function wasRunning() { return state.running; }
+    novo.elapsedMs = state.elapsedMs; novo.charged = state.charged;
+    novo.startedAt = state.running ? state.startedAt : Date.now();
+    state = novo; engine.invalidate(); commit();
+  }
 
-  // sliders
-  bindSlider('s-fc', 'fc', function (v) { state.fc = +v; engine.invalidate(); });
-  bindSlider('s-pas', 'pas', function (v) { state.pas = +v; });
-  bindSlider('s-pad', 'pad', function (v) { state.pad = +v; });
-  bindSlider('s-spo2', 'spo2', function (v) { state.spo2 = +v; });
-  bindSlider('s-etco2', 'etco2', function (v) { state.etco2 = +v; engine.invalidate(); });
-  bindSlider('s-fr', 'fr', function (v) { state.fr = +v; engine.invalidate(); });
-  bindSlider('s-temp', 'temp', function (v) { state.temp = +v; }, true);
-  bindSlider('s-pacer', 'pacerFc', function (v) { state.pacerFc = +v; });
-  function bindSlider(id, out, fn, isFloat) {
-    var i = document.getElementById(id); if (!i) return;
-    i.addEventListener('input', function () {
-      fn(i.value);
-      var o = document.querySelector('[data-out="' + out + '"]');
-      if (o) o.textContent = isFloat ? (+i.value).toFixed(1) : i.value;
-      paint(); broadcast();
+  // editor do desfibrilador
+  function editDefib(anchor) {
+    var html =
+      '<div class="mon-pop-head">Desfibrilação</div>' +
+      '<div class="mon-pop-sub">Energia (J)</div>' +
+      '<div class="mon-energy pop">' + ENERGIAS.map(function (j) {
+        return '<button class="mon-j' + (j === state.energia ? ' active' : '') + '" data-j="' + j + '">' + j + '<small>J</small></button>';
+      }).join('') + '</div>' +
+      '<div class="mon-defib-actions">' +
+        '<button class="mon-btn" id="p-charge">Carregar</button>' +
+        '<button class="mon-btn shock" id="p-shock"' + (state.charged ? '' : ' disabled') + '>⚡ CHOQUE</button>' +
+      '</div>' +
+      '<p class="mon-hint">Choques: <b data-m="shocks">' + (state.choques || 0) + '</b> · Pediátrico: 2 J/kg (1º) e 4 J/kg (seguintes). Cardioversão sincr. 0,5–1 J/kg.</p>';
+    openPop(html, anchor);
+    pop.querySelectorAll('.mon-j').forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.energia = +b.dataset.j; state.charged = false;
+        pop.querySelectorAll('.mon-j').forEach(function (o) { o.classList.remove('active'); });
+        b.classList.add('active');
+        document.getElementById('p-shock').disabled = true;
+        document.getElementById('p-shock').textContent = '⚡ CHOQUE';
+        commit();
+      });
+    });
+    var charge = pop.querySelector('#p-charge'), shock = pop.querySelector('#p-shock');
+    charge.addEventListener('click', function () {
+      charge.disabled = true; charge.textContent = 'Carregando…';
+      setTimeout(function () {
+        state.charged = true; charge.disabled = false; charge.textContent = 'Carregado ✓';
+        shock.disabled = false; shock.textContent = '⚡ CHOQUE ' + state.energia + 'J';
+        commit();
+      }, 900);
+    });
+    shock.addEventListener('click', function () {
+      if (!state.charged) return;
+      state.choques = (state.choques || 0) + 1; state.charged = false; state.flashAt = Date.now();
+      shock.disabled = true; shock.textContent = '⚡ CHOQUE';
+      charge.textContent = 'Carregar';
+      var sc = pop.querySelector('[data-m="shocks"]'); if (sc) sc.textContent = state.choques;
+      commit();
     });
   }
 
-  // toggles
-  document.getElementById('t-pulso').addEventListener('click', function () { state.pulso = !state.pulso; commit(); });
-  document.getElementById('t-sync').addEventListener('click', function () { state.sync = !state.sync; commit(); });
-  document.getElementById('t-pacer').addEventListener('click', function () { state.pacer = !state.pacer; commit(); });
-
-  // energia
-  document.getElementById('c-energy').addEventListener('click', function (e) {
-    var b = e.target.closest('.mon-j'); if (!b) return;
-    state.energia = +b.dataset.j; state.charged = false; commit();
+  // roteamento de cliques nos tiles / ritmo
+  screenEl.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-edit]'); if (!t) return;
+    var k = t.dataset.edit;
+    if (k === 'pa') editPA(t);
+    else if (k === 'ritmo') editRitmo(t);
+    else if (k === 'defib') editDefib(t);
+    else if (VIT[k]) editNum(k, t);
   });
 
-  // carregar / choque
-  document.getElementById('c-charge').addEventListener('click', function () {
-    var btn = this; btn.disabled = true; btn.textContent = 'Carregando…';
-    setTimeout(function () {
-      state.charged = true; btn.disabled = false; btn.textContent = 'Carregado ✓';
-      setTimeout(function () { btn.textContent = 'Carregar'; }, 1400);
-      commit();
-    }, 900);
-  });
-  document.getElementById('c-shock').addEventListener('click', function () {
-    if (!state.charged) return;
-    state.choques = (state.choques || 0) + 1;
-    state.charged = false;
-    state.flashAt = Date.now();
-    commit();
-  });
-
-  // timer / reset
+  /* ---------- faixa de controle ---------- */
   document.getElementById('c-run').addEventListener('click', function () {
     if (state.running) { state.elapsedMs += Date.now() - state.startedAt; state.running = false; }
     else { state.startedAt = Date.now(); state.running = true; }
     commit();
   });
-  document.getElementById('c-reset-time').addEventListener('click', function () {
-    state.elapsedMs = 0; state.startedAt = Date.now(); commit();
-  });
-  document.getElementById('c-reset-all').addEventListener('click', function () {
-    state = defaults(); engine.invalidate(); commit();
+  document.getElementById('c-reset-time').addEventListener('click', function () { state.elapsedMs = 0; state.startedAt = Date.now(); commit(); });
+  document.getElementById('c-reset-all').addEventListener('click', function () { state = defaults(); engine.invalidate(); commit(); });
+  document.getElementById('t-pulso').addEventListener('click', function () { state.pulso = !state.pulso; commit(); });
+  document.getElementById('t-sync').addEventListener('click', function () { state.sync = !state.sync; commit(); });
+  document.getElementById('t-pacer').addEventListener('click', function () { state.pacer = !state.pacer; commit(); });
+  document.querySelectorAll('[data-pacer]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.pacerFc = Math.max(40, Math.min(180, state.pacerFc + (+b.dataset.pacer)));
+      commit();
+    });
   });
 
-  // espelhar / tela cheia
+  /* ---------- espelhar / tela cheia ---------- */
   document.getElementById('c-mirror').addEventListener('click', function () {
     broadcast();
     if (singleFile) { alert('No arquivo único, use "Tela cheia". A janela-espelho funciona na versão hospedada do site.'); return; }
@@ -5101,19 +5233,15 @@ PRQ.monitor = (function () {
     var el = document.getElementById('mon-screen');
     if (!document.fullscreenElement) {
       document.body.classList.add('projecting');
-      (el.requestFullscreen ? el.requestFullscreen() : (el.webkitRequestFullscreen && el.webkitRequestFullscreen())) ;
-    } else {
-      document.body.classList.remove('projecting');
-      document.exitFullscreen && document.exitFullscreen();
-    }
+      (el.requestFullscreen ? el.requestFullscreen() : (el.webkitRequestFullscreen && el.webkitRequestFullscreen()));
+    } else { document.body.classList.remove('projecting'); document.exitFullscreen && document.exitFullscreen(); }
   });
   document.addEventListener('fullscreenchange', function () {
+    closePop(); // evita popover órfão ao trocar de contexto
     if (!document.fullscreenElement) document.body.classList.remove('projecting');
   });
 
-  // primeira pintura
-  loadShared();
-  engine.invalidate(); commit();
+  loadShared(); engine.invalidate(); commit();
 })();
 
 }
