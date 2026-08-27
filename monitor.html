@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PALS Rhythm Quest · Monitor de simulação</title>
+<meta name="theme-color" content="#06090e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Monitor">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230A0E14'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%2346D6A2' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body class="mon-page">
+
+<main class="mon-wrap">
+
+  <div class="mon-bar" id="mon-bar">
+    <a class="mon-back" href="index.html" aria-label="Voltar">‹ Sair</a>
+    <span class="mon-title">Monitor de simulação <small>modo apresentador</small></span>
+    <div class="mon-bar-actions">
+      <button class="mon-btn" id="c-mirror" title="Abrir tela de projeção espelhada">Espelhar</button>
+      <button class="mon-btn" id="c-fs" title="Tela cheia para projeção">Tela cheia</button>
+    </div>
+  </div>
+
+  <!-- TELA DO MONITOR (é o que se projeta) -->
+  <section class="mon-screen" id="mon-screen">
+    <div class="mon-head">
+      <div class="mon-patient"><span class="mon-dot"></span>Paciente pediátrico · simulação educacional</div>
+      <div class="mon-rhythm"><span class="mon-mini">ritmo</span><b data-m="ritmo" class="tone-ok">Ritmo sinusal</b></div>
+      <div class="mon-clock"><span class="mon-mini">tempo</span><b data-m="timer">00:00</b></div>
+    </div>
+
+    <div class="mon-body">
+      <div class="mon-waves">
+        <div class="mon-lane"><span class="mon-lane-tag t-ecg">ECG · DII</span><canvas id="mon-ecg"></canvas></div>
+        <div class="mon-lane"><span class="mon-lane-tag t-pleth">Pleth · SpO₂</span><canvas id="mon-pleth"></canvas></div>
+        <div class="mon-lane"><span class="mon-lane-tag t-capno">Capno · CO₂</span><canvas id="mon-capno"></canvas></div>
+      </div>
+
+      <div class="mon-vitals">
+        <div class="mon-vital v-hr" data-vital="hr">
+          <span class="mon-vlabel">FC<small>bpm</small></span><b data-m="hr">110</b>
+        </div>
+        <div class="mon-vital v-pa" data-vital="pa">
+          <span class="mon-vlabel">PA<small>mmHg</small></span><b data-m="pa">95/60</b>
+        </div>
+        <div class="mon-vital v-spo2" data-vital="spo2">
+          <span class="mon-vlabel">SpO₂<small>%</small></span><b data-m="spo2">98</b>
+        </div>
+        <div class="mon-vital v-etco2" data-vital="etco2">
+          <span class="mon-vlabel">EtCO₂<small>mmHg</small></span><b data-m="etco2">35</b>
+        </div>
+        <div class="mon-vital-row">
+          <div class="mon-vital v-fr small" data-vital="fr"><span class="mon-vlabel">FR<small>rpm</small></span><b data-m="fr">24</b></div>
+          <div class="mon-vital v-temp small"><span class="mon-vlabel">Temp<small>°C</small></span><b data-m="temp">37.0</b></div>
+          <div class="mon-vital v-shocks small"><span class="mon-vlabel">Choques</span><b data-m="shocks">0</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAINEL DE CONTROLE (some na projeção/espelho) -->
+  <section class="mon-controls" id="mon-controls">
+
+    <div class="mon-ctl-row mon-toolbar">
+      <button class="mon-btn primary" id="c-run">Iniciar</button>
+      <button class="mon-btn" id="c-reset-time">Zerar tempo</button>
+      <button class="mon-btn ghost" id="c-reset-all">Restaurar padrão</button>
+    </div>
+
+    <div class="mon-panel">
+      <div class="mon-panel-head">Ritmo cardíaco</div>
+      <div class="mon-keypad" id="c-keypad"></div>
+    </div>
+
+    <div class="mon-cols">
+      <div class="mon-panel">
+        <div class="mon-panel-head">Sinais vitais</div>
+        <div class="mon-slider" data-k="fc"><label>FC <b><span data-out="fc">110</span> bpm</b></label><input type="range" id="s-fc" min="0" max="300" step="1" value="110"></div>
+        <div class="mon-slider" data-k="pas"><label>PA sistólica <b><span data-out="pas">95</span></b></label><input type="range" id="s-pas" min="30" max="180" step="1" value="95"></div>
+        <div class="mon-slider" data-k="pad"><label>PA diastólica <b><span data-out="pad">60</span></b></label><input type="range" id="s-pad" min="15" max="120" step="1" value="60"></div>
+        <div class="mon-slider" data-k="spo2"><label>SpO₂ <b><span data-out="spo2">98</span>%</b></label><input type="range" id="s-spo2" min="40" max="100" step="1" value="98"></div>
+        <div class="mon-slider" data-k="etco2"><label>EtCO₂ <b><span data-out="etco2">35</span> mmHg</b></label><input type="range" id="s-etco2" min="0" max="80" step="1" value="35"></div>
+        <div class="mon-slider" data-k="fr"><label>FR <b><span data-out="fr">24</span> rpm</b></label><input type="range" id="s-fr" min="0" max="70" step="1" value="24"></div>
+        <div class="mon-slider" data-k="temp"><label>Temperatura <b><span data-out="temp">37.0</span> °C</b></label><input type="range" id="s-temp" min="32" max="42" step="0.1" value="37"></div>
+      </div>
+
+      <div class="mon-panel">
+        <div class="mon-panel-head">Intervenções</div>
+        <div class="mon-toggle-row">
+          <button class="mon-toggle on" id="t-pulso" data-on="1">Pulso central<span class="mon-toggle-dot"></span></button>
+          <button class="mon-toggle" id="t-sync" data-on="0">SYNC (cardioversão)<span class="mon-toggle-dot"></span></button>
+          <button class="mon-toggle" id="t-pacer" data-on="0">Marca-passo (PACER)<span class="mon-toggle-dot"></span></button>
+        </div>
+        <div class="mon-slider" data-k="pacerFc" id="row-pacer" hidden><label>Frequência do PACER <b><span data-out="pacerFc">80</span> ppm</b></label><input type="range" id="s-pacer" min="40" max="180" step="5" value="80"></div>
+
+        <div class="mon-defib">
+          <div class="mon-panel-head">Desfibrilação</div>
+          <div class="mon-energy" id="c-energy"></div>
+          <div class="mon-defib-actions">
+            <button class="mon-btn" id="c-charge">Carregar</button>
+            <button class="mon-btn shock" id="c-shock" disabled>⚡ CHOQUE</button>
+          </div>
+          <p class="mon-hint">Pediátrico: desfibrilação 2 J/kg (1º choque) e 4 J/kg (seguintes). Cardioversão sincronizada 0,5–1 J/kg.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="mon-disclaimer">Ferramenta educacional. Traçados sintéticos para treino de reconhecimento e condução de cenários PALS — não substituem monitor clínico real.</p>
+  </section>
+
+</main>
+
+<script src="js/ecg.js"></script>
+<script src="js/monitor.js"></script>
+<script>
+(function () {
+  var M = PRQ.monitor;
+  var CH = 'prq-monitor', LS = 'prq-monitor-state';
+  var singleFile = !!(window.PRQ && PRQ.route);      // arquivo único: sem janela-espelho
+  var params = (function () {
+    var h = (PRQ.route && PRQ.route.search) || location.search || '';
+    return /view=mirror/.test(h) || /[?&]mirror/.test(location.hash);
+  })();
+  var isMirror = params;
+
+  var ENERGIAS = [2, 4, 10, 20, 50, 70, 100, 150, 200];
+
+  var state = defaults();
+  function defaults() {
+    var p = M.preset('sinusal');
+    p.running = false; p.seed = 7; p.choques = 0; p.energia = 20;
+    p.pulso = true; p.sync = false; p.pacer = false; p.pacerFc = 80;
+    p.elapsedMs = 0; p.startedAt = Date.now(); p.charged = false;
+    return p;
+  }
+
+  /* ---------- canal de sincronização (controle → espelho) ---------- */
+  var bc = null;
+  try { bc = ('BroadcastChannel' in window) ? new BroadcastChannel(CH) : null; } catch (e) { bc = null; }
+  function broadcast() {
+    try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {}
+    if (bc) { try { bc.postMessage(state); } catch (e) {} }
+  }
+  function loadShared() {
+    try { var s = JSON.parse(localStorage.getItem(LS)); if (s) state = s; } catch (e) {}
+  }
+
+  /* ---------- motor de ondas ---------- */
+  var engine = M.createEngine({
+    ecg: document.getElementById('mon-ecg'),
+    pleth: document.getElementById('mon-pleth'),
+    capno: document.getElementById('mon-capno'),
+    getState: function () { return state; }
+  });
+
+  /* ---------- relógio (mesmo cálculo nos dois modos) ---------- */
+  function elapsed() {
+    return state.running ? state.elapsedMs + (Date.now() - state.startedAt) : state.elapsedMs;
+  }
+  function timerText() {
+    var s = Math.floor(elapsed() / 1000), m = Math.floor(s / 60);
+    s = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  setInterval(function () {
+    var el = document.querySelector('[data-m="timer"]');
+    if (el) el.textContent = timerText();
+  }, 250);
+
+  function paint() { M.renderNumbers(document, state); }
+
+  /* ============================================================
+     MODO ESPELHO: só a tela, recebe estado e desenha
+     ============================================================ */
+  if (isMirror) {
+    document.body.classList.add('mirror');
+    loadShared();
+    engine.invalidate(); paint();
+    function onMsg(s) { if (s) { state = s; engine.invalidate(); paint(); } }
+    if (bc) bc.onmessage = function (e) { onMsg(e.data); };
+    window.addEventListener('storage', function (e) {
+      if (e.key === LS && e.newValue) { try { onMsg(JSON.parse(e.newValue)); } catch (err) {} }
+    });
+    return;
+  }
+
+  /* ============================================================
+     MODO CONTROLE
+     ============================================================ */
+
+  // teclado de ritmos
+  document.getElementById('c-keypad').innerHTML = M.RITMOS.map(function (r) {
+    return '<button class="mon-key tone-' + r.tom + '" data-r="' + r.id + '">' +
+      '<span class="mon-key-sigla">' + r.sigla + '</span>' +
+      '<span class="mon-key-nome">' + r.nome + '</span></button>';
+  }).join('');
+
+  // energias
+  document.getElementById('c-energy').innerHTML = ENERGIAS.map(function (j) {
+    return '<button class="mon-j" data-j="' + j + '">' + j + '<small>J</small></button>';
+  }).join('');
+
+  function syncControls() {
+    var r = M.ritmo(state.ritmo);
+    document.querySelectorAll('.mon-key').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.r === state.ritmo);
+    });
+    setSlider('s-fc', 'fc', state.fc);
+    setSlider('s-pas', 'pas', state.pas);
+    setSlider('s-pad', 'pad', state.pad);
+    setSlider('s-spo2', 'spo2', state.spo2);
+    setSlider('s-etco2', 'etco2', state.etco2);
+    setSlider('s-fr', 'fr', state.fr);
+    setSliderF('s-temp', 'temp', state.temp);
+    setSlider('s-pacer', 'pacerFc', state.pacerFc);
+    toggleBtn('t-pulso', state.pulso);
+    toggleBtn('t-sync', state.sync);
+    toggleBtn('t-pacer', state.pacer);
+    document.getElementById('row-pacer').hidden = !state.pacer;
+    document.querySelectorAll('.mon-j').forEach(function (b) {
+      b.classList.toggle('active', +b.dataset.j === state.energia);
+    });
+    document.getElementById('c-run').textContent = state.running ? 'Pausar' : 'Iniciar';
+    document.getElementById('c-run').classList.toggle('primary', !state.running);
+    var shock = document.getElementById('c-shock');
+    shock.disabled = !state.charged;
+    shock.textContent = state.charged ? ('⚡ CHOQUE ' + state.energia + 'J') : '⚡ CHOQUE';
+  }
+  function setSlider(id, out, val) { var i = document.getElementById(id); if (i) i.value = val; var o = document.querySelector('[data-out="' + out + '"]'); if (o) o.textContent = val; }
+  function setSliderF(id, out, val) { var i = document.getElementById(id); if (i) i.value = val; var o = document.querySelector('[data-out="' + out + '"]'); if (o) o.textContent = (+val).toFixed(1); }
+  function toggleBtn(id, on) { var b = document.getElementById(id); if (b) { b.classList.toggle('on', on); b.dataset.on = on ? '1' : '0'; } }
+
+  function commit() { paint(); syncControls(); broadcast(); }
+
+  // escolher ritmo → aplica vitais sugeridos (mantém tempo e choques)
+  document.getElementById('c-keypad').addEventListener('click', function (e) {
+    var b = e.target.closest('.mon-key'); if (!b) return;
+    var novo = M.preset(b.dataset.r);
+    novo.running = true; novo.seed = (state.seed || 7) + 1;
+    novo.choques = state.choques; novo.energia = state.energia;
+    novo.sync = state.sync; novo.pacer = state.pacer; novo.pacerFc = state.pacerFc;
+    novo.elapsedMs = state.elapsedMs; novo.startedAt = state.startedAt; novo.charged = state.charged;
+    if (!wasRunning()) { novo.startedAt = Date.now(); }
+    state = novo;
+    engine.invalidate(); commit();
+  });
+  function wasRunning() { return state.running; }
+
+  // sliders
+  bindSlider('s-fc', 'fc', function (v) { state.fc = +v; engine.invalidate(); });
+  bindSlider('s-pas', 'pas', function (v) { state.pas = +v; });
+  bindSlider('s-pad', 'pad', function (v) { state.pad = +v; });
+  bindSlider('s-spo2', 'spo2', function (v) { state.spo2 = +v; });
+  bindSlider('s-etco2', 'etco2', function (v) { state.etco2 = +v; engine.invalidate(); });
+  bindSlider('s-fr', 'fr', function (v) { state.fr = +v; engine.invalidate(); });
+  bindSlider('s-temp', 'temp', function (v) { state.temp = +v; }, true);
+  bindSlider('s-pacer', 'pacerFc', function (v) { state.pacerFc = +v; });
+  function bindSlider(id, out, fn, isFloat) {
+    var i = document.getElementById(id); if (!i) return;
+    i.addEventListener('input', function () {
+      fn(i.value);
+      var o = document.querySelector('[data-out="' + out + '"]');
+      if (o) o.textContent = isFloat ? (+i.value).toFixed(1) : i.value;
+      paint(); broadcast();
+    });
+  }
+
+  // toggles
+  document.getElementById('t-pulso').addEventListener('click', function () { state.pulso = !state.pulso; commit(); });
+  document.getElementById('t-sync').addEventListener('click', function () { state.sync = !state.sync; commit(); });
+  document.getElementById('t-pacer').addEventListener('click', function () { state.pacer = !state.pacer; commit(); });
+
+  // energia
+  document.getElementById('c-energy').addEventListener('click', function (e) {
+    var b = e.target.closest('.mon-j'); if (!b) return;
+    state.energia = +b.dataset.j; state.charged = false; commit();
+  });
+
+  // carregar / choque
+  document.getElementById('c-charge').addEventListener('click', function () {
+    var btn = this; btn.disabled = true; btn.textContent = 'Carregando…';
+    setTimeout(function () {
+      state.charged = true; btn.disabled = false; btn.textContent = 'Carregado ✓';
+      setTimeout(function () { btn.textContent = 'Carregar'; }, 1400);
+      commit();
+    }, 900);
+  });
+  document.getElementById('c-shock').addEventListener('click', function () {
+    if (!state.charged) return;
+    state.choques = (state.choques || 0) + 1;
+    state.charged = false;
+    state.flashAt = Date.now();
+    commit();
+  });
+
+  // timer / reset
+  document.getElementById('c-run').addEventListener('click', function () {
+    if (state.running) { state.elapsedMs += Date.now() - state.startedAt; state.running = false; }
+    else { state.startedAt = Date.now(); state.running = true; }
+    commit();
+  });
+  document.getElementById('c-reset-time').addEventListener('click', function () {
+    state.elapsedMs = 0; state.startedAt = Date.now(); commit();
+  });
+  document.getElementById('c-reset-all').addEventListener('click', function () {
+    state = defaults(); engine.invalidate(); commit();
+  });
+
+  // espelhar / tela cheia
+  document.getElementById('c-mirror').addEventListener('click', function () {
+    broadcast();
+    if (singleFile) { alert('No arquivo único, use "Tela cheia". A janela-espelho funciona na versão hospedada do site.'); return; }
+    window.open('monitor.html?view=mirror', 'prq-mirror', 'width=1280,height=800');
+  });
+  document.getElementById('c-fs').addEventListener('click', function () {
+    var el = document.getElementById('mon-screen');
+    if (!document.fullscreenElement) {
+      document.body.classList.add('projecting');
+      (el.requestFullscreen ? el.requestFullscreen() : (el.webkitRequestFullscreen && el.webkitRequestFullscreen())) ;
+    } else {
+      document.body.classList.remove('projecting');
+      document.exitFullscreen && document.exitFullscreen();
+    }
+  });
+  document.addEventListener('fullscreenchange', function () {
+    if (!document.fullscreenElement) document.body.classList.remove('projecting');
+  });
+
+  // primeira pintura
+  loadShared();
+  engine.invalidate(); commit();
+})();
+</script>
+</body>
+</html>

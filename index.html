@@ -37,6 +37,18 @@
     <span class="hero-signature">Uma experiência educacional da STOP</span>
   </section>
 
+  <a class="presenter-card" href="monitor.html">
+    <div class="presenter-mini">
+      <span class="presenter-tag">Modo apresentador</span>
+      <div class="presenter-ecg"><canvas id="presenter-ecg"></canvas></div>
+    </div>
+    <div class="presenter-txt">
+      <h3>Monitor de simulação</h3>
+      <p>Projete um monitor cardíaco e controle ao vivo: ritmo, FC, PA, SpO₂, EtCO₂ e desfibrilação. Ideal para conduzir cenários PALS na tela grande.</p>
+      <span class="presenter-go">Abrir monitor ›</span>
+    </div>
+  </a>
+
   <div class="section-head"><h2 class="section-title">Desafio STOP da semana</h2></div>
   <section class="challenge" id="home-challenge"></section>
 
@@ -103,6 +115,8 @@
   ui.splash(function () {
     ui.renderShell();
     cicloHero();
+    var pc = document.getElementById('presenter-ecg');
+    if (pc) PRQ.ecg.renderLive(pc, 'sinusal', 110, 9, { sweepSeg: 3.2 });
     ui.garantirPerfil(render);
   });
 

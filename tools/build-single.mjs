@@ -11,10 +11,10 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
 const PAGES = ['index.html', 'modos.html', 'partida.html', 'dashboard.html',
-  'ranking.html', 'emblemas.html', 'biblioteca.html'];
+  'ranking.html', 'emblemas.html', 'biblioteca.html', 'monitor.html'];
 
 const css = read('css/style.css');
-let core = ['js/data.js', 'js/ecg.js', 'js/state.js', 'js/ui.js', 'js/game.js']
+let core = ['js/data.js', 'js/ecg.js', 'js/state.js', 'js/ui.js', 'js/game.js', 'js/monitor.js']
   .map(read).join('\n;\n');
 
 // inlinar a logo STOP como data URI (arquivo único, sem dependência externa)
@@ -26,7 +26,7 @@ const templates = [];
 const inits = [];
 for (const page of PAGES) {
   const html = read(page);
-  const body = html.match(/<body>([\s\S]*)<\/body>/)[1];
+  const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)[1];
   // conteúdo estático: tudo antes do primeiro <script src=
   const staticPart = body.split(/<script src=/)[0].trim();
   // script da página: último bloco <script> inline

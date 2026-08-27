@@ -178,6 +178,74 @@ PRQ.ecg = (function () {
         out[i] = v + (r() - 0.5) * 0.02;
       }
       return out;
+    },
+
+    /* fibrilação atrial: irregularmente irregular, sem onda P, base fibrilatória */
+    afib(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rr = 60 / fc, rAmp = 0.85 + r() * 0.25;
+      let beats = [], t = -rr * r();
+      while (t < dur + 1) { beats.push(t); t += rr * (0.5 + r() * 1.0); } // RR muito variável
+      const f1 = 6 + r() * 3, f2 = 9 + r() * 4, ph1 = r() * 6.28, ph2 = r() * 6.28;
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        let v = 0;
+        for (const b of beats) {
+          const dt = ti - b;
+          if (dt >= -0.02 && dt < 0.42) v += narrowBeat(dt, { p: false, rAmp, tAmp: 0.2 });
+        }
+        v += (Math.sin(ti * f1 * 6.28 + ph1) + 0.7 * Math.sin(ti * f2 * 6.28 + ph2)) * 0.03;
+        out[i] = v + (r() - 0.5) * 0.02;
+      }
+      return out;
+    },
+
+    /* flutter atrial: ondas F em dente de serra (~300/min) + QRS estreito */
+    aflutter(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rr = 60 / fc, rAmp = 0.8 + r() * 0.2;
+      const fAtrial = 5; // ~300/min
+      let beats = [], t = -rr * r();
+      while (t < dur + 1) { beats.push(t); t += rr * (0.98 + r() * 0.04); }
+      const ph = r() * 6.28;
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        const x = (ti * fAtrial + ph) % 1;
+        const saw = (x < 0.75 ? x / 0.75 : 1 - (x - 0.75) / 0.25) * 2 - 1;
+        let v = saw * 0.14;
+        for (const b of beats) {
+          const dt = ti - b;
+          if (dt >= -0.02 && dt < 0.4) v += narrowBeat(dt, { p: false, rAmp, tAmp: 0.08 });
+        }
+        out[i] = v + (r() - 0.5) * 0.015;
+      }
+      return out;
+    },
+
+    /* extrassístoles ventriculares: sinusal com PVC precoce e largo periódico */
+    extra(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rr = 60 / fc, rAmp = 0.95 + r() * 0.2, pAmp = 0.12 + r() * 0.05;
+      const every = 4 + Math.floor(r() * 2);
+      let beats = [], t = -rr * r(), k = 0;
+      while (t < dur + 1) {
+        k++;
+        const pvc = (k % every === 0);
+        beats.push({ t: t, pvc: pvc });
+        t += pvc ? rr * 1.02 : rr * (0.98 + r() * 0.04); // PVC precoce + pausa compensatória
+        if (pvc) t += rr * 0.35;
+      }
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        let v = 0;
+        for (const b of beats) {
+          const dt = ti - b.t;
+          if (b.pvc) { if (dt >= -0.02 && dt < 0.5) v += wideBeat(dt, { rAmp: 1.15, tAmp: 0.35 }); }
+          else if (dt >= -0.05 && dt < 0.6) v += narrowBeat(dt, { rAmp, pAmp });
+        }
+        out[i] = v + (r() - 0.5) * 0.02;
+      }
+      return out;
     }
   };
 
