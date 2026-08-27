@@ -1326,8 +1326,23 @@ body.mirror { background: #000; }
 body.mirror .mon-only-control { display: none !important; }
 body.mirror .mon-wrap, body.projecting .mon-wrap { max-width: none; padding: 0; }
 body.mirror .mon-screen { position: fixed; inset: 0; border-radius: 0; border: 0; height: 100vh; height: 100dvh; }
-#mon-screen:fullscreen { border-radius: 0; border: 0; width: 100vw; height: 100vh; padding: 20px 24px; }
-#mon-screen:-webkit-full-screen { border-radius: 0; border: 0; width: 100vw; height: 100vh; }
+#mon-screen:fullscreen { border-radius: 0; border: 0; width: 100vw; height: 100vh; height: 100dvh; padding: 16px 22px; }
+#mon-screen:-webkit-full-screen { border-radius: 0; border: 0; width: 100vw; height: 100vh; padding: 16px 22px; }
+
+/* em tela cheia / espelho a tela vira coluna flex e ENCOLHE as ondas p/ caber
+   (sem cortar o final) — em vez de transbordar a viewport */
+#mon-screen:fullscreen, #mon-screen:-webkit-full-screen, body.mirror .mon-screen {
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#mon-screen:fullscreen .mon-body, #mon-screen:-webkit-full-screen .mon-body, body.mirror .mon-body {
+  flex: 1 1 auto; min-height: 0;
+}
+#mon-screen:fullscreen .mon-waves, #mon-screen:-webkit-full-screen .mon-waves, body.mirror .mon-waves {
+  min-height: 0;
+}
+#mon-screen:fullscreen .mon-lane, #mon-screen:-webkit-full-screen .mon-lane, body.mirror .mon-lane {
+  min-height: 0; flex: 1 1 0;
+}
 body.mirror .mon-vital:not(.small) > b { font-size: 52px; }
 body.mirror .mon-vital.small > b { font-size: 30px; }
 
