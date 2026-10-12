@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PALS Rhythm Quest · Plantão ao vivo</title>
+<meta name="description" content="Plantão ao vivo: o caso acontece no monitor real e o paciente deteriora em tempo real — sua conduta o estabiliza ou o perde.">
+<meta name="theme-color" content="#06090e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Plantão ao vivo">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230A0E14'/%3E%3Cpath d='M3 12h4l2.5-6 4 12 2.5-6h5' stroke='%2346D6A2' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<main class="game-shell">
+  <section id="view-vivo"></section>
+</main>
+
+<div class="sheet-backdrop" id="sheet-backdrop"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toastwrap" id="toastwrap" style="top:14px"></div>
+<div class="burst-layer" id="burstlayer"></div>
+
+<script src="js/data.js"></script>
+<script src="js/ecg.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/monitor.js"></script>
+<script src="js/vivo.js"></script>
+<script>
+(function () {
+  PRQ.ui.garantirPerfil(function () { PRQ.vivo.init(); });
+})();
+</script>
+</body>
+</html>

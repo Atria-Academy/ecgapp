@@ -11,10 +11,10 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
 const PAGES = ['index.html', 'modos.html', 'partida.html', 'dashboard.html',
-  'ranking.html', 'emblemas.html', 'biblioteca.html', 'monitor.html', 'metronomo.html'];
+  'ranking.html', 'emblemas.html', 'biblioteca.html', 'monitor.html', 'metronomo.html', 'vivo.html'];
 
 const css = read('css/style.css');
-let core = ['js/data.js', 'js/ecg.js', 'js/state.js', 'js/ui.js', 'js/game.js', 'js/monitor.js', 'js/metronome.js']
+let core = ['js/data.js', 'js/ecg.js', 'js/state.js', 'js/ui.js', 'js/game.js', 'js/monitor.js', 'js/metronome.js', 'js/vivo.js']
   .map(read).join('\n;\n');
 
 // inlinar a logo STOP como data URI (arquivo único, sem dependência externa)
@@ -43,6 +43,7 @@ const router = `
 
   PRQ.nav = function (url) {
     if (PRQ.game && PRQ.game.teardown) PRQ.game.teardown();
+    if (PRQ.vivo && PRQ.vivo.teardown) PRQ.vivo.teardown();
     var m = String(url).match(/^([^?#]+)(\\?[^#]*)?(#.*)?$/) || [];
     var page = m[1] || 'index.html';
     if (!SPA_PAGES[page]) page = 'index.html';

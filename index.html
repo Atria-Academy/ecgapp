@@ -38,6 +38,18 @@
     <span class="hero-signature">Uma experiência educacional da STOP</span>
   </section>
 
+  <a class="vivo-home" href="vivo.html">
+    <div class="vivo-home-mini">
+      <span class="vivo-home-tag">novo · ao vivo</span>
+      <div class="vivo-home-ecg"><canvas id="vivo-home-ecg"></canvas></div>
+    </div>
+    <div class="vivo-home-txt">
+      <p class="vivo-home-title">Plantão ao vivo</p>
+      <p>Um paciente de verdade no monitor, deteriorando em tempo real. Reconheça o ritmo e conduza o PALS antes que ele pare. Sobrevivência é o placar.</p>
+      <span class="vivo-home-go">Assumir o plantão ›</span>
+    </div>
+  </a>
+
   <a class="presenter-card" href="monitor.html">
     <div class="presenter-mini">
       <span class="presenter-tag">Modo apresentador</span>
@@ -127,6 +139,8 @@
     cicloHero();
     var pc = document.getElementById('presenter-ecg');
     if (pc) PRQ.ecg.renderLive(pc, 'sinusal', 110, 9, { sweepSeg: 3.2 });
+    var vc = document.getElementById('vivo-home-ecg');
+    if (vc) PRQ.ecg.renderLive(vc, 'tv', 190, 13, { sweepSeg: 3.0 });
     ui.garantirPerfil(render);
   });
 

@@ -1630,6 +1630,74 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .answer-btn.correct::after { content: '✓'; color: var(--ok); }
 .answer-btn.wrong::after   { content: '✗'; color: var(--bad); }
 
+/* ============================================================
+   PLANTÃO AO VIVO (monitor como espinha) · vivo.html
+   ============================================================ */
+.vivo-clock-box { text-align: right; min-width: 56px; }
+.vivo-clock-box b { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; color: var(--ink); }
+
+.vivo-vinheta {
+  background: var(--information-dim); border: 1px solid rgba(94,158,201,.28);
+  border-radius: 14px; padding: 12px 14px; margin-bottom: 12px;
+  font-size: 14px; line-height: 1.5; color: var(--ink);
+}
+.vivo-vinheta .mon-mini { display: block; color: var(--information); margin-bottom: 4px; }
+
+.vivo-monitor { margin-bottom: 12px; }
+/* barra de estabilidade do paciente — o "placar" vivo */
+.vivo-estab { margin-bottom: 12px; }
+.vivo-estab-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 5px; }
+.vivo-estab-head b { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 16px; color: var(--success); }
+.vivo-estab-bar { height: 10px; border-radius: 999px; background: #10202b; overflow: hidden; }
+.vivo-estab-bar i { display: block; height: 100%; background: var(--success); border-radius: 999px; transition: width .25s linear, background .3s; }
+.vivo-estab.warn .vivo-estab-bar i { background: #E7C15A; }
+.vivo-estab.warn .vivo-estab-head b { color: #E7C15A; }
+.vivo-estab.crit .vivo-estab-bar i { background: var(--danger); }
+.vivo-estab.crit .vivo-estab-head b { color: var(--danger); }
+.vivo-estab.crit .vivo-estab-bar { animation: vivoPulse 1s steps(1) infinite; }
+@keyframes vivoPulse { 50% { box-shadow: 0 0 0 2px rgba(230,90,90,.4); } }
+
+.vivo-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+/* pergunta promovida a protagonista (não é mais um microlabel apagado) */
+.vivo-pergunta {
+  font-family: var(--font-display, inherit); font-size: 18px; font-weight: 800;
+  color: var(--ink); text-align: center; margin: 2px 0 12px;
+}
+.vivo-cond { grid-column: 1 / -1; min-height: 52px; text-align: left; padding: 12px 16px; font-size: 14px; }
+
+.vivo-outcome-stats { display: flex; gap: 10px; margin: 12px 0; }
+.vivo-outcome-stats .gain { flex: 1; background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 12px; padding: 10px; text-align: center; }
+.vivo-outcome-stats .gain b { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 700; color: var(--ink); }
+.vivo-outcome-stats .gain.g-xp b { color: var(--reward); }
+.vivo-outcome-stats .gain span { font-size: 10.5px; color: var(--ink-3); }
+
+/* card de destaque do Plantão ao vivo (home) */
+.vivo-home {
+  display: flex; gap: 14px; align-items: stretch; margin: 2px 0 10px;
+  background: linear-gradient(135deg, rgba(230,90,90,.12), rgba(70,214,162,.06));
+  border: 1px solid rgba(230,90,90,.35); border-radius: 18px; padding: 13px;
+  transition: transform .1s, border-color .15s;
+}
+.vivo-home:hover { border-color: rgba(230,90,90,.6); transform: translateY(-1px); }
+.vivo-home:active { transform: translateY(0); }
+.vivo-home-mini { flex: 0 0 126px; display: flex; flex-direction: column; gap: 6px; }
+.vivo-home-tag {
+  font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--danger); background: rgba(230,90,90,.14); padding: 4px 8px; border-radius: 7px; text-align: center;
+}
+.vivo-home-ecg { position: relative; flex: 1; min-height: 74px; border-radius: 10px; overflow: hidden; background: #06090e; border: 1px solid #131c26; }
+.vivo-home-ecg canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vivo-home-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.vivo-home-title { font-family: var(--font-display, inherit); font-size: 18px; font-weight: 800; color: var(--ink); margin: 0; }
+.vivo-home-txt p { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; margin: 5px 0 8px; }
+.vivo-home-go { font-size: 13px; font-weight: 700; color: var(--danger); }
+@media (max-width: 480px) {
+  .vivo-home { flex-direction: column; }
+  .vivo-home-mini { flex: none; flex-direction: row; align-items: center; }
+  .vivo-home-tag { flex: none; }
+  .vivo-home-ecg { flex: 1; min-height: 56px; }
+}
+
 </style>
 </head>
 <body>
@@ -1657,6 +1725,18 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
     </div>
     <span class="hero-signature">Uma experiência educacional da STOP</span>
   </section>
+
+  <a class="vivo-home" href="vivo.html">
+    <div class="vivo-home-mini">
+      <span class="vivo-home-tag">novo · ao vivo</span>
+      <div class="vivo-home-ecg"><canvas id="vivo-home-ecg"></canvas></div>
+    </div>
+    <div class="vivo-home-txt">
+      <p class="vivo-home-title">Plantão ao vivo</p>
+      <p>Um paciente de verdade no monitor, deteriorando em tempo real. Reconheça o ritmo e conduza o PALS antes que ele pare. Sobrevivência é o placar.</p>
+      <span class="vivo-home-go">Assumir o plantão ›</span>
+    </div>
+  </a>
 
   <a class="presenter-card" href="monitor.html">
     <div class="presenter-mini">
@@ -1718,6 +1798,15 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
     </div>
   </div>
   <p class="small muted mb-14">Você destrava modos ao subir de nível, mas pode voltar a qualquer um para revisar.</p>
+
+  <a class="rcp-card" href="vivo.html" style="border-color:rgba(230,90,90,.35);background:linear-gradient(135deg,rgba(230,90,90,.1),rgba(70,214,162,.05))">
+    <span class="rcp-ico" style="background:rgba(230,90,90,.14);color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2.5-6 4 12 2.5-6h7"/></svg></span>
+    <span class="txt">
+      <p class="rtitle">Plantão ao vivo <span style="color:var(--danger);font-size:11px;font-weight:700">· novo</span></p>
+      <p>Paciente no monitor, deteriorando em tempo real. Reconheça o ritmo e conduza o PALS antes que ele pare.</p>
+    </span>
+    <span class="go" style="color:var(--danger)">›</span>
+  </a>
 
   <div class="modegrid" id="modos"></div>
 
@@ -1945,6 +2034,16 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
     Ferramenta educacional de apoio — siga sempre o protocolo e a avaliação clínica.
   </footer>
 </main>
+</template>
+<template data-page="vivo.html">
+<main class="game-shell">
+  <section id="view-vivo"></section>
+</main>
+
+<div class="sheet-backdrop" id="sheet-backdrop"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toastwrap" id="toastwrap" style="top:14px"></div>
+<div class="burst-layer" id="burstlayer"></div>
 </template>
 <script>
 (function(){
@@ -4894,6 +4993,372 @@ PRQ.metro = (function () {
 })();
 
 ;
+/* ============================================================
+   PALS Rhythm Quest · Plantão ao vivo (monitor como espinha)
+   O caso acontece no monitor real: o paciente deteriora em tempo
+   real (EtCO2/SpO2/estabilidade caindo) e a sua conduta o
+   estabiliza (ritmo converte, pulso volta) ou o perde.
+   Reaproveita PRQ.monitor (motor) e PRQ.CASES (conteúdo PALS).
+   Sobrevivência como placar — sem moedas nem combo.
+   ============================================================ */
+window.PRQ = window.PRQ || {};
+
+PRQ.vivo = (function () {
+  var M = function () { return PRQ.monitor; };
+  var st = function () { return PRQ.state; };
+  var ui = function () { return PRQ.ui; };
+
+  var engine = null, decayTimer = null, scene = null;
+  var fila = [], idx = 0, salvos = 0, tempos = [], porRitmo = {};
+  var etapa = 'ritmo';   // 'ritmo' | 'conduta' | 'resolvido'
+
+  // urgência por ritmo apresentado no monitor: estabilidade inicial, queda/s,
+  // se é parada (chocável/não), e vitais de abertura.
+  var URG = {
+    sinusal:     { estab: 92, decay: 0,   spo2: 98, etco2: 38, fr: 26 },
+    taqsinusal:  { estab: 86, decay: 0,   spo2: 96, etco2: 36, fr: 34 },
+    bradicardia: { estab: 58, decay: 1.1, spo2: 82, etco2: 30, fr: 16 },
+    tsv:         { estab: 62, decay: 0.9, spo2: 93, etco2: 34, fr: 40 },
+    tv:          { estab: 52, decay: 1.2, spo2: 88, etco2: 30, fr: 36 },
+    bavt:        { estab: 56, decay: 1.1, spo2: 88, etco2: 30, fr: 24 },
+    fv:          { estab: 46, decay: 1.6, spo2: 0,  etco2: 14, fr: 0, arrest: true },
+    assistolia:  { estab: 40, decay: 1.7, spo2: 0,  etco2: 8,  fr: 0, arrest: true }
+  };
+
+  function $(id) { return document.getElementById(id); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  function nomeRitmo(id) {
+    if (id === 'aesp') return PRQ.AESP.nome;
+    var r = PRQ.RHYTHMS[id];
+    return r ? r.nome : id;
+  }
+  function opcoesRitmo(correto, pulso) {
+    var ids;
+    if (correto === 'aesp') ids = ['aesp', 'sinusal', 'assistolia', 'bradicardia'];
+    else {
+      var conf = (PRQ.CONFUSIONS[correto] || []).slice();
+      ids = [correto].concat(conf.slice(0, 3));
+      if (pulso === false && ids.indexOf('aesp') < 0) ids[ids.length - 1] = 'aesp';
+    }
+    return shuffle(ids);
+  }
+
+  /* estado lido pelo motor do monitor a cada frame */
+  function getState() { return scene; }
+
+  /* ---------- montar cena a partir de um caso ---------- */
+  function montarCena(caso) {
+    var monRitmo = caso.strip.ritmo;            // o que é desenhado (AESP = sinusal organizado)
+    var u = URG[monRitmo] || URG.sinusal;
+    return {
+      caso: caso,
+      ritmo: monRitmo,
+      fc: caso.fcMonitor || caso.strip.fc || 100,
+      pulso: caso.pulso,
+      pas: caso.pulso ? 84 : 0, pad: caso.pulso ? 52 : 0,
+      spo2: u.spo2, etco2: u.etco2, fr: u.fr, temp: 37.0,
+      sync: false, pacer: false, pacerFc: 80, choques: 0, energia: 20,
+      seed: (caso.strip.seed || 7),
+      running: true,
+      // simulação
+      estab: u.estab, estab0: u.estab, decay: u.decay, arrest: !!u.arrest,
+      inicio: Date.now(), resolvido: false
+    };
+  }
+
+  /* ---------- loop de deterioração ---------- */
+  function iniciarDecay() {
+    var last = Date.now();
+    decayTimer = setInterval(function () {
+      if (!scene || scene.resolvido) return;
+      var now = Date.now(), dt = (now - last) / 1000; last = now;
+      if (scene.decay > 0) {
+        scene.estab = Math.max(0, scene.estab - scene.decay * dt);
+        // vitais acompanham a queda (quanto pior a estabilidade, pior o número)
+        var k = scene.estab / scene.estab0;
+        if (scene.pulso) {
+          scene.spo2 = Math.round(Math.max(60, (URG[scene.ritmo] || {}).spo2 * (0.6 + 0.4 * k)));
+          scene.pas = Math.round(Math.max(40, 84 * (0.5 + 0.5 * k)));
+          scene.pad = Math.round(scene.pas * 0.62);
+        }
+        scene.etco2 = Math.round(Math.max(6, (URG[scene.ritmo] || {}).etco2 * (0.5 + 0.5 * k)));
+      }
+      atualizarMonitor();
+      if (scene.estab <= 0 && !scene.resolvido) resolver(false, true); // deteriorou até o fim
+    }, 220);
+  }
+  function pararDecay() { if (decayTimer) { clearInterval(decayTimer); decayTimer = null; } }
+
+  function atualizarMonitor() {
+    M().renderNumbers(document, scene);
+    var bar = $('vivo-estab-fill'), lbl = $('vivo-estab-val'), wrap = $('vivo-estab');
+    if (bar) bar.style.width = scene.estab.toFixed(0) + '%';
+    if (lbl) lbl.textContent = scene.estab.toFixed(0) + '%';
+    if (wrap) {
+      wrap.classList.toggle('crit', scene.estab < 34);
+      wrap.classList.toggle('warn', scene.estab >= 34 && scene.estab < 67);
+    }
+    var clk = $('vivo-clock');
+    if (clk && !scene.resolvido) clk.textContent = ((Date.now() - scene.inicio) / 1000).toFixed(0) + 's';
+  }
+
+  /* ============ fluxo ============ */
+  function proximoCaso() {
+    etapa = 'ritmo';
+    if (idx >= fila.length) { finalizar(); return; }
+    scene = montarCena(fila[idx]);
+    renderCena();
+    if (engine) engine.invalidate();
+    iniciarDecay();
+    perguntarRitmo();
+  }
+
+  function renderCena() {
+    var c = scene.caso;
+    $('view-vivo').innerHTML =
+      '<div class="game-top">' +
+        '<a class="game-exit" href="modos.html" aria-label="Sair">' + ui().icon('back') + '</a>' +
+        '<div class="game-progress">' +
+          '<span class="microlabel">plantão ao vivo · caso ' + (idx + 1) + ' de ' + fila.length + '</span>' +
+          '<div class="meter"><i style="width:' + ((idx / fila.length) * 100).toFixed(0) + '%;background:var(--danger)"></i></div>' +
+        '</div>' +
+        '<div class="vivo-clock-box"><span class="mon-mini">tempo</span><b id="vivo-clock">0s</b></div>' +
+      '</div>' +
+      '<div class="vivo-vinheta"><span class="mon-mini">' + ui().esc(c.idade) + ' · caso em andamento</span>' + ui().esc(c.vinheta) + '</div>' +
+      '<section class="mon-screen vivo-monitor">' +
+        '<div class="vivo-estab" id="vivo-estab">' +
+          '<div class="vivo-estab-head"><span class="mon-mini">estabilidade do paciente</span><b id="vivo-estab-val">' + scene.estab.toFixed(0) + '%</b></div>' +
+          '<div class="vivo-estab-bar"><i id="vivo-estab-fill" style="width:' + scene.estab.toFixed(0) + '%"></i></div>' +
+        '</div>' +
+        '<div class="mon-body">' +
+          '<div class="mon-waves">' +
+            '<div class="mon-lane"><span class="mon-lane-tag t-ecg">ECG · DII</span><canvas id="vivo-ecg"></canvas></div>' +
+            '<div class="mon-lane"><span class="mon-lane-tag t-pleth">Pleth · SpO₂</span><canvas id="vivo-pleth"></canvas></div>' +
+            '<div class="mon-lane"><span class="mon-lane-tag t-capno">Capno · CO₂</span><canvas id="vivo-capno"></canvas></div>' +
+          '</div>' +
+          '<div class="mon-vitals">' +
+            '<div class="mon-vital v-hr" data-vital="hr"><span class="mon-vlabel">FC<small>bpm</small></span><b data-m="hr">--</b></div>' +
+            '<div class="mon-vital v-pa" data-vital="pa"><span class="mon-vlabel">PA<small>mmHg</small></span><b data-m="pa">--</b></div>' +
+            '<div class="mon-vital v-spo2" data-vital="spo2"><span class="mon-vlabel">SpO₂<small>%</small></span><b data-m="spo2">--</b></div>' +
+            '<div class="mon-vital v-etco2" data-vital="etco2"><span class="mon-vlabel">EtCO₂<small>mmHg</small></span><b data-m="etco2">--</b></div>' +
+            '<div class="mon-vital-row">' +
+              '<div class="mon-vital v-fr small" data-vital="fr"><span class="mon-vlabel">FR<small>rpm</small></span><b data-m="fr">--</b></div>' +
+              '<div class="mon-vital v-temp small"><span class="mon-vlabel">Temp<small>°C</small></span><b data-m="temp">--</b></div>' +
+              '<div class="mon-vital v-shocks small" style="display:none"><span class="mon-vlabel">Choques</span><b data-m="shocks">0</b></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</section>' +
+      '<div class="vivo-chip-row">' +
+        '<span class="chip ' + (scene.pulso ? 'info' : 'bad') + '">' + (scene.pulso ? 'pulso presente' : 'PULSO AUSENTE') + '</span>' +
+        '<span class="chip">' + ui().esc(c.perfusao) + '</span>' +
+      '</div>' +
+      '<p class="vivo-pergunta" id="vivo-pergunta">Qual é o ritmo?</p>' +
+      '<div class="answers" id="vivo-answers"></div>';
+
+    engine = M().createEngine({
+      ecg: $('vivo-ecg'), pleth: $('vivo-pleth'), capno: $('vivo-capno'),
+      getState: getState, sweepSeg: 3.6
+    });
+    atualizarMonitor();
+  }
+
+  function marcar(box, correctSel, chosenEl) {
+    box.querySelectorAll('.answer-btn').forEach(function (b) {
+      if (correctSel(b)) b.classList.add('correct');
+      else if (b === chosenEl) b.classList.add('wrong');
+      else b.classList.add('faded');
+    });
+  }
+
+  function perguntarRitmo() {
+    var c = scene.caso;
+    $('vivo-pergunta').textContent = 'Qual é o ritmo?';
+    var ids = opcoesRitmo(c.ritmoCorreto, c.pulso);
+    var box = $('vivo-answers');
+    box.innerHTML = ids.map(function (id) {
+      return '<button class="answer-btn" data-id="' + id + '">' + ui().esc(nomeRitmo(id)) + '</button>';
+    }).join('');
+    var travado = false;
+    box.querySelectorAll('.answer-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (travado) return; travado = true;
+        var ok = b.dataset.id === c.ritmoCorreto;
+        scene.ritmoOk = ok;
+        marcar(box, function (x) { return x.dataset.id === c.ritmoCorreto; }, b);
+        setTimeout(perguntarConduta, 720);
+      });
+    });
+  }
+
+  function perguntarConduta() {
+    if (!scene || scene.resolvido) return;
+    etapa = 'conduta';
+    var c = scene.caso;
+    $('vivo-pergunta').textContent = 'Conduta imediata (PALS)?';
+    var ordem = shuffle(c.condutas.map(function (t, i) { return { t: t, i: i }; }));
+    var box = $('vivo-answers');
+    box.innerHTML = ordem.map(function (o) {
+      return '<button class="answer-btn vivo-cond" data-i="' + o.i + '">' + ui().esc(o.t) + '</button>';
+    }).join('');
+    var travado = false;
+    box.querySelectorAll('.answer-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (travado) return; travado = true;
+        var condOk = parseInt(b.dataset.i, 10) === c.condutaCorreta;
+        marcar(box, function (x) { return parseInt(x.dataset.i, 10) === c.condutaCorreta; }, b);
+        setTimeout(function () { resolver(condOk, false); }, 760);
+      });
+    });
+  }
+
+  /* ---------- desfecho ---------- */
+  function resolver(condOk, timeout) {
+    if (!scene || scene.resolvido) return;
+    scene.resolvido = true;
+    pararDecay();
+    etapa = 'resolvido';
+    var c = scene.caso;
+    var tempoS = (Date.now() - scene.inicio) / 1000;
+    var salvou = condOk && !timeout;
+
+    // consequência no monitor
+    if (salvou) {
+      scene.ritmo = 'sinusal'; scene.pulso = true;
+      scene.fc = c.idade.indexOf('ano') >= 0 ? 110 : 140;
+      scene.spo2 = 98; scene.etco2 = 36; scene.fr = 26;
+      scene.pas = 96; scene.pad = 60; scene.estab = Math.min(100, scene.estab + 55);
+    } else {
+      scene.estab = Math.max(0, scene.estab - 40);
+      if (scene.arrest || scene.estab <= 8) { scene.ritmo = 'assistolia'; scene.pulso = false; scene.spo2 = 0; scene.etco2 = 6; scene.fr = 0; scene.estab = 0; }
+    }
+    if (engine) engine.invalidate();
+    atualizarMonitor();
+
+    // placar: sobrevivência + tempo até o tratamento
+    total_registrar(c.ritmoCorreto, salvou);
+    tempos.push(tempoS);
+    if (salvou) {
+      salvos++;
+      var rapido = tempoS < (scene.arrest ? 10 : 18);
+      var xp = Math.round((scene.arrest ? 160 : 120) + (rapido ? 60 : 0) + Math.round(scene.estab));
+      st().addXp(xp); scene._xp = xp;
+    } else { scene._xp = 0; }
+    st().get().rodadas = st().get().rodadas; // noop p/ manter schema
+    ui().refreshPills();
+
+    mostrarDesfecho(salvou, timeout, tempoS);
+  }
+
+  function total_registrar(ritmo, ok) {
+    var pr = porRitmo[ritmo] || (porRitmo[ritmo] = { ok: 0, total: 0 });
+    pr.total++; if (ok) pr.ok++;
+    st().registrarTentativa({ ritmo: ritmo, resposta: ok ? 'conduta correta' : 'conduta incorreta', correta: ok, tempoMs: 0, modo: 'vivo', combo: 0 });
+  }
+
+  function mostrarDesfecho(salvou, timeout, tempoS) {
+    var c = scene.caso;
+    var head = salvou ? 'Paciente estabilizado' : (scene.arrest || scene.estab <= 0 ? 'Paciente perdido' : 'Piorou — reavalie');
+    var sub = salvou
+      ? 'Ritmo convertido, pulso e perfusão de volta.'
+      : (timeout ? 'O tempo correu e a conduta não veio a tempo.' : 'A conduta escolhida não reverteu o quadro.');
+    var html = '<div class="sheet-grip"></div>' +
+      '<div class="verdict ' + (salvou ? 'ok' : 'bad') + '">' +
+        '<div class="verdict-icon">' + ui().icon(salvou ? 'check' : 'x') + '</div>' +
+        '<div><h3>' + head + '</h3><span class="microlabel">' + sub + '</span></div>' +
+      '</div>' +
+      '<div class="vivo-outcome-stats">' +
+        '<div class="gain"><b>' + tempoS.toFixed(0) + 's</b><span>até o tratamento</span></div>' +
+        '<div class="gain"><b>' + scene.estab.toFixed(0) + '%</b><span>estabilidade final</span></div>' +
+        (salvou ? '<div class="gain g-xp"><b>+' + ui().fmt(scene._xp) + '</b><span>XP</span></div>' : '') +
+      '</div>' +
+      '<div class="compare">' +
+        '<div class="' + (scene.ritmoOk ? 'right' : 'yours') + '"><span class="microlabel">ritmo</span><b>' + (scene.ritmoOk ? 'correto ✓' : 'não reconhecido') + '</b></div>' +
+        '<div class="' + (salvou ? 'right' : 'yours') + '"><span class="microlabel">conduta</span><b>' + (salvou ? 'correta ✓' : 'incorreta') + '</b></div>' +
+      '</div>' +
+      '<div class="teachblock"><span class="microlabel txt-info">Raciocínio</span><ul>' +
+        '<li>' + ui().esc(c.explicacao) + '</li>' +
+        '<li><b style="color:var(--ink)">Conduta esperada:</b> ' + ui().esc(c.condutas[c.condutaCorreta]) + '</li>' +
+      '</ul></div>' +
+      '<button class="btn btn-primary btn-block" id="vivo-next">' + (idx + 1 >= fila.length ? 'Ver plantão' : 'Próximo paciente') + '</button>';
+    abrirSheet(html);
+    var bn = $('vivo-next');
+    if (bn) bn.addEventListener('click', function () { fecharSheet(); idx++; setTimeout(proximoCaso, 300); });
+  }
+
+  /* ---------- resultado do plantão ---------- */
+  function finalizar() {
+    if (engine) { engine.stop(); engine = null; }
+    pararDecay();
+    var n = fila.length;
+    var tMed = tempos.length ? (tempos.reduce(function (a, b) { return a + b; }, 0) / tempos.length).toFixed(0) : '0';
+    var taxa = n ? Math.round((salvos / n) * 100) : 0;
+    var band = taxa >= 80 ? 'ring-ok' : taxa >= 50 ? 'ring-warn' : 'ring-bad';
+    st().get().rodadas++; st().save();
+    st().setBestScore('vivo', salvos * 100);
+    ui().refreshPills();
+    var novos = st().checarBadges();
+
+    var porR = Object.keys(porRitmo).map(function (id) {
+      var pr = porRitmo[id], pct = (pr.ok / pr.total) * 100;
+      return '<div class="masteryrow' + (pct < 60 ? ' weak' : '') + '"><span class="mname">' + ui().esc(nomeRitmo(id)) +
+        '</span><div class="meter"><i style="width:' + pct.toFixed(0) + '%"></i></div><span class="mval">' + pr.ok + '/' + pr.total + '</span></div>';
+    }).join('');
+
+    $('view-vivo').innerHTML =
+      '<div class="game-top"><a class="game-exit" href="modos.html" aria-label="Sair">' + ui().icon('back') + '</a>' +
+        '<div class="game-progress"><span class="microlabel">plantão concluído</span></div></div>' +
+      '<div class="result-hero">' +
+        '<h2>' + (taxa >= 80 ? 'Plantão firme.' : taxa >= 50 ? 'Alguns se foram.' : 'Plantão difícil.') + '</h2>' +
+        '<div class="ring-wrap ' + band + '">' + ui().ringSvg(0, 158, 11) +
+          '<div class="ring-center"><b id="vivo-res">0</b><span>de ' + n + ' salvos</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card card-tight">' +
+        '<div class="bonusline"><span>Pacientes estabilizados</span><b>' + salvos + ' / ' + n + '</b></div>' +
+        '<div class="bonusline"><span>Tempo médio até o tratamento</span><b>' + tMed + 's</b></div>' +
+      '</div>' +
+      '<div class="card card-tight mt-14"><span class="microlabel" style="display:block;margin-bottom:6px">Desfechos por ritmo</span>' + porR + '</div>' +
+      (novos.length ? '<div class="card card-tight mt-14"><span class="microlabel" style="display:block;margin-bottom:8px">Emblemas desbloqueados</span><div class="chiprow">' +
+        novos.map(function (b) { return '<span class="chip">' + b.emoji + ' ' + ui().esc(b.nome) + '</span>'; }).join('') + '</div></div>' : '') +
+      '<div class="row mt-14" style="gap:10px">' +
+        '<button class="btn btn-ghost grow" id="vivo-modos">Modos</button>' +
+        '<button class="btn btn-primary grow" id="vivo-again">Novo plantão</button>' +
+      '</div>';
+    window.scrollTo(0, 0);
+    setTimeout(function () {
+      var arc = $('view-vivo').querySelector('.ringarc');
+      if (arc) { var size = 158, stroke = 11, r = (size - stroke) / 2, cc = 2 * Math.PI * r; arc.style.strokeDashoffset = (cc * (1 - taxa / 100)).toFixed(1); }
+      ui().countUp($('vivo-res'), salvos, 900);
+    }, 120);
+    $('vivo-again').addEventListener('click', iniciar);
+    $('vivo-modos').addEventListener('click', function () { if (PRQ.nav) PRQ.nav('modos.html'); else location.href = 'modos.html'; });
+  }
+
+  /* ---------- sheet ---------- */
+  function abrirSheet(html) { var sh = $('sheet'), bd = $('sheet-backdrop'); if (!sh || !bd) return; sh.innerHTML = html; bd.classList.add('open'); sh.classList.add('open'); sh.scrollTop = 0; }
+  function fecharSheet() { var sh = $('sheet'), bd = $('sheet-backdrop'); if (bd) bd.classList.remove('open'); if (sh) sh.classList.remove('open'); }
+
+  function teardown() { pararDecay(); if (engine) { engine.stop(); engine = null; } fecharSheet(); }
+
+  function iniciar() {
+    fila = shuffle(PRQ.CASES).slice(0, Math.min(5, PRQ.CASES.length));
+    idx = 0; salvos = 0; tempos = []; porRitmo = {};
+    st().tocarStreak(); ui().refreshPills();
+    proximoCaso();
+  }
+
+  function init() {
+    var S = st().get();
+    // nível mínimo leve (Plantão PALS costuma destravar cedo); segue se ok
+    iniciar();
+  }
+
+  return { init: init, teardown: teardown, iniciar: iniciar };
+})();
+
+;
 
 (function () {
   window.PRQ = window.PRQ || {};
@@ -4934,6 +5399,8 @@ PRQ.metro = (function () {
     cicloHero();
     var pc = document.getElementById('presenter-ecg');
     if (pc) PRQ.ecg.renderLive(pc, 'sinusal', 110, 9, { sweepSeg: 3.2 });
+    var vc = document.getElementById('vivo-home-ecg');
+    if (vc) PRQ.ecg.renderLive(vc, 'tv', 190, 13, { sweepSeg: 3.0 });
     ui.garantirPerfil(render);
   });
 
@@ -5751,11 +6218,19 @@ PRQ.metro = (function () {
   PRQ.metro.create(document.getElementById('metro-host'), { bpm: 110 });
 })();
 
+},
+'vivo.html': function () {
+
+(function () {
+  PRQ.ui.garantirPerfil(function () { PRQ.vivo.init(); });
+})();
+
 }
 };
 
   PRQ.nav = function (url) {
     if (PRQ.game && PRQ.game.teardown) PRQ.game.teardown();
+    if (PRQ.vivo && PRQ.vivo.teardown) PRQ.vivo.teardown();
     var m = String(url).match(/^([^?#]+)(\?[^#]*)?(#.*)?$/) || [];
     var page = m[1] || 'index.html';
     if (!SPA_PAGES[page]) page = 'index.html';
