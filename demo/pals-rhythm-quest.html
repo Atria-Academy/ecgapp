@@ -39,7 +39,7 @@
 
   --ink: #E8EDF3;
   --ink-2: #9BA9B9;
-  --ink-3: #61707F;
+  --ink-3: #7C8A98;
 
   /* ---- Tokens semânticos (um significado por cor) ---- */
   --success: var(--stop-green);          /* acerto / conclusão */
@@ -285,8 +285,8 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .scope canvas { width: 100%; height: 100%; }
 .scope-label {
   position: absolute; top: 8px; left: 10px; z-index: 2;
-  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: rgba(70, 214, 162, 0.55);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: rgba(70, 214, 162, 0.8);
 }
 .scope-hr {
   position: absolute; top: 8px; right: 10px; z-index: 2;
@@ -402,7 +402,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   padding: 20px 18px 18px;
   overflow: hidden;
 }
-.hero .microlabel { color: rgba(70, 214, 162, 0.6); display: flex; align-items: center; gap: 7px; }
+.hero .microlabel { color: rgba(70, 214, 162, 0.85); display: flex; align-items: center; gap: 7px; }
 .hero .live-dot {
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--ecg-signal);
@@ -781,6 +781,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
   border-radius: var(--r-md);
   padding: 14px 8px 12px;
   position: relative;
+  min-width: 0;
 }
 .podium-card.first {
   border-color: rgba(195, 178, 230, 0.4);
@@ -1004,7 +1005,7 @@ input:focus, select:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .disclaimer {
   margin-top: 26px;
   border: 1px solid rgba(228, 120, 138, 0.3);
-  border-left: 3px solid var(--stop-coral-soft);
+  background: rgba(228, 120, 138, 0.05);
   border-radius: var(--r-md);
   padding: 13px 15px;
   font-size: 12px; color: var(--ink-3); line-height: 1.55;
@@ -1172,7 +1173,7 @@ body.mon-page { background: #05080c; }
 .mon-wrap { max-width: 1160px; margin: 0 auto; padding: 12px 14px 44px; }
 
 .mon-bar {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   padding: 6px 2px 12px;
 }
 .mon-back {
@@ -1181,9 +1182,9 @@ body.mon-page { background: #05080c; }
   background: var(--surface); white-space: nowrap;
 }
 .mon-back:hover { color: var(--ink); border-color: var(--ink-3); }
-.mon-title { font-weight: 800; font-size: 15px; color: var(--ink); }
-.mon-title small { display: block; font-weight: 600; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
-.mon-bar-actions { margin-left: auto; display: flex; gap: 8px; }
+.mon-title { font-weight: 800; font-size: 15px; color: var(--ink); flex: 1 1 auto; min-width: 0; }
+.mon-title small { display: block; font-weight: 600; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.mon-bar-actions { margin-left: auto; display: flex; gap: 8px; flex: none; }
 
 /* --- botões genéricos do monitor --- */
 .mon-btn {
@@ -1209,7 +1210,7 @@ body.mon-page { background: #05080c; }
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
   padding-bottom: 12px; border-bottom: 1px solid #131c26; margin-bottom: 12px;
 }
-.mon-mini { display: block; font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); }
+.mon-mini { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
 .mon-patient {
   display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 12.5px;
   color: var(--ink-2); font-family: 'IBM Plex Mono', monospace;
@@ -1228,7 +1229,7 @@ body.mon-page { background: #05080c; }
 .mon-lane canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .mon-lane-tag {
   position: absolute; top: 6px; left: 8px; z-index: 2;
-  font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;
   padding: 2px 7px; border-radius: 6px; background: rgba(6,9,14,.6); letter-spacing: .04em;
 }
 .mon-lane-tag.t-ecg { color: #46D6A2; } .mon-lane-tag.t-pleth { color: #5AD1E6; } .mon-lane-tag.t-capno { color: #E7C15A; }
@@ -1240,7 +1241,7 @@ body.mon-page { background: #05080c; }
   padding: 8px 14px 10px; position: relative; overflow: hidden;
 }
 .mon-vlabel { display: flex; align-items: baseline; gap: 6px; font-weight: 700; font-size: 12px; color: var(--ink-2); letter-spacing: .04em; }
-.mon-vlabel small { font-size: 10px; color: var(--ink-3); font-weight: 600; }
+.mon-vlabel small { font-size: 11px; color: var(--ink-3); font-weight: 600; }
 .mon-vital b { display: block; font-family: 'IBM Plex Mono', monospace; font-weight: 700; line-height: 1; letter-spacing: .01em; }
 .mon-vital > b { font-size: 44px; margin-top: 2px; }
 .mon-vital.small > b { font-size: 24px; }
@@ -1368,13 +1369,13 @@ body.mirror .mon-vital.small > b { font-size: 30px; }
 .presenter-card:active { transform: translateY(0); }
 .presenter-mini { flex: 0 0 122px; display: flex; flex-direction: column; gap: 6px; }
 .presenter-tag {
-  font-size: 9.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
   color: var(--success); background: var(--ok-dim); padding: 4px 8px; border-radius: 7px; text-align: center;
 }
 .presenter-ecg { position: relative; flex: 1; min-height: 70px; border-radius: 10px; overflow: hidden; background: #06090e; border: 1px solid #131c26; }
 .presenter-ecg canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .presenter-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-.presenter-txt h3 { font-family: var(--font-display, inherit); font-size: 17px; font-weight: 800; color: var(--ink); }
+.presenter-txt .ptitle { font-family: var(--font-display, inherit); font-size: 17px; font-weight: 800; color: var(--ink); margin: 0; }
 .presenter-txt p { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; margin: 5px 0 8px; }
 .presenter-go { font-size: 13px; font-weight: 700; color: var(--success); }
 @media (max-width: 480px) {
@@ -1433,7 +1434,7 @@ button.mon-vital, button.mon-rhythm {
 .mon-defib-tile .mon-vlabel { color: #E7C15A; }
 .mon-defib-tile::after { content: '⚡'; color: #E7C15A; opacity: .8; }
 .mon-defib-tile-b { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 16px; color: var(--ink); }
-.mon-defib-tile-b small { font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-3); letter-spacing: 0; }
+.mon-defib-tile-b small { font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 11px; color: var(--ink-3); letter-spacing: 0; }
 
 /* popover de edição */
 .mon-pop-bg { position: fixed; inset: 0; background: rgba(3,6,10,.45); z-index: 60; }
@@ -1490,7 +1491,7 @@ button.mon-vital, button.mon-rhythm {
 .metro-head { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
 .metro-logo { height: 30px; width: auto; opacity: .95; }
 .metro-id { text-align: left; }
-.metro-kicker { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--success); }
+.metro-kicker { display: block; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--success); }
 .metro-id h3 { font-family: var(--font-display, inherit); font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1.1; }
 
 .metro-pulse {
@@ -1513,7 +1514,7 @@ button.mon-vital, button.mon-rhythm {
 .metro-center { position: relative; z-index: 1; }
 .metro-center b { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 48px; font-weight: 700; line-height: 1; color: #E7C15A; }
 .metro-center b.inzone { color: var(--success); }
-.metro-center small { font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.metro-center small { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
 
 .metro-counter { font-size: 12px; color: var(--ink-2); margin: 2px 0 12px; display: flex; gap: 6px; align-items: baseline; justify-content: center; }
 .metro-counter b { font-family: 'IBM Plex Mono', monospace; font-size: 18px; color: var(--ink); font-weight: 700; }
@@ -1581,9 +1582,32 @@ button.mon-vital, button.mon-rhythm {
 .rcp-ico { width: 42px; height: 42px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(70,214,162,.12); color: var(--success); }
 .rcp-ico svg { width: 24px; height: 24px; }
 .rcp-card .txt { flex: 1; min-width: 0; }
-.rcp-card h3 { font-size: 15px; font-weight: 800; color: var(--ink); }
+.rcp-card .rtitle { font-size: 15px; font-weight: 800; color: var(--ink); margin: 0; }
 .rcp-card p { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
 .rcp-card .go { font-size: 20px; color: var(--success); }
+
+/* ============================================================
+   SUPERFÍCIES DO NAVEGADOR · tematizadas a partir da paleta
+   (seleção, cursor, scrollbars, foco de teclado)
+   ============================================================ */
+::selection { background: rgba(70, 214, 162, 0.28); color: var(--ink); }
+input, textarea, select, [contenteditable] { caret-color: var(--ecg-signal); }
+
+* { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+
+/* foco de teclado consistente (não aparece em clique de mouse) */
+:focus-visible {
+  outline: 2px solid var(--ecg-signal);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+a:focus-visible, button:focus-visible { outline-offset: 3px; }
+/* evita anel duplo onde já há foco próprio em inputs */
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offset: 1px; }
 
 </style>
 </head>
@@ -1619,7 +1643,7 @@ button.mon-vital, button.mon-rhythm {
       <div class="presenter-ecg"><canvas id="presenter-ecg"></canvas></div>
     </div>
     <div class="presenter-txt">
-      <h3>Monitor de simulação</h3>
+      <p class="ptitle">Monitor de simulação</p>
       <p>Projete um monitor cardíaco e controle ao vivo: ritmo, FC, PA, SpO₂, EtCO₂ e desfibrilação. Ideal para conduzir cenários PALS na tela grande.</p>
       <span class="presenter-go">Abrir monitor ›</span>
     </div>
@@ -1628,7 +1652,7 @@ button.mon-vital, button.mon-rhythm {
   <a class="rcp-card" href="metronomo.html">
     <span class="rcp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3l2-7 4 14 3-9 2 4h6"/></svg></span>
     <span class="txt">
-      <h3>Metrônomo de RCP</h3>
+      <p class="rtitle">Metrônomo de RCP</p>
       <p>Guia a cadência das compressões (100–120/min), com som e pulso.</p>
     </span>
     <span class="go">›</span>
@@ -4729,7 +4753,7 @@ PRQ.metro = (function () {
         '<button class="metro-toggle" data-toggle>▶ Iniciar</button>' +
         '<div class="metro-rate">' +
           '<button class="metro-step" data-step="-5" aria-label="diminuir">−</button>' +
-          '<input type="range" class="metro-range" data-range min="60" max="150" step="1" value="' + bpm + '">' +
+          '<input type="range" class="metro-range" data-range min="60" max="150" step="1" value="' + bpm + '" aria-label="Frequência em compressões por minuto">' +
           '<button class="metro-step" data-step="5" aria-label="aumentar">+</button>' +
         '</div>' +
         '<div class="metro-presets">' +

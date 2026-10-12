@@ -27,7 +27,7 @@ PRQ.metro = (function () {
         '<button class="metro-toggle" data-toggle>▶ Iniciar</button>' +
         '<div class="metro-rate">' +
           '<button class="metro-step" data-step="-5" aria-label="diminuir">−</button>' +
-          '<input type="range" class="metro-range" data-range min="60" max="150" step="1" value="' + bpm + '">' +
+          '<input type="range" class="metro-range" data-range min="60" max="150" step="1" value="' + bpm + '" aria-label="Frequência em compressões por minuto">' +
           '<button class="metro-step" data-step="5" aria-label="aumentar">+</button>' +
         '</div>' +
         '<div class="metro-presets">' +
