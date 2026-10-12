@@ -11,10 +11,10 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
 const PAGES = ['index.html', 'modos.html', 'partida.html', 'dashboard.html',
-  'ranking.html', 'emblemas.html', 'biblioteca.html', 'monitor.html'];
+  'ranking.html', 'emblemas.html', 'biblioteca.html', 'monitor.html', 'metronomo.html'];
 
 const css = read('css/style.css');
-let core = ['js/data.js', 'js/ecg.js', 'js/state.js', 'js/ui.js', 'js/game.js', 'js/monitor.js']
+let core = ['js/data.js', 'js/ecg.js', 'js/state.js', 'js/ui.js', 'js/game.js', 'js/monitor.js', 'js/metronome.js']
   .map(read).join('\n;\n');
 
 // inlinar a logo STOP como data URI (arquivo único, sem dependência externa)

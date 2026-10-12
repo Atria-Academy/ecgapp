@@ -198,6 +198,90 @@ PRQ.RHYTHMS = {
       'Cabo ou eletrodo solto simulando linha reta.'
     ]
   },
+  bav1: {
+    id: 'bav1',
+    nome: 'BAV de 1º grau',
+    nomeEn: 'First-degree AV block',
+    dificuldade: 2,
+    categoria: 'intermediario',
+    fc: 'Normal para a idade',
+    qrs: 'Estreito',
+    ritmo: 'Regular',
+    ondaP: 'Presente, conduz 1:1',
+    pqrs: '1:1 (PR longo)',
+    temP: true,
+    qrsLargo: false,
+    achados: [
+      'PR prolongado e CONSTANTE (acima do limite para a idade)',
+      'Toda onda P conduz um QRS (1:1)',
+      'QRS estreito e ritmo regular',
+      'FC geralmente normal'
+    ],
+    dicas: [
+      'Toda P conduz, mas "demora": o PR é longo e fixo.',
+      'Isolado e assintomático costuma ser benigno; investigue causa (fármacos, tônus vagal, miocardite, febre reumática).'
+    ],
+    armadilhas: [
+      'Chamar de bloqueio grave: o 1º grau isolado raramente precisa de marca-passo.',
+      'Não medir o PR e assumir ritmo sinusal normal.'
+    ]
+  },
+  bav2mobitz1: {
+    id: 'bav2mobitz1',
+    nome: 'BAV 2º grau Mobitz I (Wenckebach)',
+    nomeEn: 'Second-degree AV block, Mobitz I',
+    dificuldade: 3,
+    categoria: 'avancado',
+    fc: 'Atrial normal; ventricular um pouco menor',
+    qrs: 'Estreito',
+    ritmo: 'Irregular (agrupado)',
+    ondaP: 'Presente; nem toda conduz',
+    pqrs: 'Mais P que QRS (ex.: 4:3)',
+    temP: true,
+    qrsLargo: false,
+    achados: [
+      'PR aumenta progressivamente até uma P bloquear (QRS "cai")',
+      'Após a pausa, o ciclo recomeça com PR curto',
+      'R-R encurta antes da pausa; batimentos agrupados',
+      'QRS estreito'
+    ],
+    dicas: [
+      '"Vai atrasando, atrasando... e falha": o PR cresce até sumir um QRS.',
+      'Geralmente nodal e benigno; costuma responder a atropina.'
+    ],
+    armadilhas: [
+      'Confundir com Mobitz II (lá o PR é FIXO antes da falha).',
+      'Ler a pausa como bradicardia sinusal.'
+    ]
+  },
+  bav2mobitz2: {
+    id: 'bav2mobitz2',
+    nome: 'BAV 2º grau Mobitz II',
+    nomeEn: 'Second-degree AV block, Mobitz II',
+    dificuldade: 3,
+    categoria: 'avancado',
+    fc: 'Ventricular reduzida conforme a condução',
+    qrs: 'Estreito ou largo',
+    ritmo: 'Regular com falhas súbitas',
+    ondaP: 'Presente; falhas intermitentes',
+    pqrs: 'Mais P que QRS (ex.: 3:2, 2:1)',
+    temP: true,
+    qrsLargo: false,
+    achados: [
+      'PR CONSTANTE nos batimentos conduzidos',
+      'QRS bloqueia de repente, sem aviso',
+      'Pode ter padrão fixo (2:1, 3:1)',
+      'Risco de progredir para bloqueio total'
+    ],
+    dicas: [
+      'PR fixo e, do nada, "some" um QRS: pense Mobitz II.',
+      'Mais perigoso que o Mobitz I: costuma ser infranodal e pode exigir marca-passo — atropina pode não resolver.'
+    ],
+    armadilhas: [
+      'Subestimar: pode evoluir para BAVT.',
+      'Confundir com Wenckebach (lá o PR aumenta antes de falhar).'
+    ]
+  },
   bavt: {
     id: 'bavt',
     nome: 'BAVT / idioventricular lento',

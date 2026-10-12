@@ -1479,6 +1479,112 @@ button.mon-vital, button.mon-rhythm {
   .mon-chip { font-size: 12px; padding: 7px 11px; }
 }
 
+/* ============================================================
+   METRÔNOMO DE RCP · componente (biblioteca / página dedicada)
+   ============================================================ */
+.metro {
+  background: var(--surface); border: 1px solid var(--line-soft);
+  border-radius: 18px; padding: 16px 16px 14px; text-align: center;
+  max-width: 420px; margin: 0 auto;
+}
+.metro-head { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+.metro-logo { height: 30px; width: auto; opacity: .95; }
+.metro-id { text-align: left; }
+.metro-kicker { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--success); }
+.metro-id h3 { font-family: var(--font-display, inherit); font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+
+.metro-pulse {
+  position: relative; width: 170px; height: 170px; margin: 8px auto 6px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  border: 3px solid rgba(70,214,162,.28);
+  background: radial-gradient(circle at 50% 42%, rgba(70,214,162,.10), transparent 72%);
+}
+.metro-pulse.beat { animation: metroBeat .2s ease-out; }
+.metro-pulse.accent { animation: metroAccent .34s ease-out; }
+@keyframes metroBeat {
+  0% { box-shadow: 0 0 0 0 rgba(70,214,162,.55); border-color: var(--success); }
+  100% { box-shadow: 0 0 0 24px rgba(70,214,162,0); border-color: rgba(70,214,162,.28); }
+}
+@keyframes metroAccent {
+  0% { box-shadow: 0 0 0 0 rgba(231,193,90,.6); border-color: #E7C15A; }
+  100% { box-shadow: 0 0 0 30px rgba(231,193,90,0); border-color: rgba(70,214,162,.28); }
+}
+.metro-ring { position: absolute; inset: 14px; border-radius: 50%; border: 1px dashed rgba(70,214,162,.16); }
+.metro-center { position: relative; z-index: 1; }
+.metro-center b { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 48px; font-weight: 700; line-height: 1; color: #E7C15A; }
+.metro-center b.inzone { color: var(--success); }
+.metro-center small { font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+
+.metro-counter { font-size: 12px; color: var(--ink-2); margin: 2px 0 12px; display: flex; gap: 6px; align-items: baseline; justify-content: center; }
+.metro-counter b { font-family: 'IBM Plex Mono', monospace; font-size: 18px; color: var(--ink); font-weight: 700; }
+
+.metro-toggle {
+  width: 100%; font-family: inherit; font-weight: 800; font-size: 16px;
+  padding: 14px; border-radius: 14px; cursor: pointer; margin-bottom: 12px;
+  background: var(--success); color: #04231a; border: 0;
+  transition: transform .08s, filter .15s;
+}
+.metro-toggle:active { transform: translateY(1px); }
+.metro-toggle.on { background: var(--danger); color: #fff; }
+
+.metro-rate { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.metro-step {
+  width: 44px; height: 44px; flex: none; border-radius: 12px; cursor: pointer;
+  background: #0b111a; border: 1px solid var(--line); color: var(--ink);
+  font-size: 22px; font-weight: 700; line-height: 1;
+}
+.metro-step:active { background: #12202b; }
+.metro-range { flex: 1; height: 30px; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+/* faixa com a zona-alvo (100–120) destacada */
+.metro-range::-webkit-slider-runnable-track {
+  height: 7px; border-radius: 4px;
+  background: linear-gradient(90deg, #1a2634 0 44%, rgba(70,214,162,.55) 44% 67%, #1a2634 67%);
+}
+.metro-range::-moz-range-track {
+  height: 7px; border-radius: 4px;
+  background: linear-gradient(90deg, #1a2634 0 44%, rgba(70,214,162,.55) 44% 67%, #1a2634 67%);
+}
+.metro-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: var(--success); border: 3px solid #06110d; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.metro-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--success); border: 3px solid #06110d; }
+
+.metro-presets { display: flex; gap: 8px; margin-bottom: 12px; }
+.metro-presets button {
+  flex: 1; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 15px;
+  padding: 9px; border-radius: 11px; cursor: pointer;
+  background: #0b111a; border: 1px solid var(--line); color: var(--ink);
+}
+.metro-presets button.on { border-color: var(--success); background: rgba(70,214,162,.14); color: var(--success); }
+
+.metro-302 { display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 12.5px; color: var(--ink-2); cursor: pointer; margin-bottom: 10px; }
+.metro-302 input { width: 18px; height: 18px; accent-color: var(--success); }
+.metro-hint { font-size: 11.5px; color: var(--ink-3); line-height: 1.55; }
+
+/* página dedicada */
+.metro-page-wrap { padding-top: 6px; }
+
+/* metrônomo embutido na biblioteca (bloco recolhível) */
+.lib-metro { border: 1px solid rgba(70,214,162,.25); border-radius: 16px; padding: 12px 14px; margin-bottom: 14px; background: linear-gradient(135deg, rgba(70,214,162,.06), transparent); }
+.lib-metro > summary { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 800; font-size: 15px; color: var(--ink); list-style: none; }
+.lib-metro > summary::-webkit-details-marker { display: none; }
+.lib-metro > summary span { font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: .03em; }
+.lib-metro > summary::after { content: '▾'; margin-left: auto; color: var(--ink-3); }
+.lib-metro[open] > summary::after { content: '▴'; }
+.lib-metro .metro { border: 0; background: transparent; padding: 6px 0 0; max-width: 420px; }
+
+/* card de acesso ao metrônomo na home */
+.rcp-card {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 6px;
+  background: linear-gradient(135deg, rgba(230,90,90,.08), rgba(70,214,162,.05));
+  border: 1px solid rgba(70,214,162,.22); border-radius: 16px; padding: 12px 14px;
+}
+.rcp-card:hover { border-color: rgba(70,214,162,.5); }
+.rcp-ico { width: 42px; height: 42px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(70,214,162,.12); color: var(--success); }
+.rcp-ico svg { width: 24px; height: 24px; }
+.rcp-card .txt { flex: 1; min-width: 0; }
+.rcp-card h3 { font-size: 15px; font-weight: 800; color: var(--ink); }
+.rcp-card p { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+.rcp-card .go { font-size: 20px; color: var(--success); }
+
 </style>
 </head>
 <body>
@@ -1517,6 +1623,15 @@ button.mon-vital, button.mon-rhythm {
       <p>Projete um monitor cardíaco e controle ao vivo: ritmo, FC, PA, SpO₂, EtCO₂ e desfibrilação. Ideal para conduzir cenários PALS na tela grande.</p>
       <span class="presenter-go">Abrir monitor ›</span>
     </div>
+  </a>
+
+  <a class="rcp-card" href="metronomo.html">
+    <span class="rcp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3l2-7 4 14 3-9 2 4h6"/></svg></span>
+    <span class="txt">
+      <h3>Metrônomo de RCP</h3>
+      <p>Guia a cadência das compressões (100–120/min), com som e pulso.</p>
+    </span>
+    <span class="go">›</span>
   </a>
 
   <div class="section-head"><h2 class="section-title">Desafio STOP da semana</h2></div>
@@ -1666,9 +1781,14 @@ button.mon-vital, button.mon-rhythm {
       <h2 class="section-title" style="font-size:24px;margin-top:4px">Biblioteca de ritmos</h2>
     </div>
   </div>
-  <p class="small muted mb-14">Os 8 ritmos do jogo, com critérios, dicas de reconhecimento e armadilhas. Toque em um ritmo para abrir a ficha completa.</p>
+  <p class="small muted mb-14">Os ritmos do jogo, com critérios, dicas de reconhecimento e armadilhas. Toque em um ritmo para abrir a ficha completa.</p>
 
-  <input id="lib-busca" placeholder="Buscar ritmo (ex.: TSV, bradicardia...)" autocomplete="off" style="margin-bottom:12px">
+  <details class="lib-metro" open>
+    <summary>Metrônomo de RCP <span>100–120/min · guia</span></summary>
+    <div id="lib-metro-host" class="mt-14"></div>
+  </details>
+
+  <input id="lib-busca" placeholder="Buscar ritmo (ex.: TSV, bloqueio, bradicardia...)" autocomplete="off" style="margin-bottom:12px">
   <div class="filters mb-14" id="lib-filters">
     <button class="filter-btn active" data-f="todos">Todos</button>
     <button class="filter-btn" data-f="basico">Básico</button>
@@ -1760,6 +1880,25 @@ button.mon-vital, button.mon-rhythm {
 
   <p class="mon-disclaimer mon-only-control">Ferramenta educacional. Toque em um valor para ajustar. Traçados sintéticos — não substituem monitor clínico real.</p>
 
+</main>
+</template>
+<template data-page="metronomo.html">
+<main class="app">
+  <div class="section-head mt-0">
+    <div>
+      <span class="microlabel">guia de ressuscitação</span>
+      <h2 class="section-title" style="font-size:24px;margin-top:4px">Metrônomo de RCP</h2>
+    </div>
+  </div>
+  <p class="small muted mb-14">Marca a cadência das compressões no alvo PALS (100–120/min). Toque em Iniciar — o som e o pulso guiam o ritmo.</p>
+
+  <div id="metro-host" class="metro-page-wrap"></div>
+
+  <footer class="disclaimer">
+    <b>Como usar</b><br>
+    Apoie o celular perto da equipe, inicie e comprima no pulso. Ative "avisar a cada 30" para lembrar a pausa de ventilação (30:2).
+    Ferramenta educacional de apoio — siga sempre o protocolo e a avaliação clínica.
+  </footer>
 </main>
 </template>
 <script>
@@ -1973,6 +2112,90 @@ PRQ.RHYTHMS = {
     armadilhas: [
       'FV fina confundida com assistolia.',
       'Cabo ou eletrodo solto simulando linha reta.'
+    ]
+  },
+  bav1: {
+    id: 'bav1',
+    nome: 'BAV de 1º grau',
+    nomeEn: 'First-degree AV block',
+    dificuldade: 2,
+    categoria: 'intermediario',
+    fc: 'Normal para a idade',
+    qrs: 'Estreito',
+    ritmo: 'Regular',
+    ondaP: 'Presente, conduz 1:1',
+    pqrs: '1:1 (PR longo)',
+    temP: true,
+    qrsLargo: false,
+    achados: [
+      'PR prolongado e CONSTANTE (acima do limite para a idade)',
+      'Toda onda P conduz um QRS (1:1)',
+      'QRS estreito e ritmo regular',
+      'FC geralmente normal'
+    ],
+    dicas: [
+      'Toda P conduz, mas "demora": o PR é longo e fixo.',
+      'Isolado e assintomático costuma ser benigno; investigue causa (fármacos, tônus vagal, miocardite, febre reumática).'
+    ],
+    armadilhas: [
+      'Chamar de bloqueio grave: o 1º grau isolado raramente precisa de marca-passo.',
+      'Não medir o PR e assumir ritmo sinusal normal.'
+    ]
+  },
+  bav2mobitz1: {
+    id: 'bav2mobitz1',
+    nome: 'BAV 2º grau Mobitz I (Wenckebach)',
+    nomeEn: 'Second-degree AV block, Mobitz I',
+    dificuldade: 3,
+    categoria: 'avancado',
+    fc: 'Atrial normal; ventricular um pouco menor',
+    qrs: 'Estreito',
+    ritmo: 'Irregular (agrupado)',
+    ondaP: 'Presente; nem toda conduz',
+    pqrs: 'Mais P que QRS (ex.: 4:3)',
+    temP: true,
+    qrsLargo: false,
+    achados: [
+      'PR aumenta progressivamente até uma P bloquear (QRS "cai")',
+      'Após a pausa, o ciclo recomeça com PR curto',
+      'R-R encurta antes da pausa; batimentos agrupados',
+      'QRS estreito'
+    ],
+    dicas: [
+      '"Vai atrasando, atrasando... e falha": o PR cresce até sumir um QRS.',
+      'Geralmente nodal e benigno; costuma responder a atropina.'
+    ],
+    armadilhas: [
+      'Confundir com Mobitz II (lá o PR é FIXO antes da falha).',
+      'Ler a pausa como bradicardia sinusal.'
+    ]
+  },
+  bav2mobitz2: {
+    id: 'bav2mobitz2',
+    nome: 'BAV 2º grau Mobitz II',
+    nomeEn: 'Second-degree AV block, Mobitz II',
+    dificuldade: 3,
+    categoria: 'avancado',
+    fc: 'Ventricular reduzida conforme a condução',
+    qrs: 'Estreito ou largo',
+    ritmo: 'Regular com falhas súbitas',
+    ondaP: 'Presente; falhas intermitentes',
+    pqrs: 'Mais P que QRS (ex.: 3:2, 2:1)',
+    temP: true,
+    qrsLargo: false,
+    achados: [
+      'PR CONSTANTE nos batimentos conduzidos',
+      'QRS bloqueia de repente, sem aviso',
+      'Pode ter padrão fixo (2:1, 3:1)',
+      'Risco de progredir para bloqueio total'
+    ],
+    dicas: [
+      'PR fixo e, do nada, "some" um QRS: pense Mobitz II.',
+      'Mais perigoso que o Mobitz I: costuma ser infranodal e pode exigir marca-passo — atropina pode não resolver.'
+    ],
+    armadilhas: [
+      'Subestimar: pode evoluir para BAVT.',
+      'Confundir com Wenckebach (lá o PR aumenta antes de falhar).'
     ]
   },
   bavt: {
@@ -2642,6 +2865,71 @@ PRQ.ecg = (function () {
           const dt = ti - b.t;
           if (b.pvc) { if (dt >= -0.02 && dt < 0.5) v += wideBeat(dt, { rAmp: 1.15, tAmp: 0.35 }); }
           else if (dt >= -0.05 && dt < 0.6) v += narrowBeat(dt, { rAmp, pAmp });
+        }
+        out[i] = v + (r() - 0.5) * 0.02;
+      }
+      return out;
+    },
+
+    /* BAV de 1º grau: condução 1:1 com PR longo e CONSTANTE */
+    bav1(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rr = 60 / fc, rAmp = 0.95 + r() * 0.2, pr = 0.26;
+      let beats = [], t = -rr * r();
+      while (t < dur + 1) { beats.push(t); t += rr * (0.985 + r() * 0.03); }
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        let v = 0;
+        for (const b of beats) {
+          const dp = ti - b;
+          if (dp >= -0.06 && dp < 0.12) v += pWave(dp, 0.04);          // onda P
+          const dq = ti - (b + pr);
+          if (dq >= -0.02 && dq < 0.42) v += narrowBeat(dq, { p: false, rAmp, tAmp: 0.24 }); // QRS após PR longo
+        }
+        out[i] = v + (r() - 0.5) * 0.02;
+      }
+      return out;
+    },
+
+    /* BAV 2º grau Mobitz I (Wenckebach): PR cresce até uma P bloquear (4:3) */
+    bav2mobitz1(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rrP = 60 / fc, rAmp = 0.95 + r() * 0.2;
+      const prs = [0.16, 0.26, 0.38]; // 3 conduzidos, PR progressivamente maior
+      let ps = [], t = -rrP * r(), k = 0;
+      while (t < dur + 1.2) { ps.push({ t: t, idx: k % 4 }); t += rrP * (0.99 + r() * 0.02); k++; }
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        let v = 0;
+        for (const p of ps) {
+          const dp = ti - p.t;
+          if (dp >= -0.06 && dp < 0.12) v += pWave(dp, 0.045);
+          if (p.idx < 3) {                                    // 4ª P é bloqueada (sem QRS)
+            const dq = ti - (p.t + prs[p.idx]);
+            if (dq >= -0.02 && dq < 0.4) v += narrowBeat(dq, { p: false, rAmp, tAmp: 0.2 });
+          }
+        }
+        out[i] = v + (r() - 0.5) * 0.02;
+      }
+      return out;
+    },
+
+    /* BAV 2º grau Mobitz II: PR CONSTANTE, QRS bloqueia de repente (3:2) */
+    bav2mobitz2(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rrP = 60 / fc, rAmp = 0.95 + r() * 0.2, pr = 0.18;
+      let ps = [], t = -rrP * r(), k = 0;
+      while (t < dur + 1.2) { ps.push({ t: t, drop: (k % 3 === 2) }); t += rrP * (0.99 + r() * 0.02); k++; }
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        let v = 0;
+        for (const p of ps) {
+          const dp = ti - p.t;
+          if (dp >= -0.06 && dp < 0.12) v += pWave(dp, 0.045);
+          if (!p.drop) {                                      // PR fixo; batimento bloqueado some
+            const dq = ti - (p.t + pr);
+            if (dq >= -0.02 && dq < 0.4) v += narrowBeat(dq, { p: false, rAmp, tAmp: 0.2 });
+          }
         }
         out[i] = v + (r() - 0.5) * 0.02;
       }
@@ -4412,6 +4700,146 @@ PRQ.monitor = (function () {
 })();
 
 ;
+/* ============================================================
+   PALS Rhythm Quest · Metrônomo de RCP
+   Áudio Web Audio com agendamento por lookahead (tempo estável),
+   pulso visual, contador de compressões e logo da STOP.
+   Alvo PALS: 100–120 compressões/min. Componente reutilizável.
+   ============================================================ */
+window.PRQ = window.PRQ || {};
+
+PRQ.metro = (function () {
+
+  function create(container, opts) {
+    opts = opts || {};
+    var bpm = opts.bpm || 110;
+    var logo = (PRQ.STOP && PRQ.STOP.logo) || '';
+
+    container.innerHTML =
+      '<div class="metro">' +
+        '<div class="metro-head">' +
+          (logo ? '<img class="metro-logo" src="' + logo + '" alt="Sociedade Tocantinense de Pediatria" width="' + (PRQ.STOP.logoW || 594) + '" height="' + (PRQ.STOP.logoH || 304) + '" loading="lazy">' : '') +
+          '<div class="metro-id"><span class="metro-kicker">Guia de RCP</span><h3>Metrônomo</h3></div>' +
+        '</div>' +
+        '<div class="metro-pulse" data-pulse>' +
+          '<span class="metro-ring"></span>' +
+          '<span class="metro-center"><b data-bpm>' + bpm + '</b><small>compressões/min</small></span>' +
+        '</div>' +
+        '<div class="metro-counter"><span>ciclo 30:2</span><b data-count>0</b><span>/ 30</span></div>' +
+        '<button class="metro-toggle" data-toggle>▶ Iniciar</button>' +
+        '<div class="metro-rate">' +
+          '<button class="metro-step" data-step="-5" aria-label="diminuir">−</button>' +
+          '<input type="range" class="metro-range" data-range min="60" max="150" step="1" value="' + bpm + '">' +
+          '<button class="metro-step" data-step="5" aria-label="aumentar">+</button>' +
+        '</div>' +
+        '<div class="metro-presets">' +
+          '<button data-preset="100">100</button>' +
+          '<button data-preset="110">110</button>' +
+          '<button data-preset="120">120</button>' +
+        '</div>' +
+        '<label class="metro-302"><input type="checkbox" data-302> Avisar a cada 30 (pausa para ventilar)</label>' +
+        '<p class="metro-hint">Alvo PALS: <b>100–120/min</b>, profundidade de cerca de ⅓ do tórax, permita o retorno total do tórax e minimize as interrupções.</p>' +
+      '</div>';
+
+    var elPulse = container.querySelector('[data-pulse]');
+    var elBpm = container.querySelector('[data-bpm]');
+    var elCount = container.querySelector('[data-count]');
+    var elToggle = container.querySelector('[data-toggle]');
+    var elRange = container.querySelector('[data-range]');
+    var el302 = container.querySelector('[data-302]');
+
+    var ctx = null, running = false, nextTime = 0, beat = 0, timer = null;
+    var lookahead = 0.12, tickMs = 25, mode302 = false;
+
+    function ensureCtx() {
+      if (!ctx) { var AC = window.AudioContext || window.webkitAudioContext; ctx = AC ? new AC() : null; }
+      if (ctx && ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    }
+
+    function click(time, accent) {
+      if (!ctx) return;
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'square';
+      o.frequency.value = accent ? 1560 : 1040;
+      o.connect(g); g.connect(ctx.destination);
+      var vol = accent ? 0.85 : 0.5;
+      g.gain.setValueAtTime(0.0001, time);
+      g.gain.exponentialRampToValueAtTime(vol, time + 0.001);
+      g.gain.exponentialRampToValueAtTime(0.0001, time + 0.05);
+      o.start(time); o.stop(time + 0.06);
+    }
+
+    function flash(delayMs, accent, count) {
+      setTimeout(function () {
+        if (!running) return;
+        elPulse.classList.remove('beat', 'accent');
+        void elPulse.offsetWidth;                 // reinicia a animação
+        elPulse.classList.add(accent ? 'accent' : 'beat');
+        if (count != null) elCount.textContent = count;
+      }, Math.max(0, delayMs));
+    }
+
+    function scheduler() {
+      if (!running) return;
+      if (!container.isConnected) { stop(); return; }   // trocou de página (SPA)
+      var spb = 60 / bpm;
+      while (nextTime < ctx.currentTime + lookahead) {
+        var pos = beat % 30;                             // 0..29
+        var accent = mode302 && pos === 29;              // 30ª compressão: pausa p/ ventilar
+        var delay = (nextTime - ctx.currentTime) * 1000;
+        click(nextTime, accent);
+        flash(delay, accent, pos + 1);
+        beat++;
+        nextTime += spb;
+      }
+      timer = setTimeout(scheduler, tickMs);
+    }
+
+    function start() {
+      ensureCtx();
+      if (!ctx) { alert('Áudio não suportado neste navegador. Atualize o navegador ou use outro.'); return; }
+      running = true; beat = 0; nextTime = ctx.currentTime + 0.1;
+      elToggle.textContent = '⏸ Parar'; elToggle.classList.add('on');
+      scheduler();
+    }
+
+    function stop() {
+      running = false;
+      if (timer) { clearTimeout(timer); timer = null; }
+      elToggle.textContent = '▶ Iniciar'; elToggle.classList.remove('on');
+      elPulse.classList.remove('beat', 'accent');
+    }
+
+    function setBpm(v) {
+      bpm = Math.max(60, Math.min(150, Math.round(v)));
+      elBpm.textContent = bpm; elRange.value = bpm;
+      elBpm.classList.toggle('inzone', bpm >= 100 && bpm <= 120);
+      container.querySelectorAll('.metro-presets button').forEach(function (b) {
+        b.classList.toggle('on', +b.dataset.preset === bpm);
+      });
+    }
+
+    elToggle.addEventListener('click', function () { running ? stop() : start(); });
+    elRange.addEventListener('input', function () { setBpm(+elRange.value); });
+    container.querySelectorAll('.metro-step').forEach(function (b) {
+      b.addEventListener('click', function () { setBpm(bpm + (+b.dataset.step)); });
+    });
+    container.querySelectorAll('.metro-presets button').forEach(function (b) {
+      b.addEventListener('click', function () { setBpm(+b.dataset.preset); });
+    });
+    el302.addEventListener('change', function () { mode302 = el302.checked; });
+    // pausa o áudio se a aba for escondida
+    document.addEventListener('visibilitychange', function () { if (document.hidden && running) stop(); });
+
+    setBpm(bpm);
+    return { start: start, stop: stop, setBpm: setBpm };
+  }
+
+  return { create: create };
+})();
+
+;
 
 (function () {
   window.PRQ = window.PRQ || {};
@@ -4873,6 +5301,7 @@ PRQ.monitor = (function () {
 (function () {
   var ui = PRQ.ui, st = PRQ.state;
   ui.renderShell();
+  if (PRQ.metro) PRQ.metro.create(document.getElementById('lib-metro-host'), { bpm: 110 });
   var filtro = 'todos', busca = '';
   var liveDetalhe = null;
 
@@ -4897,7 +5326,8 @@ PRQ.monitor = (function () {
   });
 
   function fcExemplo(r) {
-    var mapa = { sinusal: 104, bradicardia: 48, taqsinusal: 178, tsv: 236, tv: 184, fv: 0, assistolia: 0, bavt: 42 };
+    var mapa = { sinusal: 104, bradicardia: 48, taqsinusal: 178, tsv: 236, tv: 184, fv: 0, assistolia: 0, bavt: 42,
+      bav1: 74, bav2mobitz1: 78, bav2mobitz2: 82 };
     return mapa[r.id] || 100;
   }
 
@@ -5257,6 +5687,14 @@ PRQ.monitor = (function () {
   });
 
   loadShared(); engine.invalidate(); commit();
+})();
+
+},
+'metronomo.html': function () {
+
+(function () {
+  PRQ.ui.renderShell();
+  PRQ.metro.create(document.getElementById('metro-host'), { bpm: 110 });
 })();
 
 }

@@ -246,6 +246,71 @@ PRQ.ecg = (function () {
         out[i] = v + (r() - 0.5) * 0.02;
       }
       return out;
+    },
+
+    /* BAV de 1º grau: condução 1:1 com PR longo e CONSTANTE */
+    bav1(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rr = 60 / fc, rAmp = 0.95 + r() * 0.2, pr = 0.26;
+      let beats = [], t = -rr * r();
+      while (t < dur + 1) { beats.push(t); t += rr * (0.985 + r() * 0.03); }
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        let v = 0;
+        for (const b of beats) {
+          const dp = ti - b;
+          if (dp >= -0.06 && dp < 0.12) v += pWave(dp, 0.04);          // onda P
+          const dq = ti - (b + pr);
+          if (dq >= -0.02 && dq < 0.42) v += narrowBeat(dq, { p: false, rAmp, tAmp: 0.24 }); // QRS após PR longo
+        }
+        out[i] = v + (r() - 0.5) * 0.02;
+      }
+      return out;
+    },
+
+    /* BAV 2º grau Mobitz I (Wenckebach): PR cresce até uma P bloquear (4:3) */
+    bav2mobitz1(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rrP = 60 / fc, rAmp = 0.95 + r() * 0.2;
+      const prs = [0.16, 0.26, 0.38]; // 3 conduzidos, PR progressivamente maior
+      let ps = [], t = -rrP * r(), k = 0;
+      while (t < dur + 1.2) { ps.push({ t: t, idx: k % 4 }); t += rrP * (0.99 + r() * 0.02); k++; }
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        let v = 0;
+        for (const p of ps) {
+          const dp = ti - p.t;
+          if (dp >= -0.06 && dp < 0.12) v += pWave(dp, 0.045);
+          if (p.idx < 3) {                                    // 4ª P é bloqueada (sem QRS)
+            const dq = ti - (p.t + prs[p.idx]);
+            if (dq >= -0.02 && dq < 0.4) v += narrowBeat(dq, { p: false, rAmp, tAmp: 0.2 });
+          }
+        }
+        out[i] = v + (r() - 0.5) * 0.02;
+      }
+      return out;
+    },
+
+    /* BAV 2º grau Mobitz II: PR CONSTANTE, QRS bloqueia de repente (3:2) */
+    bav2mobitz2(fc, seed, dur, fs) {
+      const r = rng(seed), n = Math.floor(dur * fs), out = new Float32Array(n);
+      const rrP = 60 / fc, rAmp = 0.95 + r() * 0.2, pr = 0.18;
+      let ps = [], t = -rrP * r(), k = 0;
+      while (t < dur + 1.2) { ps.push({ t: t, drop: (k % 3 === 2) }); t += rrP * (0.99 + r() * 0.02); k++; }
+      for (let i = 0; i < n; i++) {
+        const ti = i / fs;
+        let v = 0;
+        for (const p of ps) {
+          const dp = ti - p.t;
+          if (dp >= -0.06 && dp < 0.12) v += pWave(dp, 0.045);
+          if (!p.drop) {                                      // PR fixo; batimento bloqueado some
+            const dq = ti - (p.t + pr);
+            if (dq >= -0.02 && dq < 0.4) v += narrowBeat(dq, { p: false, rAmp, tAmp: 0.2 });
+          }
+        }
+        out[i] = v + (r() - 0.5) * 0.02;
+      }
+      return out;
     }
   };
 

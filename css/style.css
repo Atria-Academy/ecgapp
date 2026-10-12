@@ -1467,3 +1467,109 @@ button.mon-vital, button.mon-rhythm {
   .mon-strip { gap: 6px; }
   .mon-chip { font-size: 12px; padding: 7px 11px; }
 }
+
+/* ============================================================
+   METRÔNOMO DE RCP · componente (biblioteca / página dedicada)
+   ============================================================ */
+.metro {
+  background: var(--surface); border: 1px solid var(--line-soft);
+  border-radius: 18px; padding: 16px 16px 14px; text-align: center;
+  max-width: 420px; margin: 0 auto;
+}
+.metro-head { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+.metro-logo { height: 30px; width: auto; opacity: .95; }
+.metro-id { text-align: left; }
+.metro-kicker { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--success); }
+.metro-id h3 { font-family: var(--font-display, inherit); font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+
+.metro-pulse {
+  position: relative; width: 170px; height: 170px; margin: 8px auto 6px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  border: 3px solid rgba(70,214,162,.28);
+  background: radial-gradient(circle at 50% 42%, rgba(70,214,162,.10), transparent 72%);
+}
+.metro-pulse.beat { animation: metroBeat .2s ease-out; }
+.metro-pulse.accent { animation: metroAccent .34s ease-out; }
+@keyframes metroBeat {
+  0% { box-shadow: 0 0 0 0 rgba(70,214,162,.55); border-color: var(--success); }
+  100% { box-shadow: 0 0 0 24px rgba(70,214,162,0); border-color: rgba(70,214,162,.28); }
+}
+@keyframes metroAccent {
+  0% { box-shadow: 0 0 0 0 rgba(231,193,90,.6); border-color: #E7C15A; }
+  100% { box-shadow: 0 0 0 30px rgba(231,193,90,0); border-color: rgba(70,214,162,.28); }
+}
+.metro-ring { position: absolute; inset: 14px; border-radius: 50%; border: 1px dashed rgba(70,214,162,.16); }
+.metro-center { position: relative; z-index: 1; }
+.metro-center b { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 48px; font-weight: 700; line-height: 1; color: #E7C15A; }
+.metro-center b.inzone { color: var(--success); }
+.metro-center small { font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+
+.metro-counter { font-size: 12px; color: var(--ink-2); margin: 2px 0 12px; display: flex; gap: 6px; align-items: baseline; justify-content: center; }
+.metro-counter b { font-family: 'IBM Plex Mono', monospace; font-size: 18px; color: var(--ink); font-weight: 700; }
+
+.metro-toggle {
+  width: 100%; font-family: inherit; font-weight: 800; font-size: 16px;
+  padding: 14px; border-radius: 14px; cursor: pointer; margin-bottom: 12px;
+  background: var(--success); color: #04231a; border: 0;
+  transition: transform .08s, filter .15s;
+}
+.metro-toggle:active { transform: translateY(1px); }
+.metro-toggle.on { background: var(--danger); color: #fff; }
+
+.metro-rate { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.metro-step {
+  width: 44px; height: 44px; flex: none; border-radius: 12px; cursor: pointer;
+  background: #0b111a; border: 1px solid var(--line); color: var(--ink);
+  font-size: 22px; font-weight: 700; line-height: 1;
+}
+.metro-step:active { background: #12202b; }
+.metro-range { flex: 1; height: 30px; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+/* faixa com a zona-alvo (100–120) destacada */
+.metro-range::-webkit-slider-runnable-track {
+  height: 7px; border-radius: 4px;
+  background: linear-gradient(90deg, #1a2634 0 44%, rgba(70,214,162,.55) 44% 67%, #1a2634 67%);
+}
+.metro-range::-moz-range-track {
+  height: 7px; border-radius: 4px;
+  background: linear-gradient(90deg, #1a2634 0 44%, rgba(70,214,162,.55) 44% 67%, #1a2634 67%);
+}
+.metro-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: var(--success); border: 3px solid #06110d; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.metro-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--success); border: 3px solid #06110d; }
+
+.metro-presets { display: flex; gap: 8px; margin-bottom: 12px; }
+.metro-presets button {
+  flex: 1; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 15px;
+  padding: 9px; border-radius: 11px; cursor: pointer;
+  background: #0b111a; border: 1px solid var(--line); color: var(--ink);
+}
+.metro-presets button.on { border-color: var(--success); background: rgba(70,214,162,.14); color: var(--success); }
+
+.metro-302 { display: flex; align-items: center; gap: 8px; justify-content: center; font-size: 12.5px; color: var(--ink-2); cursor: pointer; margin-bottom: 10px; }
+.metro-302 input { width: 18px; height: 18px; accent-color: var(--success); }
+.metro-hint { font-size: 11.5px; color: var(--ink-3); line-height: 1.55; }
+
+/* página dedicada */
+.metro-page-wrap { padding-top: 6px; }
+
+/* metrônomo embutido na biblioteca (bloco recolhível) */
+.lib-metro { border: 1px solid rgba(70,214,162,.25); border-radius: 16px; padding: 12px 14px; margin-bottom: 14px; background: linear-gradient(135deg, rgba(70,214,162,.06), transparent); }
+.lib-metro > summary { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 800; font-size: 15px; color: var(--ink); list-style: none; }
+.lib-metro > summary::-webkit-details-marker { display: none; }
+.lib-metro > summary span { font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: .03em; }
+.lib-metro > summary::after { content: '▾'; margin-left: auto; color: var(--ink-3); }
+.lib-metro[open] > summary::after { content: '▴'; }
+.lib-metro .metro { border: 0; background: transparent; padding: 6px 0 0; max-width: 420px; }
+
+/* card de acesso ao metrônomo na home */
+.rcp-card {
+  display: flex; align-items: center; gap: 12px; margin: 0 0 6px;
+  background: linear-gradient(135deg, rgba(230,90,90,.08), rgba(70,214,162,.05));
+  border: 1px solid rgba(70,214,162,.22); border-radius: 16px; padding: 12px 14px;
+}
+.rcp-card:hover { border-color: rgba(70,214,162,.5); }
+.rcp-ico { width: 42px; height: 42px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(70,214,162,.12); color: var(--success); }
+.rcp-ico svg { width: 24px; height: 24px; }
+.rcp-card .txt { flex: 1; min-width: 0; }
+.rcp-card h3 { font-size: 15px; font-weight: 800; color: var(--ink); }
+.rcp-card p { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+.rcp-card .go { font-size: 20px; color: var(--success); }
