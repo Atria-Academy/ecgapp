@@ -1597,3 +1597,24 @@ input, textarea, select, [contenteditable] { caret-color: var(--ecg-signal); }
 a:focus-visible, button:focus-visible { outline-offset: 3px; }
 /* evita anel duplo onde já há foco próprio em inputs */
 input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offset: 1px; }
+
+/* ============================================================
+   Suavizar + honestidade + acessibilidade (Fase 1)
+   ============================================================ */
+/* anel de resultado colorido por faixa de acurácia (nada de verde em 33%) */
+.ring-wrap.ring-ok   .ringarc { stroke: var(--ok); }
+.ring-wrap.ring-ok   .ring-center b { color: var(--ok); }
+.ring-wrap.ring-warn .ringarc { stroke: #E7C15A; }
+.ring-wrap.ring-warn .ring-center b { color: #E7C15A; }
+.ring-wrap.ring-bad  .ringarc { stroke: var(--bad); }
+.ring-wrap.ring-bad  .ring-center b { color: var(--bad); }
+
+/* acerto/erro sinalizado também por ícone, não só por cor (daltônicos) */
+.answer-btn { position: relative; }
+.answer-btn.correct::after,
+.answer-btn.wrong::after {
+  position: absolute; top: 6px; right: 9px;
+  font-size: 14px; font-weight: 800; line-height: 1;
+}
+.answer-btn.correct::after { content: '✓'; color: var(--ok); }
+.answer-btn.wrong::after   { content: '✗'; color: var(--bad); }

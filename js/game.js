@@ -379,7 +379,7 @@ PRQ.game = (function () {
   }
 
   function computarGanho(acertou, tempoMs) {
-    if (!acertou) return { xp: -20, moedas: 0, base: 0, veloc: 0, comboB: 0, mult: 1 };
+    if (!acertou) return { xp: (modo.id === 'treino' ? 0 : -10), moedas: 0, base: 0, veloc: 0, comboB: 0, mult: 1 };
     const timed = modo.timerSeg > 0;
     const base = 100;
     let veloc = 0;
@@ -462,7 +462,7 @@ PRQ.game = (function () {
         '<div class="verdict bad">' +
           '<div class="verdict-icon">' + ui().icon('x') + '</div>' +
           '<div><h3>' + (timeout ? 'Tempo esgotado' : 'Ainda não') + '</h3>' +
-          '<span class="microlabel">o correto era ' + ui().esc(rit.nome) + ' · −20 XP</span></div>' +
+          '<span class="microlabel">o correto era ' + ui().esc(rit.nome) + (g.xp < 0 ? ' · ' + g.xp + ' XP' : ' · sem perda no treino') + '</span></div>' +
         '</div>' +
         '<div class="compare">' +
           '<div class="yours"><span class="microlabel">sua resposta</span><b>' + ui().esc(timeout ? 'sem resposta' : nomeRitmo(resposta)) + '</b></div>' +
@@ -610,14 +610,19 @@ PRQ.game = (function () {
     if (liveHandle) liveHandle.stop();
     pararTimer();
     limparBots();
+    var tw = document.getElementById('toastwrap'); if (tw) tw.innerHTML = ''; // sem toast colidindo com o resultado
 
     const acc = R.total ? (R.acertos / R.total) * 100 : 0;
-    let bonus = 0, moedasX2 = false;
-    if (acc > 95) { bonus = 700; moedasX2 = true; }
+    let bonus = 0;
+    if (acc > 95) bonus = 700;
     else if (acc > 90) bonus = 400;
     else if (acc > 80) bonus = 200;
     if (bonus) { R.bonusFinal = bonus; st().addXp(bonus); R.xp += bonus; }
-    if (moedasX2 && R.moedas > 0) { st().addMoedas(R.moedas); R.moedas *= 2; }
+    // moedas: bônus proporcional à acurácia — nada abaixo de 50%
+    const coinBonusFrac = acc > 80 ? 1.0 : acc >= 50 ? 0.5 : 0;
+    if (coinBonusFrac && R.moedas > 0) { const add = Math.round(R.moedas * coinBonusFrac); st().addMoedas(add); R.moedas += add; }
+    // cor do anel/headline por faixa de acurácia (honesto: 33% não fica verde)
+    const accBand = acc >= 80 ? 'ring-ok' : acc >= 50 ? 'ring-warn' : 'ring-bad';
 
     if (modo.id === 'treino') {
       st().get().counters.treinoSessoes++;
@@ -633,9 +638,9 @@ PRQ.game = (function () {
     }
     st().get().rodadas++;
     st().save();
-    const recorde = R.xp > 0 ? st().setBestScore(modo.id, R.xp) : false;
+    const recorde = (R.xp > 0 && acc >= 50) ? st().setBestScore(modo.id, R.xp) : false;
     ui().refreshPills();
-    ui().celebrarBadges(st().checarBadges());
+    const novosBadges = st().checarBadges(); // premia em silêncio; exibidos no resultado (sem toast)
 
     const tempoMedio = R.tempos.length
       ? (R.tempos.reduce((a, b) => a + b, 0) / R.tempos.length / 1000).toFixed(1)
@@ -672,7 +677,7 @@ PRQ.game = (function () {
       '<div class="result-hero">' +
         '<span class="microlabel">' + ui().esc(modo.nome) + ' · rodada concluída</span>' +
         '<h2>' + (acc >= 80 ? 'Sinal firme.' : acc >= 50 ? 'No caminho.' : 'Hora de revisar.') + '</h2>' +
-        '<div class="ring-wrap">' + ui().ringSvg(0, 158, 11) +
+        '<div class="ring-wrap ' + accBand + '">' + ui().ringSvg(0, 158, 11) +
           '<div class="ring-center"><b id="res-acc">0%</b><span>acurácia</span></div>' +
         '</div>' +
         (desafioStop ? '<div class="center" style="margin-top:10px"><span class="stop-seal">chancelado pela STOP</span></div>' : '') +
@@ -681,13 +686,17 @@ PRQ.game = (function () {
         '<div class="bonusline"><span>XP da rodada</span><b id="res-xp">0</b></div>' +
         (R.bonusFinal ? '<div class="bonusline"><span>Bônus de acurácia ' + (acc > 95 ? '>95%' : acc > 90 ? '>90%' : '>80%') + '</span><b>+' + R.bonusFinal + ' XP</b></div>' : '') +
         (R.bonusStop ? '<div class="bonusline"><span>Bônus do Desafio STOP</span><b class="reward">+' + R.bonusStop + ' XP</b></div>' : '') +
-        '<div class="bonusline"><span>Moedas' + (moedasX2 ? ' (×2 pela acurácia)' : '') + '</span><b class="reward">+' + ui().fmt(R.moedas) + ' ◉</b></div>' +
+        '<div class="bonusline"><span>Moedas' + (coinBonusFrac ? ' (bônus de acurácia)' : '') + '</span><b class="reward">+' + ui().fmt(R.moedas) + ' ◉</b></div>' +
         '<div class="bonusline"><span>Melhor combo</span><b>×' + R.melhorCombo + '</b></div>' +
         (modo.timerSeg ? '<div class="bonusline"><span>Tempo médio por tira</span><b>' + tempoMedio + 's</b></div>' : '') +
         (modo.id === 'plantao' ? '<div class="bonusline"><span>Condutas PALS corretas</span><b>' + R.condutasOk + '/' + R.total + '</b></div>' : '') +
         (recorde && R.xp > 0 ? '<div class="bonusline"><span>Recorde pessoal</span><b class="reward">novo!</b></div>' : '') +
       '</div>' +
       '<div class="card card-tight mt-14"><span class="microlabel" style="display:block;margin-bottom:6px">Desempenho por ritmo</span>' + porRitmoHtml + '</div>' +
+      (novosBadges.length
+        ? '<div class="card card-tight mt-14"><span class="microlabel" style="display:block;margin-bottom:8px">' + (acc >= 50 ? 'Emblemas desbloqueados 🎉' : 'Emblemas desbloqueados') + '</span><div class="chiprow">' +
+          novosBadges.map(function (b) { return '<span class="chip">' + b.emoji + ' ' + ui().esc(b.nome) + '</span>'; }).join('') + '</div></div>'
+        : '') +
       arenaHtml +
       '<div class="card card-tight mt-14">' + ui().xpbarHtml() + '</div>' +
       '<div class="row mt-14" style="gap:10px">' +
